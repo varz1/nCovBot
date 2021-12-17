@@ -33,6 +33,10 @@ func receiver() {
 		if update.Message == nil {
 			continue
 		}
-		go baseRouter(update)
+		if update.Message.IsCommand() {
+			go oderRouter(update)
+		}else {
+			go baseRouter(update)
+		}
 	}
 }

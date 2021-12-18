@@ -5,6 +5,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/json-iterator/go"
 	"github.com/varz1/nCovBot/model"
+	"strings"
 )
 
 var (
@@ -44,4 +45,11 @@ func GetAreas() (model.Result, error) {
 		return model.Result{}, err
 	}
 	return areas, nil
+}
+
+// GetList 返回指定页码的text
+func GetList(page int8, model model.Result) string {
+	var list []string = model.Areas[0 : len(model.Areas)]
+	str := strings.Join(list," ")
+	return str
 }

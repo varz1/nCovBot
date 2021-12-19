@@ -3,26 +3,11 @@ package maker
 import (
 	"encoding/json"
 	"fmt"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/varz1/nCovBot/channel"
 	"io/ioutil"
 	"os"
 	"strings"
-)
-
-type res struct {
-	Results []string `json:"results"`
-}
-
-var board = tgbotapi.NewInlineKeyboardMarkup(
-	tgbotapi.NewInlineKeyboardRow(
-		tgbotapi.NewInlineKeyboardButtonData("国内各省市", "province"),
-	),
-)
-var board1 = tgbotapi.NewInlineKeyboardMarkup(
-	tgbotapi.NewInlineKeyboardRow(
-		tgbotapi.NewInlineKeyboardButtonData("国外各国家地区", "country"),
-	),
 )
 
 func List() {
@@ -45,7 +30,9 @@ func List() {
 		return
 	}
 
-	var post res
+	var post struct {
+		Results []string `json:"results"`
+	}
 	// 解析json数据到post中
 	err = json.Unmarshal(jsonData, &post)
 	if err != nil {
@@ -54,16 +41,38 @@ func List() {
 	}
 	for area := range channel.ListChannel {
 		var c tgbotapi.Chattable
-		text := "加载文件错误"
+		text := "请选择区域"
 		switch area.Types {
+		case "menu":
+			var menu = tgbotapi.NewInlineKeyboardMarkup(
+				tgbotapi.NewInlineKeyboardRow(
+					tgbotapi.NewInlineKeyboardButtonData("国内各省市", "province"),
+				),
+				tgbotapi.NewInlineKeyboardRow(
+					tgbotapi.NewInlineKeyboardButtonData("国内外各国家地区", "country"),
+				),
+			)
+			msg := tgbotapi.NewMessage(area.AreaMessage.Chat.ID, text)
+			msg.ReplyMarkup = menu
+			c = msg
 		case "province":
+			var board1 = tgbotapi.NewInlineKeyboardMarkup(
+				tgbotapi.NewInlineKeyboardRow(
+					tgbotapi.NewInlineKeyboardButtonData("国内外各国家地区", "country"),
+				),
+			)
 			text = strings.Join(post.Results[0:34], " ")
-			msg := tgbotapi.NewEditMessageText(area.Query.Chat.ID, area.Query.MessageID, text)
+			msg := tgbotapi.NewEditMessageText(area.AreaMessage.Chat.ID, area.AreaMessage.MessageID, text)
 			msg.ReplyMarkup = &board1
 			c = msg
 		case "country":
+			var board = tgbotapi.NewInlineKeyboardMarkup(
+				tgbotapi.NewInlineKeyboardRow(
+					tgbotapi.NewInlineKeyboardButtonData("国内各省市", "province"),
+				),
+			)
 			text = strings.Join(post.Results[35:], " ")
-			msg := tgbotapi.NewEditMessageText(area.Query.Chat.ID, area.Query.MessageID, text)
+			msg := tgbotapi.NewEditMessageText(area.AreaMessage.Chat.ID, area.AreaMessage.MessageID, text)
 			msg.ReplyMarkup = &board
 			c = msg
 		}

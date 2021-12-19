@@ -1,7 +1,7 @@
 package channel
 
 import (
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/varz1/nCovBot/model"
 )
 

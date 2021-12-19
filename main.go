@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/spf13/viper"
 	"github.com/varz1/nCovBot/bot"
+	"github.com/varz1/nCovBot/maker"
 	"sync"
 )
 
@@ -15,6 +16,7 @@ func main() {
 		panic("viper wrong")
 	}
 	go bot.Run()
+	go maker.List()
 	wg := sync.WaitGroup{}
 	wg.Add(1)
 	wg.Wait()

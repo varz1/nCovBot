@@ -1,6 +1,9 @@
 package model
 
-type Result struct {
-	Areas   []string `json:"results"`
-	Success bool     `json:"success"`
+import tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+
+type Areas struct {
+	Types string
+	area []string
+	Query tgbotapi.Message
 }

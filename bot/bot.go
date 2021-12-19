@@ -32,7 +32,7 @@ func receiver() {
 	}
 	for update := range updates {
 		if update.CallbackQuery != nil {
-			go callBackRouter(update)
+			go callBackRouter(update.CallbackQuery)
 		}
 		if update.Message == nil {
 			continue
@@ -40,3 +40,4 @@ func receiver() {
 		go baseRouter(update)
 	}
 }
+

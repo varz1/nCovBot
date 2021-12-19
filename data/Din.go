@@ -48,8 +48,13 @@ func GetAreas() (model.Result, error) {
 }
 
 // GetList 返回指定页码的text
-func GetList(page int8, model model.Result) string {
-	var list []string = model.Areas[0 : len(model.Areas)]
-	str := strings.Join(list," ")
+func GetList(province bool, model model.Result) string {
+	a := model.Areas
+	var list []string = a[0:33]
+	list = append(list, a[47])
+	if !province {
+		list = append(a[34:46], a[48:]...)
+	}
+	str := strings.Join(list, " ")
 	return str
 }

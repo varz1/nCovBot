@@ -31,13 +31,12 @@ func receiver() {
 		panic("update wrong")
 	}
 	for update := range updates {
+		if update.CallbackQuery != nil {
+			go callBackRouter(update)
+		}
 		if update.Message == nil {
 			continue
 		}
-		if update.Message.IsCommand() {
-			go oderRouter(update)
-		}else {
-			go baseRouter(update)
-		}
+		go baseRouter(update)
 	}
 }

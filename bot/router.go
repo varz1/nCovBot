@@ -21,11 +21,6 @@ func baseRouter(update *tgbotapi.Update) {
 	case "test":
 		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "测试频道")
 		channel.MessageChannel <- msg
-		//
-		//var msg1 model.OverallMessage
-		//msg1.OverallData = data.Overall()
-		//msg1.Overall.ChatID = update.Message.Chat.ID
-		//fmt.Println(msg1.OverallData)
 	}
 }
 

@@ -2,44 +2,44 @@ package maker
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/varz1/nCovBot/channel"
 	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 )
 
 func List() {
-	// 打开json文件
-	fh, err := os.Open("list.txt")
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer func(fh *os.File) {
-		err := fh.Close()
-		if err != nil {
-			fmt.Println(err)
-		}
-	}(fh)
-	// 读取json文件，保存到jsonData中
-	jsonData, err := ioutil.ReadAll(fh)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	var post struct {
-		Results []string `json:"results"`
-	}
-	// 解析json数据到post中
-	err = json.Unmarshal(jsonData, &post)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
 	for area := range channel.ListChannel {
+		// 打开json文件
+		fh, err := os.Open("list.txt")
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		defer func(fh *os.File) {
+			err := fh.Close()
+			if err != nil {
+				log.Println(err)
+			}
+		}(fh)
+		// 读取json文件，保存到jsonData中
+		jsonData, err := ioutil.ReadAll(fh)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		var post struct {
+			Results []string `json:"results"`
+		}
+		// 解析json数据到post中
+		err = json.Unmarshal(jsonData, &post)
+		if err != nil {
+			log.Println(err)
+			return
+		}
 		var c tgbotapi.Chattable
 		text := "请选择区域"
 		switch area.Types {
@@ -53,6 +53,7 @@ func List() {
 				),
 			)
 			msg := tgbotapi.NewMessage(area.AreaMessage.Chat.ID, text)
+
 			msg.ReplyMarkup = menu
 			c = msg
 		case "province":

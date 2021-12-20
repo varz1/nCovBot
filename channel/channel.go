@@ -6,11 +6,13 @@ import (
 )
 
 var (
-	MessageChannel chan tgbotapi.Chattable
-	ListChannel chan model.Areas
+	MessageChannel chan tgbotapi.Chattable // 普通text消息Channel
+	ListChannel    chan model.Areas        // 地区列表Channel
+	OverallMsgChannel chan model.OverallMessage
 )
 
 func init() {
 	MessageChannel = make(chan tgbotapi.Chattable, 100)
-	ListChannel = make(chan model.Areas)
+	ListChannel = make(chan model.Areas, 10)
+	OverallMsgChannel = make(chan model.OverallMessage, 10)
 }

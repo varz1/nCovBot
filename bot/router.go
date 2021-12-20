@@ -27,14 +27,14 @@ func baseRouter(update *tgbotapi.Update) {
 func commandRouter(update *tgbotapi.Update) {
 	message := update.Message.Text
 	switch message {
+	case "/start":
+		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "欢迎使用")
+		channel.MessageChannel <- msg
 	case "/list":
 		var list model.Areas
 		list.Types = "menu"
 		list.AreaMessage = *update.Message
 		channel.ListChannel <- list
-	case "/start":
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "欢迎使用")
-		channel.MessageChannel <- msg
 	case "/overall":
 		var msg model.OverallMessage
 		msg.OverallData = data.Overall()

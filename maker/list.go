@@ -53,7 +53,6 @@ func List() {
 				),
 			)
 			msg := tgbotapi.NewMessage(area.AreaMessage.Chat.ID, text)
-
 			msg.ReplyMarkup = menu
 			c = msg
 		case "province":

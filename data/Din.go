@@ -2,14 +2,12 @@ package data
 
 import (
 	"github.com/go-resty/resty/v2"
-	"github.com/json-iterator/go"
 	"github.com/varz1/nCovBot/model"
 	"log"
 )
 
 var (
 	request = resty.New()
-	json    = jsoniter.ConfigFastest
 )
 
 func init() {
@@ -27,18 +25,39 @@ func init() {
 	request.SetHeaders(header)
 }
 
-
 func Overall() model.OverallData {
-	resp, err := request.R().Get("https://lab.isaaclin.cn/nCoV/api/overall")
+	var overall struct {
+		Results []model.OverallData `json:"results"`
+	}
+	resp, err := request.R().SetResult(&overall).Get("https://lab.isaaclin.cn/nCoV/api/overall")
 	if err != nil {
 		log.Println(err)
 	}
 	if resp.StatusCode() != 200 {
 		log.Println(err)
 	}
-	var overall struct{
-		Results []model.OverallData `json:"results"`
-	}
-	err = json.Unmarshal(resp.Body(), &overall)
 	return overall.Results[0]
+}
+
+func AreaData(area string) model.ProvinceData {
+	var res struct {
+		Results []model.ProvinceData `json:"results"`
+	}
+	resp, err := request.R().SetResult(&res).SetQueryString("province=" + area).
+		Get("https://lab.isaaclin.cn/nCoV/api/area?")
+	if err != nil {
+		log.Printf("%v resp err", err)
+		return model.ProvinceData{}
+	}
+	if resp.StatusCode() != 200 {
+		log.Printf("%v statusCode err", err)
+		return model.ProvinceData{}
+	}
+	if res.Results != nil {
+		log.Println(res.Results[0])
+	} else {
+		log.Println("请求失败")
+		return model.ProvinceData{}
+	}
+	return res.Results[0]
 }

@@ -1,6 +1,9 @@
 package model
 
-import "github.com/go-telegram-bot-api/telegram-bot-api"
+import (
+	"github.com/go-telegram-bot-api/telegram-bot-api"
+	"reflect"
+)
 
 type Areas struct {
 	Types       string
@@ -8,9 +11,47 @@ type Areas struct {
 	AreaMessage tgbotapi.Message
 }
 
+// ProvinceMsg Province消息
+type ProvinceMsg struct {
+	Data   ProvinceData
+	Config tgbotapi.MessageConfig
+}
+
+func (msg ProvinceData) IsEmpty() bool {
+	return reflect.DeepEqual(msg, ProvinceData{})
+}
+
+type ProvinceData struct {
+	LocationId            int         `json:"locationId"`
+	ContinentName         string      `json:"continentName"`
+	CountryName           string      `json:"countryName"`
+	CountryFullName       interface{} `json:"countryFullName"`
+	ProvinceName          string      `json:"provinceName"`
+	CurrentConfirmedCount int         `json:"currentConfirmedCount"` //现存确诊(含境外
+	ConfirmedCount        int         `json:"confirmedCount"`        //累计确诊
+	SuspectedCount        int         `json:"suspectedCount"`
+	CuredCount            int         `json:"curedCount"` //累计治愈
+	DeadCount             int         `json:"deadCount"`  //死亡
+	Cities                []Cities    `json:"cities"`
+	UpdateTime            int64       `json:"updateTime"`
+}
+type Cities struct {
+	CityName                 string `json:"cityName"`
+	ConfirmedCount           int    `json:"confirmedCount"` //累计确诊
+	SuspectedCount           int    `json:"suspectedCount"`
+	CuredCount               int    `json:"curedCount"`      //累计治愈
+	DeadCount                int    `json:"deadCount"`       //死亡
+	HighDangerCount          int    `json:"highDangerCount"` //高风险地区数量
+	MidDangerCount           int    `json:"midDangerCount"`  //中风险地区数量
+	LocationId               int    `json:"locationId"`
+	CurrentConfirmedCountStr string `json:"currentConfirmedCountStr"` //现存本土确诊
+	CityEnglishName          string `json:"cityEnglishName,omitempty"`
+}
+
+// OverallMessage Overall消息
 type OverallMessage struct {
+	OverallData OverallData
 	Overall     tgbotapi.MessageConfig
-	OverallData `json:"results"`
 }
 
 type OverallData struct {

@@ -10,38 +10,19 @@ import (
 	"strings"
 )
 
-func List() {
-	for area := range channel.ListChannel {
-		// 打开json文件
-		fh, err := os.Open("list.txt")
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		defer func(fh *os.File) {
-			err := fh.Close()
-			if err != nil {
-				log.Println(err)
-			}
-		}(fh)
-		// 读取json文件，保存到jsonData中
-		jsonData, err := ioutil.ReadAll(fh)
-		if err != nil {
-			log.Println(err)
-			return
-		}
+type Jsons struct {
+	Results []string `json:"results"`
+}
 
-		var post struct {
-			Results []string `json:"results"`
-		}
-		// 解析json数据到post中
-		err = json.Unmarshal(jsonData, &post)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		var c tgbotapi.Chattable
-		text := "请选择区域"
+func List() {
+	post, err := GetData()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	var c tgbotapi.Chattable
+	text := "请选择区域"
+	for area := range channel.ListChannel {
 		switch area.Types {
 		case "menu":
 			var menu = tgbotapi.NewInlineKeyboardMarkup(
@@ -78,4 +59,44 @@ func List() {
 		}
 		channel.MessageChannel <- c
 	}
+}
+
+func GetData() (Jsons, error) {
+	var post Jsons
+	// 打开json文件
+	fh, err := os.Open("list.txt")
+	if err != nil {
+		log.Println(err)
+		return post, err
+	}
+	defer func(fh *os.File) {
+		err := fh.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}(fh)
+	// 读取json文件，保存到jsonData中
+	jsonData, err := ioutil.ReadAll(fh)
+	if err != nil {
+		log.Println(err)
+		return post, err
+	}
+
+	// 解析json数据到post中
+	err = json.Unmarshal(jsonData, &post)
+	if err != nil {
+		log.Println(err)
+		return post, err
+	}
+	return post, nil
+}
+
+func IsContain(data string) bool {
+	var post, _ = GetData()
+	for _, v := range post.Results {
+		if v == data {
+			return true
+		}
+	}
+	return false
 }

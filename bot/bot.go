@@ -33,11 +33,6 @@ func receiver() {
 	for update := range updates {
 		if update.CallbackQuery != nil {
 			go callBackRouter(update.CallbackQuery)
-			continue
-		}
-		if update.Message.IsCommand() {
-			go commandRouter(&update)
-			continue
 		}
 		if update.Message == nil {
 			continue

@@ -18,6 +18,7 @@ func main() {
 	go bot.Run()
 	go maker.List()
 	go maker.Overall()
+	go maker.Province()
 	wg := sync.WaitGroup{}
 	wg.Add(1)
 	wg.Wait()

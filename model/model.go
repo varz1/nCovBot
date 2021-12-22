@@ -7,8 +7,22 @@ import (
 
 type Areas struct {
 	Types       string
-	area        []string
+	Area        []string
 	AreaMessage tgbotapi.Message
+}
+
+type NewsMsg struct {
+	Data   []NewsData
+	Config tgbotapi.MessageConfig
+}
+
+// NewsData 请求的新闻数据
+type NewsData struct {
+	PubDate    string `json:"pubDate"`    //发布时间
+	Title      string `json:"title"`      //标题
+	Summary    string `json:"summary"`    //新闻概要
+	InfoSource string `json:"infoSource"` //新闻来源
+	SourceUrl  string `json:"sourceUrl"`  //新闻源地址
 }
 
 // ProvinceMsg Province消息
@@ -17,10 +31,12 @@ type ProvinceMsg struct {
 	Config tgbotapi.MessageConfig
 }
 
+// IsEmpty data判空
 func (msg ProvinceData) IsEmpty() bool {
 	return reflect.DeepEqual(msg, ProvinceData{})
 }
 
+// ProvinceData 请求的省份详细数据
 type ProvinceData struct {
 	LocationId            int         `json:"locationId"`
 	ContinentName         string      `json:"continentName"`
@@ -54,6 +70,7 @@ type OverallMessage struct {
 	Overall     tgbotapi.MessageConfig
 }
 
+// OverallData 请求的概要数据
 type OverallData struct {
 	CurrentConfirmedCount int              `json:"currentConfirmedCount"` //现有确诊(含港澳台,境外
 	CurrentConfirmedIncr  int              `json:"currentConfirmedIncr"`  //现有确诊较昨日新增

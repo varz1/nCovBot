@@ -27,29 +27,29 @@ func List() {
 		case "menu":
 			var menu = tgbotapi.NewInlineKeyboardMarkup(
 				tgbotapi.NewInlineKeyboardRow(
-					tgbotapi.NewInlineKeyboardButtonData("国内各省市", "province"),
+					tgbotapi.NewInlineKeyboardButtonData("国内各省市", "list-province"),
 				),
 				tgbotapi.NewInlineKeyboardRow(
-					tgbotapi.NewInlineKeyboardButtonData("国内外各国家地区", "country"),
+					tgbotapi.NewInlineKeyboardButtonData("国内外各国家地区", "list-country"),
 				),
 			)
 			msg := tgbotapi.NewMessage(area.AreaMessage.Chat.ID, text)
 			msg.ReplyMarkup = menu
 			c = msg
-		case "province":
+		case "list-province":
 			var board1 = tgbotapi.NewInlineKeyboardMarkup(
 				tgbotapi.NewInlineKeyboardRow(
-					tgbotapi.NewInlineKeyboardButtonData("国内外各国家地区", "country"),
+					tgbotapi.NewInlineKeyboardButtonData("国内外各国家地区", "list-country"),
 				),
 			)
 			text = strings.Join(post.Results[0:34], " ")
 			msg := tgbotapi.NewEditMessageText(area.AreaMessage.Chat.ID, area.AreaMessage.MessageID, text)
 			msg.ReplyMarkup = &board1
 			c = msg
-		case "country":
+		case "list-country":
 			var board = tgbotapi.NewInlineKeyboardMarkup(
 				tgbotapi.NewInlineKeyboardRow(
-					tgbotapi.NewInlineKeyboardButtonData("国内各省市", "province"),
+					tgbotapi.NewInlineKeyboardButtonData("国内各省市", "list-province"),
 				),
 			)
 			text = strings.Join(post.Results[35:], " ")

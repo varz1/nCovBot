@@ -10,6 +10,7 @@ var (
 	ListChannel        chan model.Areas          // 地区列表Channel
 	OverallMsgChannel  chan model.OverallMessage // 概览Channel With MsgConfig
 	ProvinceMsgChannel chan model.ProvinceMsg    //地区数据Channel With MsgConfig
+	NewsMsgChannel     chan model.NewsMsg
 )
 
 func init() {
@@ -17,4 +18,5 @@ func init() {
 	ListChannel = make(chan model.Areas, 10)
 	OverallMsgChannel = make(chan model.OverallMessage, 10)
 	ProvinceMsgChannel = make(chan model.ProvinceMsg)
+	NewsMsgChannel = make(chan model.NewsMsg)
 }

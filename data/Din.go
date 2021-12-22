@@ -61,3 +61,15 @@ func AreaData(area string) model.ProvinceData {
 	}
 	return res.Results[0]
 }
+
+func GetNews() []model.NewsData {
+	var res struct {
+		Results []model.NewsData `json:"results"`
+	}
+	resp, err := request.R().SetResult(&res).Get("https://lab.isaaclin.cn/nCoV/api/news")
+	if err != nil || resp.StatusCode() != 200 {
+		log.Println(err)
+		return []model.NewsData{}
+	}
+	return res.Results
+}

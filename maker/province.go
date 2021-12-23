@@ -14,7 +14,7 @@ func Province() {
 		text := strings.Builder{}
 		data := data2.GetAreaData(provinceUpdate.Message.Text)
 		cities := data.Cities
-		tm := time.Unix(data.UpdateTime/1000, 0).Format("2006-01-02 15:04:05")
+		tm := time.Unix(data.UpdateTime/1000, 0).Format("2006-01-02 15:04")
 		if data.IsEmpty() {
 			text.WriteString("请求错误")
 		} else if cities != nil {

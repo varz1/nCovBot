@@ -61,6 +61,7 @@ func GetNews() []model.NewsData {
 	var res struct {
 		Results []model.NewsData `json:"results"`
 	}
+	log1.Println("开始请求新闻数据API")
 	resp, err := request.R().SetResult(&res).Get("https://lab.isaaclin.cn/nCoV/api/news")
 	if err != nil || resp.StatusCode() != 200 {
 		log1.WithField("请求新闻失败", "").Errorln(err)

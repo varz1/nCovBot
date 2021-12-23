@@ -1,14 +1,8 @@
 package model
 
 import (
-	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"reflect"
 )
-
-type NewsMsg struct {
-	Data   []NewsData
-	Config tgbotapi.MessageConfig
-}
 
 // NewsData 请求的新闻数据
 type NewsData struct {
@@ -19,7 +13,7 @@ type NewsData struct {
 	SourceUrl  string `json:"sourceUrl"`  //新闻源地址
 }
 
-// IsEmpty data判空
+// IsEmpty ProvinceData 判空
 func (msg ProvinceData) IsEmpty() bool {
 	return reflect.DeepEqual(msg, ProvinceData{})
 }

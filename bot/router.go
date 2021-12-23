@@ -4,19 +4,17 @@ import (
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/spf13/viper"
 	"github.com/varz1/nCovBot/channel"
-	"github.com/varz1/nCovBot/data"
 	"github.com/varz1/nCovBot/maker"
-	"github.com/varz1/nCovBot/model"
 	"strings"
 )
 
 func baseRouter(update *tgbotapi.Update) {
+	message := update.Message.Text
 	if update.Message.IsCommand() {
 		go commandRouter(update)
 		return
 	}
 	//只回应管理员消息
-	message := update.Message.Text
 	if update.Message.Chat.ID != viper.GetInt64("ChatID") {
 		return
 	}
@@ -24,21 +22,7 @@ func baseRouter(update *tgbotapi.Update) {
 	case "hi":
 		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Hi✋ :) Administrator")
 		channel.MessageChannel <- msg
-	case "test":
-		pic := "https://github.com/varz1/pics/blob/master/avatar.jpeg"
-		var medias []interface{}
-		medias = append(medias, tgbotapi.InputMediaVideo{
-			Type:      "video",
-			Media:     pic,
-			ParseMode: tgbotapi.ModeMarkdown,
-		})
-		msg := tgbotapi.MediaGroupConfig{
-			BaseChat: tgbotapi.BaseChat{
-				ChatID: viper.GetInt64("ChatID"),
-			},
-			InputMedia: medias,
-		}
-		channel.MessageChannel <- msg
+		return
 	}
 	if maker.IsContain(message) {
 		channel.ProvinceUpdateChannel <- update
@@ -49,9 +33,6 @@ func baseRouter(update *tgbotapi.Update) {
 }
 
 func commandRouter(update *tgbotapi.Update) {
-	if update.Message.Chat.ID != viper.GetInt64("ChatID") {
-		return
-	}
 	message := update.Message.Text
 	switch message {
 	case "/start":
@@ -68,7 +49,7 @@ func commandRouter(update *tgbotapi.Update) {
 				tgbotapi.NewInlineKeyboardButtonData("国内各省市", "list-province"),
 			),
 			tgbotapi.NewInlineKeyboardRow(
-				tgbotapi.NewInlineKeyboardButtonData("国内外各国家地区", "list-country"),
+				tgbotapi.NewInlineKeyboardButtonData("国内外各国家地区", "list-country-1"),
 			),
 		)
 		msg := tgbotapi.NewMessage(update.Message.Chat.ID,"请选择区域")
@@ -77,10 +58,7 @@ func commandRouter(update *tgbotapi.Update) {
 	case "/overall":
 		channel.OverallUpdateChannel <- update
 	case "/news":
-		var news model.NewsMsg
-		news.Data = data.GetNews()
-		news.Config.ChatID = update.Message.Chat.ID
-		channel.NewsMsgChannel <- news
+		channel.NewsUpdateChannel <- update
 	}
 }
 

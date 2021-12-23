@@ -7,6 +7,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/varz1/nCovBot/channel"
 	"io/ioutil"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -17,11 +18,11 @@ type Jsons struct {
 }
 
 func List() {
-	log := logrus.WithField("func", "ListQueryChannel")
-	log.Info("打开文件")
+	log1 := logrus.WithField("func", "ListQueryChannel")
+	log1.Info("打开文件")
 	post, err := GetData()
 	if err != nil {
-		log.Errorln("打开文件错误", err)
+		log1.Errorln("打开文件错误", err)
 		return
 	}
 	text := ""
@@ -52,56 +53,51 @@ func List() {
 	}
 }
 
-// GetPage TODO 分页术！
+// GetPage 分页
 func GetPage(split []string) (markup tgbotapi.InlineKeyboardMarkup) {
 	var row []tgbotapi.InlineKeyboardButton
 	pageUp := ""
 	pageDown := ""
 	currentPage, _ := strconv.Atoi(split[2])
-	row = append(row[0:1], tgbotapi.NewInlineKeyboardButtonData("国内各省市", "list-province"))
-	if currentPage == 1 {
-		pageUp = fmt.Sprintf("list-country-%d", currentPage+1)
-		row = append(row[1:2], tgbotapi.NewInlineKeyboardButtonData("👉", pageUp))
+	row = append(row, tgbotapi.NewInlineKeyboardButtonData("国内各省市", "list-province"))
+	if currentPage > 1 {
+		pageDown = fmt.Sprintf("list-country-%d", currentPage-1)
+		row = append(row, tgbotapi.NewInlineKeyboardButtonData("👈上一页", pageDown))
 	}
-	if currentPage == 5 {
-		pageDown = fmt.Sprintf("list-country-%d", currentPage-1)
-		row = append(row[1:2], tgbotapi.NewInlineKeyboardButtonData("👈", pageDown))
-	} else {
+	if currentPage < 5 {
 		pageUp = fmt.Sprintf("list-country-%d", currentPage+1)
-		pageDown = fmt.Sprintf("list-country-%d", currentPage-1)
-		row = append(row[1:2], tgbotapi.NewInlineKeyboardButtonData("👈", pageUp))
-		row = append(row[2:3], tgbotapi.NewInlineKeyboardButtonData("👉", pageDown))
+		row = append(row, tgbotapi.NewInlineKeyboardButtonData("下一页👉", pageUp))
 	}
 	markup = tgbotapi.NewInlineKeyboardMarkup(row)
 	return
 }
 
 func GetData() (Jsons, error) {
-	log := logrus.WithField("打开List文件", "GetData")
+	log1 := logrus.WithField("打开List文件", "GetData")
 	var post Jsons
 	// 打开json文件
 	fh, err := os.Open("list.json")
 	if err != nil {
-		log.Errorln(err)
+		log1.Errorln(err)
 		return post, err
 	}
 	defer func(fh *os.File) {
 		err := fh.Close()
 		if err != nil {
-			log.Errorln(err)
+			log1.Errorln(err)
 		}
 		log.Println("关闭文件")
 	}(fh)
 	// 读取json文件，保存到jsonData中
 	jsonData, err := ioutil.ReadAll(fh)
 	if err != nil {
-		log.Errorln(err)
+		log1.Errorln(err)
 		return post, err
 	}
 	// 解析json数据到post中
 	err = json.Unmarshal(jsonData, &post)
 	if err != nil {
-		log.Errorln(err)
+		log1.Errorln(err)
 		return post, err
 	}
 	return post, nil

@@ -6,6 +6,7 @@ require (
 	github.com/go-echarts/go-echarts/v2 v2.2.4
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
+	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/viper v1.10.1
 )
 

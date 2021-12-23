@@ -5,12 +5,6 @@ import (
 	"reflect"
 )
 
-type Areas struct {
-	Types       string
-	Area        []string
-	AreaMessage tgbotapi.Message
-}
-
 type NewsMsg struct {
 	Data   []NewsData
 	Config tgbotapi.MessageConfig
@@ -23,12 +17,6 @@ type NewsData struct {
 	Summary    string `json:"summary"`    //新闻概要
 	InfoSource string `json:"infoSource"` //新闻来源
 	SourceUrl  string `json:"sourceUrl"`  //新闻源地址
-}
-
-// ProvinceMsg Province消息
-type ProvinceMsg struct {
-	Data   ProvinceData
-	Config tgbotapi.MessageConfig
 }
 
 // IsEmpty data判空
@@ -62,12 +50,6 @@ type Cities struct {
 	LocationId               int    `json:"locationId"`
 	CurrentConfirmedCountStr string `json:"currentConfirmedCountStr"` //现存本土确诊
 	CityEnglishName          string `json:"cityEnglishName,omitempty"`
-}
-
-// OverallMessage Overall消息
-type OverallMessage struct {
-	OverallData OverallData
-	Overall     tgbotapi.MessageConfig
 }
 
 // OverallData 请求的概要数据

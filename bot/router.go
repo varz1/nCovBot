@@ -40,15 +40,11 @@ func baseRouter(update *tgbotapi.Update) {
 		}
 		channel.MessageChannel <- msg
 	}
-	//if !maker.IsContain(message) {
-	//	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "无该地区数据或者输入错误")
-	//	channel.MessageChannel <- msg
-	//}
 	if maker.IsContain(message) {
-		var area model.ProvinceMsg
-		area.Data = data.AreaData(message)
-		area.Config.ChatID = update.Message.Chat.ID
-		channel.ProvinceMsgChannel <- area
+		channel.ProvinceUpdateChannel <- update
+	}else {
+		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "无该地区数据或者输入错误")
+		channel.MessageChannel <- msg
 	}
 }
 
@@ -67,15 +63,19 @@ func commandRouter(update *tgbotapi.Update) {
 				"\n数据来自丁香园 本Bot不对数据负责")
 		channel.MessageChannel <- msg
 	case "/list":
-		var list model.Areas
-		list.Types = "menu"
-		list.AreaMessage = *update.Message
-		channel.ListChannel <- list
+		var menu = tgbotapi.NewInlineKeyboardMarkup(
+			tgbotapi.NewInlineKeyboardRow(
+				tgbotapi.NewInlineKeyboardButtonData("国内各省市", "list-province"),
+			),
+			tgbotapi.NewInlineKeyboardRow(
+				tgbotapi.NewInlineKeyboardButtonData("国内外各国家地区", "list-country"),
+			),
+		)
+		msg := tgbotapi.NewMessage(update.Message.Chat.ID,"请选择区域")
+		msg.ReplyMarkup = menu
+		channel.MessageChannel <- msg
 	case "/overall":
-		var msg model.OverallMessage
-		msg.OverallData = data.Overall()
-		msg.Overall.ChatID = update.Message.Chat.ID
-		channel.OverallMsgChannel <- msg
+		channel.OverallUpdateChannel <- update
 	case "/news":
 		var news model.NewsMsg
 		news.Data = data.GetNews()
@@ -88,9 +88,6 @@ func callBackRouter(query *tgbotapi.CallbackQuery) {
 	commandData := strings.Fields(query.Data)
 	// 查看国家列表handler
 	if strings.ContainsAny(commandData[0], "list") {
-		var list model.Areas
-		list.AreaMessage = *query.Message
-		list.Types = query.Data
-		channel.ListChannel <- list
+		channel.ListQueryChannel <- query
 	}
 }

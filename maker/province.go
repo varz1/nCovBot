@@ -1,19 +1,20 @@
 package maker
 
 import (
+	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/varz1/nCovBot/channel"
+	data2 "github.com/varz1/nCovBot/data"
 	"strconv"
 	"strings"
 	"time"
 )
 
 func Province() {
-	for msg := range channel.ProvinceMsgChannel {
+	for provinceUpdate := range channel.ProvinceUpdateChannel {
 		text := strings.Builder{}
-		data := msg.Data
+		data := data2.GetAreaData(provinceUpdate.Message.Text)
 		cities := data.Cities
-		timeTem := "2006-01-02 15:04:05"
-		tm := time.Unix(data.UpdateTime/1000, 0).Format(timeTem)
+		tm := time.Unix(data.UpdateTime/1000, 0).Format("2006-01-02 15:04:05")
 		if data.IsEmpty() {
 			text.WriteString("请求错误")
 		} else if cities != nil {
@@ -40,8 +41,8 @@ func Province() {
 			text.WriteString("\n暂无更多城市数据")
 		}
 		text.WriteString("\n数据更新时间:" + tm)
-		msg.Config.Text = text.String()
-		channel.MessageChannel <- msg.Config
+		msg := tgbotapi.NewMessage(provinceUpdate.Message.Chat.ID, text.String())
+		channel.MessageChannel <- msg
 		text.Reset()
 	}
 }

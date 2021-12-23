@@ -3,17 +3,18 @@ package bot
 import (
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/spf13/viper"
+	"log"
 )
 
 var botAPI *tgbotapi.BotAPI
 
 func initBot() *tgbotapi.BotAPI {
-	if viper.GetString("TOKEN") != "" && viper.GetInt64("ChatID") != 0 {
-		api, _ := tgbotapi.NewBotAPI(viper.GetString("TOKEN"))
-		return api
-	} else {
-		panic("init wrong!")
+	api, err := tgbotapi.NewBotAPI(viper.GetString("TOKEN"))
+	if err != nil {
+		log.Println("初始化失败 检查token")
+		log.Panic(err)
 	}
+	return api
 }
 
 func Run() {
@@ -33,6 +34,7 @@ func receiver() {
 	for update := range updates {
 		if update.CallbackQuery != nil {
 			go callBackRouter(update.CallbackQuery)
+			continue
 		}
 		if update.Message == nil {
 			continue
@@ -40,4 +42,3 @@ func receiver() {
 		go baseRouter(&update)
 	}
 }
-

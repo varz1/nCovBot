@@ -24,6 +24,21 @@ func baseRouter(update *tgbotapi.Update) {
 	case "hi":
 		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Hi✋ :) Administrator")
 		channel.MessageChannel <- msg
+	case "test":
+		pic := "https://github.com/varz1/pics/blob/master/avatar.jpeg"
+		var medias []interface{}
+		medias = append(medias, tgbotapi.InputMediaVideo{
+			Type:      "video",
+			Media:     pic,
+			ParseMode: tgbotapi.ModeMarkdown,
+		})
+		msg := tgbotapi.MediaGroupConfig{
+			BaseChat: tgbotapi.BaseChat{
+				ChatID: viper.GetInt64("ChatID"),
+			},
+			InputMedia: medias,
+		}
+		channel.MessageChannel <- msg
 	}
 	//if !maker.IsContain(message) {
 	//	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "无该地区数据或者输入错误")
@@ -68,9 +83,11 @@ func commandRouter(update *tgbotapi.Update) {
 		channel.NewsMsgChannel <- news
 	}
 }
+
 func callBackRouter(query *tgbotapi.CallbackQuery) {
+	commandData := strings.Fields(query.Data)
 	// 查看国家列表handler
-	if strings.ContainsAny(query.Data, "list") {
+	if strings.ContainsAny(commandData[0], "list") {
 		var list model.Areas
 		list.AreaMessage = *query.Message
 		list.Types = query.Data

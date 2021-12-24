@@ -19,6 +19,7 @@ func main() {
 	go maker.List()
 	go maker.Overall()
 	go maker.Province()
+	go maker.QueryProvince()
 	go maker.News()
 	wg := sync.WaitGroup{}
 	wg.Add(1)

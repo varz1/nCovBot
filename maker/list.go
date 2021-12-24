@@ -37,9 +37,8 @@ func List() {
 			board = tgbotapi.NewInlineKeyboardMarkup(row)
 		case "country":
 			i, _ := strconv.Atoi(split[2])
-			markup := GetPage(split)
 			text = strings.Join(post.Results[35+(i-1)*50:35+i*50], " ")
-			board = markup
+			board = GetPage(i)
 		}
 		editedMsg := tgbotapi.EditMessageTextConfig{
 			BaseEdit: tgbotapi.BaseEdit{
@@ -54,11 +53,10 @@ func List() {
 }
 
 // GetPage 分页
-func GetPage(split []string) (markup tgbotapi.InlineKeyboardMarkup) {
+func GetPage(currentPage int) (markup tgbotapi.InlineKeyboardMarkup) {
 	var row []tgbotapi.InlineKeyboardButton
 	pageUp := ""
 	pageDown := ""
-	currentPage, _ := strconv.Atoi(split[2])
 	row = append(row, tgbotapi.NewInlineKeyboardButtonData("国内各省市", "list-province"))
 	if currentPage > 1 {
 		pageDown = fmt.Sprintf("list-country-%d", currentPage-1)

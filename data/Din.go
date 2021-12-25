@@ -4,6 +4,8 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/sirupsen/logrus"
 	"github.com/varz1/nCovBot/model"
+	"sort"
+	"strconv"
 )
 
 var (
@@ -64,8 +66,41 @@ func GetNews() []model.NewsData {
 	log1.Println("开始请求新闻数据API")
 	resp, err := request.R().SetResult(&res).Get("https://lab.isaaclin.cn/nCoV/api/news")
 	if err != nil || resp.StatusCode() != 200 {
-		log1.WithField("请求新闻失败", "").Errorln(err)
+		log1.WithField("请求失败", "新闻API").Errorln(err)
 		return []model.NewsData{}
 	}
 	return res.Results
+}
+
+func GetRiskLevel(level string) []model.RiskArea {
+	log1 := logrus.WithField("func", "GetRiskLevel")
+	var res struct {
+		Data []model.RiskArea `json:"data"`
+	}
+	count := 0
+	log1.Println("开始请求风险地区API")
+	resp, err := request.R().SetResult(&res).Get("https://eyesight.news.qq.com/sars/riskarea")
+	if err != nil || resp.StatusCode() != 200 {
+		log1.WithField("请求失败", "风险地区").Error(err)
+	}
+	risk := res.Data
+	sort.SliceStable(risk, func(i, j int) bool {
+		m, _ := strconv.Atoi(risk[i].Type)
+		n, _ := strconv.Atoi(risk[j].Type)
+		if m < n {
+			return false
+		}
+		return true
+	})
+	for _, v := range risk {
+		if v.Type == "2" {
+			count = count + 1
+		}
+	}
+	switch level {
+	case "2":
+		return risk[:count]
+	default:
+		return risk[count:]
+	}
 }

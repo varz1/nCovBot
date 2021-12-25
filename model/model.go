@@ -4,6 +4,12 @@ import (
 	"reflect"
 )
 
+type RiskArea struct {
+	Area string `json:"area"`
+	Type string `json:"type"`
+	Sid  int    `json:"sid"`
+}
+
 // NewsData 请求的新闻数据
 type NewsData struct {
 	PubDate    string `json:"pubDate"`    //发布时间

@@ -27,7 +27,7 @@ func baseRouter(update *tgbotapi.Update) {
 	}
 	if maker.IsContain(message) {
 		channel.ProvinceUpdateChannel <- update
-	}else {
+	} else {
 		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "无该地区数据或者输入错误")
 		channel.MessageChannel <- msg
 	}
@@ -53,24 +53,37 @@ func commandRouter(update *tgbotapi.Update) {
 				tgbotapi.NewInlineKeyboardButtonData("国内外各国家地区", "list-country-1"),
 			),
 		)
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID,"请选择区域")
+		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "请选择区域")
 		msg.ReplyMarkup = menu
 		channel.MessageChannel <- msg
 	case "/overall":
 		channel.OverallUpdateChannel <- update
 	case "/news":
 		channel.NewsUpdateChannel <- update
+	case "/risk":
+		var menu = tgbotapi.NewInlineKeyboardMarkup(
+			tgbotapi.NewInlineKeyboardRow(
+				tgbotapi.NewInlineKeyboardButtonData("高风险地区", "risk-2-1"),
+			),
+			tgbotapi.NewInlineKeyboardRow(
+				tgbotapi.NewInlineKeyboardButtonData("中风险地区", "risk-1-1"),
+			),
+		)
+		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "请选择区域")
+		msg.ReplyMarkup = menu
+		channel.MessageChannel <- msg
 	}
 }
 
 func callBackRouter(query *tgbotapi.CallbackQuery) {
-	commandData := strings.Fields(query.Data)
-	log.Println(commandData[0])
-	// 查看国家列表handler
-	if strings.Contains(commandData[0], "list") {
+	commandData := strings.Split(query.Data, "-")
+	log.Println(commandData)
+	switch commandData[0] {
+	case "list":
 		channel.ListQueryChannel <- query
-	}
-	if strings.Contains(commandData[0],"area"){
+	case "area":
 		channel.ProvinceQueryChannel <- query
+	case "risk":
+		channel.RiskQueryChannel <- query
 	}
 }

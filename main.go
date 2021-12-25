@@ -21,6 +21,7 @@ func main() {
 	go maker.Province()
 	go maker.QueryProvince()
 	go maker.News()
+	go maker.RiskQuery()
 	wg := sync.WaitGroup{}
 	wg.Add(1)
 	wg.Wait()

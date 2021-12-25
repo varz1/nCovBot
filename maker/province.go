@@ -50,7 +50,7 @@ func Province() {
 }
 
 // GetMarkup 获取对应的keyboard
-func GetMarkup(pro string, isCity string, cities []model.Cities) tgbotapi.InlineKeyboardMarkup {
+func GetMarkup(provinceName string, isCity string, cities []model.Cities) tgbotapi.InlineKeyboardMarkup {
 	var markup = tgbotapi.NewInlineKeyboardMarkup()
 	var row1 []tgbotapi.InlineKeyboardButton
 	var row2 []tgbotapi.InlineKeyboardButton
@@ -62,10 +62,10 @@ func GetMarkup(pro string, isCity string, cities []model.Cities) tgbotapi.Inline
 	var row8 []tgbotapi.InlineKeyboardButton
 	var row9 []tgbotapi.InlineKeyboardButton
 	for k, v := range cities {
-		butData := fmt.Sprintf("area-%d-%s-%s", k, pro, v.CityName)
+		butData := fmt.Sprintf("area-%d-%s-%s", k, provinceName, v.CityName)
 		if isCity == v.CityName {
-			butData = fmt.Sprintf("area-%d-%s-%s", k, pro, pro)
-			v.CityName = pro
+			butData = fmt.Sprintf("area-%d-%s-%s", k, provinceName, provinceName)
+			v.CityName = provinceName
 		}
 		if k < 4 {
 			row1 = append(row1, tgbotapi.NewInlineKeyboardButtonData(v.CityName, butData))
@@ -103,7 +103,7 @@ func GetMarkup(pro string, isCity string, cities []model.Cities) tgbotapi.Inline
 			row9 = append(row9, tgbotapi.NewInlineKeyboardButtonData(v.CityName, butData))
 			markup = tgbotapi.NewInlineKeyboardMarkup(row1, row2, row3, row4, row5, row6, row7, row8, row9)
 		}
-		log.Println(len(row1) + len(row2) + len(row3) + len(row4) + len(row5) + len(row6) + len(row7))
+		log.Println(len(row1) + len(row2) + len(row3) + len(row4) + len(row5) + len(row6) + len(row7) + len(row8) + len(row9))
 	}
 	return markup
 }
@@ -126,7 +126,6 @@ func QueryProvince() {
 			markup = GetMarkup(total.ProvinceName, "false", total.Cities)
 		} else {
 			k, _ := strconv.Atoi(split[1])
-			log.Printf("split:%v", split)
 			city := total.Cities[k]
 			text.WriteString("\n" + split[2] + city.CityName + "数据:")
 			text.WriteString("\n现存确诊:" + city.CurrentConfirmedCountStr)

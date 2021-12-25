@@ -11,6 +11,7 @@ var (
 	OverallUpdateChannel  chan *tgbotapi.Update        // 概览UpdateChannel
 	ProvinceUpdateChannel chan *tgbotapi.Update        // 地区数据UpdateChannel
 	NewsUpdateChannel     chan *tgbotapi.Update        // 新闻数据UpdateChannel
+	RiskQueryChannel      chan *tgbotapi.CallbackQuery // 风险地区Callback
 )
 
 func init() {
@@ -20,4 +21,5 @@ func init() {
 	OverallUpdateChannel = make(chan *tgbotapi.Update)
 	ProvinceUpdateChannel = make(chan *tgbotapi.Update)
 	NewsUpdateChannel = make(chan *tgbotapi.Update)
+	RiskQueryChannel = make(chan *tgbotapi.CallbackQuery)
 }

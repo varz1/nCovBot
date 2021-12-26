@@ -87,7 +87,3 @@ func TestGetMap(t *testing.T) {
 	ex := new(MapExamples)
 	ex.Examples()
 }
-
-type provinceCompare struct {
-
-}

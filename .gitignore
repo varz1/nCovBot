@@ -6,3 +6,4 @@ config.yaml.sample
 maps_test.go
 map.html
 din_test.go
+maps.go

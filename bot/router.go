@@ -20,6 +20,8 @@ func WebHookHandler(c *fiber.Ctx) error {
 		log.Println("req解析失败")
 		return err
 	}
+	log.Printf("开始处理Update\nUpdateId:%v\nCallbackQuery:%v\nInlineQuery:%v\nMessage:%v\nEditedMessage:%v\n",
+		u.UpdateID, u.CallbackQuery, u.InlineQuery, u.Message, u.EditedMessage)
 	channel.UpdateChannel <- *u
 	return nil
 }
@@ -33,15 +35,13 @@ func baseRouter(update *tgbotapi.Update) {
 	if maker.IsContain(message) {
 		channel.ProvinceUpdateChannel <- update
 		return
-	} else {
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "无该地区数据或者输入错误")
-		channel.MessageChannel <- msg
-	}
-	switch message {
-	case "himybot":
+	} else if message == "himybot" {
 		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Hi✋ :) Administrator")
 		channel.MessageChannel <- msg
 		return
+	} else {
+		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "无该地区数据或者输入错误")
+		channel.MessageChannel <- msg
 	}
 }
 

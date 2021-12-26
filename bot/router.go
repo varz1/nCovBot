@@ -18,6 +18,7 @@ func WebHookHandler(c *fiber.Ctx) error {
 	err := c.BodyParser(&u)
 	if err != nil {
 		log.Println("req解析失败")
+		return err
 	}
 	channel.UpdateChannel <- *u
 	return nil

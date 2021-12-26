@@ -51,7 +51,7 @@ func GetAreaData(area string) model.ProvinceData {
 	log1.Println("开始请求地区数据API")
 	resp, err := request.R().SetResult(&res).SetQueryString("province=" + area).
 		Get("https://lab.isaaclin.cn/nCoV/api/area?")
-	if err != nil || resp.StatusCode() != 200 || res.Results == nil {
+	if err != nil || resp.StatusCode() != 200  {
 		log1.WithField("请求地区数据失败", "").Errorln(err)
 		return model.ProvinceData{}
 	}
@@ -84,6 +84,9 @@ func GetRiskLevel(level string) []model.RiskArea {
 		log1.WithField("请求失败", "风险地区").Error(err)
 	}
 	risk := res.Data
+	if len(risk) == 0 {
+		return nil
+	}
 	sort.SliceStable(risk, func(i, j int) bool {
 		m, _ := strconv.Atoi(risk[i].Type)
 		n, _ := strconv.Atoi(risk[j].Type)

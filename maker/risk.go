@@ -5,7 +5,6 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/varz1/nCovBot/channel"
 	"github.com/varz1/nCovBot/data"
-	"log"
 	"strconv"
 	"strings"
 )
@@ -15,7 +14,6 @@ var size = 10
 func RiskQuery() {
 	for query := range channel.RiskQueryChannel {
 		split := strings.Split(query.Data, "-")
-		log.Println(split)
 		page, _ := strconv.Atoi(split[2])
 		text, markup := GetText(split[1], page)
 		editedMsg := tgbotapi.EditMessageTextConfig{
@@ -52,6 +50,10 @@ func GetText(level string, page int) (string, tgbotapi.InlineKeyboardMarkup) {
 		text.WriteString("中风险地区:")
 	}
 	areas := data.GetRiskLevel(level)
+	if areas == nil {
+		text.WriteString("暂无该风险等级地区")
+		return text.String(), markup
+	}
 	row = append(row, tgbotapi.NewInlineKeyboardButtonData("返回菜单", "risk-return-1"))
 	maxPage := GetI(len(areas))
 	if page > 1 {

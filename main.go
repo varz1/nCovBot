@@ -1,21 +1,25 @@
 package main
 
 import (
-	"github.com/spf13/viper"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/varz1/nCovBot/bot"
 	"github.com/varz1/nCovBot/maker"
+	"log"
+	"os"
 	"sync"
 )
 
 func main() {
-	viper.AddConfigPath("/home/cl/go/src/github.com/varz1/nCovBot/config")
-	viper.SetConfigType("yaml")
-	viper.SetConfigName("config")
-	err := viper.ReadInConfig()
-	if err != nil {
-		panic("viper wrong")
-	}
+	port := os.Getenv("PORT")
+	app := fiber.New()
+	app.Use(logger.New())
 	go bot.Run()
+	app.Post("/"+os.Getenv("TOKEN"), bot.WebHookHandler)
+	err2 := app.Listen(":" + port)
+	if err2 != nil {
+		log.Println(err2)
+	}
 	go maker.List()
 	go maker.Overall()
 	go maker.Province()

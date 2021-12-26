@@ -6,7 +6,6 @@ import (
 	"github.com/varz1/nCovBot/channel"
 	data2 "github.com/varz1/nCovBot/data"
 	"github.com/varz1/nCovBot/model"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -103,7 +102,7 @@ func GetMarkup(provinceName string, isCity string, cities []model.Cities) tgbota
 			row9 = append(row9, tgbotapi.NewInlineKeyboardButtonData(v.CityName, butData))
 			markup = tgbotapi.NewInlineKeyboardMarkup(row1, row2, row3, row4, row5, row6, row7, row8, row9)
 		}
-		log.Println(len(row1) + len(row2) + len(row3) + len(row4) + len(row5) + len(row6) + len(row7) + len(row8) + len(row9))
+		//log.Println(len(row1) + len(row2) + len(row3) + len(row4) + len(row5) + len(row6) + len(row7) + len(row8) + len(row9))
 	}
 	return markup
 }

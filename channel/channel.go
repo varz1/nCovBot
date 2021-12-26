@@ -5,6 +5,7 @@ import (
 )
 
 var (
+	UpdateChannel         chan tgbotapi.Update
 	MessageChannel        chan tgbotapi.Chattable      // 普通消息Channel
 	ListQueryChannel      chan *tgbotapi.CallbackQuery // 地区列表CallbackChannel
 	ProvinceQueryChannel  chan *tgbotapi.CallbackQuery // 省份数据CallbackChannel
@@ -15,6 +16,7 @@ var (
 )
 
 func init() {
+	UpdateChannel = make(chan tgbotapi.Update)
 	MessageChannel = make(chan tgbotapi.Chattable, 100)
 	ListQueryChannel = make(chan *tgbotapi.CallbackQuery)
 	ProvinceQueryChannel = make(chan *tgbotapi.CallbackQuery)

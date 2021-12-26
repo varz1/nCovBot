@@ -7,7 +7,6 @@ import (
 	"github.com/varz1/nCovBot/maker"
 	"log"
 	"os"
-	"sync"
 )
 
 func main() {
@@ -16,17 +15,14 @@ func main() {
 	app.Use(logger.New())
 	go bot.Run()
 	app.Post("/"+os.Getenv("TOKEN"), bot.WebHookHandler)
-	err2 := app.Listen(":" + port)
-	if err2 != nil {
-		log.Println(err2)
-	}
 	go maker.List()
 	go maker.Overall()
 	go maker.Province()
 	go maker.QueryProvince()
 	go maker.News()
 	go maker.RiskQuery()
-	wg := sync.WaitGroup{}
-	wg.Add(1)
-	wg.Wait()
+	err2 := app.Listen(":" + port)
+	if err2 != nil {
+		log.Println(err2)
+	}
 }

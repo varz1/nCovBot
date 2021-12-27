@@ -50,7 +50,7 @@ func baseRouter(update *tgbotapi.Update) {
 	}
 	// 处理菜单
 	switch message {
-	case "🌎支持地区":
+	case "🏷支持地区":
 		var menu = tgbotapi.NewInlineKeyboardMarkup(
 			tgbotapi.NewInlineKeyboardRow(
 				tgbotapi.NewInlineKeyboardButtonData("国内各省市", "list-province"),
@@ -62,9 +62,9 @@ func baseRouter(update *tgbotapi.Update) {
 		msg = tgbotapi.NewMessage(update.Message.Chat.ID, "请选择区域")
 		msg.ReplyMarkup = menu
 		channel.MessageChannel <- msg
-	case "🤧疫情概览":
+	case "👥疫情概览":
 		channel.OverallUpdateChannel <- update
-	case "🗞最新新闻":
+	case "📢最新新闻":
 		channel.NewsUpdateChannel <- update
 	case "⚠️查看风险地区":
 		var menu = tgbotapi.NewInlineKeyboardMarkup(
@@ -102,11 +102,11 @@ func commandRouter(update *tgbotapi.Update) {
 				"\n数据来自丁香园 本Bot不对数据负责")
 		var numericKeyboard = tgbotapi.NewReplyKeyboard(
 			tgbotapi.NewKeyboardButtonRow(
-				tgbotapi.NewKeyboardButton("🌎支持地区"),
-				tgbotapi.NewKeyboardButton("🤧疫情概览"),
+				tgbotapi.NewKeyboardButton("🏷支持地区"),
+				tgbotapi.NewKeyboardButton("👥疫情概览"),
 			),
 			tgbotapi.NewKeyboardButtonRow(
-				tgbotapi.NewKeyboardButton("🗞最新新闻"),
+				tgbotapi.NewKeyboardButton("📢最新新闻"),
 				tgbotapi.NewKeyboardButton("⚠️查看风险地区"),
 				tgbotapi.NewKeyboardButton("❔帮助"),
 			),

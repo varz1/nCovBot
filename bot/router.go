@@ -46,25 +46,6 @@ func baseRouter(update *tgbotapi.Update) {
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, "Hi👋 :) Administrator")
 			channel.MessageChannel <- msg
 			return
-		case "open":
-			msg = tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-			var numericKeyboard = tgbotapi.NewReplyKeyboard(
-				tgbotapi.NewKeyboardButtonRow(
-					tgbotapi.NewKeyboardButton("🌏支持地区"),
-					tgbotapi.NewKeyboardButton("😶‍🌫️疫情概览"),
-				),
-				tgbotapi.NewKeyboardButtonRow(
-					tgbotapi.NewKeyboardButton("🆕最新新闻"),
-					tgbotapi.NewKeyboardButton("⚠️查看风险地区"),
-					tgbotapi.NewKeyboardButton("📘帮助"),
-				),
-			)
-			msg.ReplyMarkup = numericKeyboard
-			channel.MessageChannel <- msg
-			return
-		case "close":
-			msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
-			channel.MessageChannel <- msg
 		}
 	}
 	// 处理菜单
@@ -105,7 +86,6 @@ func baseRouter(update *tgbotapi.Update) {
 				"示例消息:上海市\n"+
 				"\n数据来自丁香园 本Bot不对数据负责")
 		channel.MessageChannel <- msg
-
 	}
 }
 
@@ -120,6 +100,18 @@ func commandRouter(update *tgbotapi.Update) {
 				"\n使用Tip:\n发送列表中地区名可返回该地区疫情数据（注意格式）\n"+
 				"示例消息:上海市\n"+
 				"\n数据来自丁香园 本Bot不对数据负责")
+		var numericKeyboard = tgbotapi.NewReplyKeyboard(
+			tgbotapi.NewKeyboardButtonRow(
+				tgbotapi.NewKeyboardButton("🌏支持地区"),
+				tgbotapi.NewKeyboardButton("😶‍🌫️疫情概览"),
+			),
+			tgbotapi.NewKeyboardButtonRow(
+				tgbotapi.NewKeyboardButton("🆕最新新闻"),
+				tgbotapi.NewKeyboardButton("⚠️查看风险地区"),
+				tgbotapi.NewKeyboardButton("📘帮助"),
+			),
+		)
+		msg.ReplyMarkup = numericKeyboard
 		channel.MessageChannel <- msg
 	case "/list":
 		var menu = tgbotapi.NewInlineKeyboardMarkup(

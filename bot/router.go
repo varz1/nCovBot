@@ -45,6 +45,8 @@ func baseRouter(update *tgbotapi.Update) {
 		case "hi":
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, "Hi👋 :) Administrator")
 			return
+		case "close":
+			msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
 		}
 	}
 	channel.MessageChannel <- msg

@@ -44,10 +44,10 @@ func baseRouter(update *tgbotapi.Update) {
 		switch message {
 		case "hi":
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, "Hi👋 :) Administrator")
-			channel.MessageChannel <- msg
 			return
 		}
 	}
+	channel.MessageChannel <- msg
 }
 
 func commandRouter(update *tgbotapi.Update) {

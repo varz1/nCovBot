@@ -6,6 +6,8 @@ import (
 	"github.com/varz1/nCovBot/channel"
 	"github.com/varz1/nCovBot/maker"
 	"log"
+	"os"
+	"strconv"
 	"strings"
 )
 
@@ -28,6 +30,7 @@ func WebHookHandler(c *fiber.Ctx) error {
 
 func baseRouter(update *tgbotapi.Update) {
 	message := update.Message.Text
+	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "无该地区或格式错误")
 	if update.Message.IsCommand() {
 		go commandRouter(update)
 		return
@@ -35,13 +38,72 @@ func baseRouter(update *tgbotapi.Update) {
 	if maker.IsContain(message) {
 		channel.ProvinceUpdateChannel <- update
 		return
-	} else if message == "himybot" {
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Hi✋ :) Administrator")
-		channel.MessageChannel <- msg
-		return
+	}
+	if strconv.Itoa(int(update.Message.Chat.ID)) == os.Getenv("AdminId") {
+		switch message {
+		case "hi":
+			msg = tgbotapi.NewMessage(update.Message.Chat.ID, "Hi👋 :) Administrator")
+			channel.MessageChannel <- msg
+			return
+		case "open":
+			msg = tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
+			var numericKeyboard = tgbotapi.NewReplyKeyboard(
+				tgbotapi.NewKeyboardButtonRow(
+					tgbotapi.NewKeyboardButton("🌏支持地区"),
+					tgbotapi.NewKeyboardButton("😶‍🌫️疫情概览"),
+				),
+				tgbotapi.NewKeyboardButtonRow(
+					tgbotapi.NewKeyboardButton("🆕最新新闻"),
+					tgbotapi.NewKeyboardButton("⚠️查看风险地区"),
+					tgbotapi.NewKeyboardButton("📘帮助"),
+				),
+			)
+			msg.ReplyMarkup = numericKeyboard
+			channel.MessageChannel <- msg
+			return
+		case "close":
+			msg.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
+			channel.MessageChannel <- msg
+		}
 	} else {
-		msg := tgbotapi.NewMessage(update.Message.Chat.ID, "无该地区数据或者输入错误")
-		channel.MessageChannel <- msg
+		switch message {
+		case "🌏支持地区":
+			var menu = tgbotapi.NewInlineKeyboardMarkup(
+				tgbotapi.NewInlineKeyboardRow(
+					tgbotapi.NewInlineKeyboardButtonData("国内各省市", "list-province"),
+				),
+				tgbotapi.NewInlineKeyboardRow(
+					tgbotapi.NewInlineKeyboardButtonData("国内外各国家地区", "list-country-1"),
+				),
+			)
+			msg = tgbotapi.NewMessage(update.Message.Chat.ID, "请选择区域")
+			msg.ReplyMarkup = menu
+			channel.MessageChannel <- msg
+		case "😶‍🌫️疫情概览":
+			channel.OverallUpdateChannel <- update
+		case "🆕最新新闻":
+			channel.NewsUpdateChannel <- update
+		case "⚠️查看风险地区":
+			var menu = tgbotapi.NewInlineKeyboardMarkup(
+				tgbotapi.NewInlineKeyboardRow(
+					tgbotapi.NewInlineKeyboardButtonData("高风险地区", "risk-2-1"),
+				),
+				tgbotapi.NewInlineKeyboardRow(
+					tgbotapi.NewInlineKeyboardButtonData("中风险地区", "risk-1-1"),
+				),
+			)
+			msg = tgbotapi.NewMessage(update.Message.Chat.ID, "请选择区域")
+			msg.ReplyMarkup = menu
+			channel.MessageChannel <- msg
+		case "📘帮助":
+			msg = tgbotapi.NewMessage(update.Message.Chat.ID,
+				"欢迎使用nCov疫情数据机器人🤖\n"+
+					"功能列表:\n/start:使用提示\n/list:支持查询的地区列表\n/overall:查看疫情数据概览\n/news:查看最新新闻\n"+
+					"\n使用Tip:\n发送列表中地区名可返回该地区疫情数据（注意格式）\n"+
+					"示例消息:上海市\n"+
+					"\n数据来自丁香园 本Bot不对数据负责")
+			channel.MessageChannel <- msg
+		}
 	}
 }
 

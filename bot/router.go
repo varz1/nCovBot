@@ -49,9 +49,8 @@ func baseRouter(update *tgbotapi.Update) {
 		}
 	}
 	// 处理菜单
-	split := strings.Split(message,"")
-	switch split[0] {
-	case "🌏":
+	switch message {
+	case "🌎支持地区":
 		var menu = tgbotapi.NewInlineKeyboardMarkup(
 			tgbotapi.NewInlineKeyboardRow(
 				tgbotapi.NewInlineKeyboardButtonData("国内各省市", "list-province"),
@@ -63,11 +62,11 @@ func baseRouter(update *tgbotapi.Update) {
 		msg = tgbotapi.NewMessage(update.Message.Chat.ID, "请选择区域")
 		msg.ReplyMarkup = menu
 		channel.MessageChannel <- msg
-	case "😷":
+	case "🤧疫情概览":
 		channel.OverallUpdateChannel <- update
-	case "🆕":
+	case "🗞最新新闻":
 		channel.NewsUpdateChannel <- update
-	case "⚠️":
+	case "⚠️查看风险地区":
 		var menu = tgbotapi.NewInlineKeyboardMarkup(
 			tgbotapi.NewInlineKeyboardRow(
 				tgbotapi.NewInlineKeyboardButtonData("高风险地区", "risk-2-1"),
@@ -79,7 +78,7 @@ func baseRouter(update *tgbotapi.Update) {
 		msg = tgbotapi.NewMessage(update.Message.Chat.ID, "请选择区域")
 		msg.ReplyMarkup = menu
 		channel.MessageChannel <- msg
-	case "🧒🏼":
+	case "❔帮助":
 		msg = tgbotapi.NewMessage(update.Message.Chat.ID,
 			"欢迎使用nCov疫情数据机器人🤖\n"+
 				"功能列表:\n/start:使用提示\n/list:支持查询的地区列表\n/overall:查看疫情数据概览\n/news:查看最新新闻\n"+
@@ -103,13 +102,13 @@ func commandRouter(update *tgbotapi.Update) {
 				"\n数据来自丁香园 本Bot不对数据负责")
 		var numericKeyboard = tgbotapi.NewReplyKeyboard(
 			tgbotapi.NewKeyboardButtonRow(
-				tgbotapi.NewKeyboardButton("🌏支持地区"),
-				tgbotapi.NewKeyboardButton("😷疫情概览"),
+				tgbotapi.NewKeyboardButton("🌎支持地区"),
+				tgbotapi.NewKeyboardButton("🤧疫情概览"),
 			),
 			tgbotapi.NewKeyboardButtonRow(
-				tgbotapi.NewKeyboardButton("🆕最新新闻"),
+				tgbotapi.NewKeyboardButton("🗞最新新闻"),
 				tgbotapi.NewKeyboardButton("⚠️查看风险地区"),
-				tgbotapi.NewKeyboardButton("🧒🏼帮助"),
+				tgbotapi.NewKeyboardButton("❔帮助"),
 			),
 		)
 		msg.ReplyMarkup = numericKeyboard

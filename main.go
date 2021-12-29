@@ -11,6 +11,7 @@ import (
 func main() {
 	app := fiber.New()
 	app.Use(logger.New())
+	app.Static("/","./public")
 	go bot.Run()
 	go maker.List()
 	go maker.Overall()

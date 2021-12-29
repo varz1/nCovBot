@@ -12,6 +12,7 @@ func main() {
 	app := fiber.New()
 	app.Use(logger.New())
 	app.Static("/","./public")
+	bot.SetUpRouter(app)
 	go bot.Run()
 	go maker.List()
 	go maker.Overall()
@@ -19,6 +20,6 @@ func main() {
 	go maker.QueryProvince()
 	go maker.News()
 	go maker.RiskQuery()
-	app.Post("/"+os.Getenv("TOKEN"), bot.WebHookHandler)
+//	app.Post("/"+os.Getenv("TOKEN"), bot.WebHookHandler)
 	app.Listen(":" + os.Getenv("PORT"))
 }

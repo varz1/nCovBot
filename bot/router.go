@@ -11,9 +11,12 @@ import (
 	"strings"
 )
 
-//func SetUpRouter(app *fiber.App) {
-//	app.Post("/"+botAPI.Token, WebHookHandler)
-//}
+func SetUpRouter(app *fiber.App) {
+	app.Post("/"+botAPI.Token, WebHookHandler)
+	app.Use(func(c *fiber.Ctx) error {
+		return c.Status(fiber.StatusNotFound).SendString("Sorry can't find that!")
+	})
+}
 
 func WebHookHandler(c *fiber.Ctx) error {
 	u := new(tgbotapi.Update)

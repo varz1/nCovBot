@@ -4,6 +4,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/varz1/nCovBot/channel"
 	data2 "github.com/varz1/nCovBot/data"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -28,7 +29,22 @@ func Overall() {
 		text.WriteString("\n全球累计治愈" + strconv.Itoa(global.CuredCount) + " ⬆️" + strconv.Itoa(global.CuredIncr))
 		text.WriteString("\n全球累计死亡" + strconv.Itoa(global.DeadCount) + " ⬆️" + strconv.Itoa(global.DeadIncr))
 		text.WriteString("\n数据更新时间:" + tm)
-		msg := tgbotapi.NewMessage(overall.Message.Chat.ID,text.String())
+		//msg := tgbotapi.NewMessage(overall.Message.Chat.ID,text.String())
+		var url = os.Getenv("baseURL") + "map.png"
+		var p []interface{}
+		pic := tgbotapi.InputMediaPhoto{
+			Type:      "photo",
+			Media:     url,
+			Caption:   text.String(),
+			ParseMode: tgbotapi.ModeMarkdown,
+		}
+		p = append(p, pic)
+		msg := tgbotapi.MediaGroupConfig{
+			BaseChat: tgbotapi.BaseChat{
+				ChatID: overall.Message.Chat.ID,
+			},
+			InputMedia: p,
+		}
 		channel.MessageChannel <- msg
 		text.Reset()
 	}

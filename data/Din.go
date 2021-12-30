@@ -34,7 +34,7 @@ func init() {
 // Cro19map 定时更新地图
 func Cro19map() {
 	c := cron.New()
-	c.AddFunc("@every 1m", func() {
+	c.AddFunc("@every 12h", func() {
 		GetChMap()
 	})
 	c.Start()
@@ -54,6 +54,7 @@ func GetChMap() {
 	options = append(chromedp.DefaultExecAllocatorOptions[:], options...)
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
+	chromedp.ExecPath(os.Getenv("GOOGLE_CHROME_SHIM"))
 	// 超时设置
 	ctx, cancel = context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()

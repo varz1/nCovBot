@@ -1,5 +1,5 @@
 module github.com/varz1/nCovBot
-
+// +heroku goVersion go1.17
 go 1.17
 
 require (

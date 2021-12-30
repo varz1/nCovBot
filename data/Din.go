@@ -66,10 +66,10 @@ func GetChMap() {
 	log1.Info("上次更新时间为" + info.ModTime().String())
 	if err := chromedp.Run(ctx,
 		Screenshot(url, sel, &buf)); err != nil {
-		log1.Fatal(err)
+		log1.Error(err)
 	}
 	if err := ioutil.WriteFile(pwd+file, buf, 0o644); err != nil {
-		log1.Fatal(err)
+		log1.Error(err)
 	}
 	log1.Info("地图已更新")
 }

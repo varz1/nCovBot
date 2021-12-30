@@ -34,7 +34,7 @@ func init() {
 // Cro19map 定时更新地图
 func Cro19map() {
 	c := cron.New()
-	c.AddFunc("@every 12h", func() {
+	c.AddFunc("@every 1m", func() {
 		GetChMap()
 	})
 	c.Start()
@@ -66,14 +66,12 @@ func GetChMap() {
 	log1.Info("上次更新时间为" + info.ModTime().String())
 	if err := chromedp.Run(ctx,
 		Screenshot(url, sel, &buf)); err != nil {
-		log1.Error(err)
+		log1.Fatal(err)
 	}
 	if err := ioutil.WriteFile(pwd+file, buf, 0o644); err != nil {
-		log1.Error(err)
+		log1.Fatal(err)
 	}
-	if err == nil {
-		log1.Info("地图已更新")
-	}
+	log1.Info("地图已更新")
 }
 
 // Screenshot 截图

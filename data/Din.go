@@ -69,7 +69,8 @@ func GetChMap() {
 	}
 	if err := ioutil.WriteFile(pwd+file, buf, 0o644); err != nil {
 		log1.Error(err)
-	} else {
+	}
+	if err == nil {
 		log1.Info("地图已更新")
 	}
 }
@@ -96,6 +97,9 @@ func GetOverall() model.OverallData {
 	if resp.StatusCode() != 200 {
 		log1.WithField("status err", err).Error(err)
 	}
+	if err == nil {
+		log1.Info("请求新闻概览API成功")
+	}
 	return overall.Results[0]
 }
 
@@ -112,6 +116,9 @@ func GetAreaData(area string) model.ProvinceData {
 		log1.WithField("请求地区数据失败", "").Errorln(err)
 		return model.ProvinceData{}
 	}
+	if err == nil {
+		log1.Info("请求地区数据API成功")
+	}
 	return res.Results[0]
 }
 
@@ -127,6 +134,9 @@ func GetNews() []model.NewsData {
 		log1.WithField("请求失败", "新闻API").Errorln(err)
 		return []model.NewsData{}
 	}
+	if err == nil {
+		log1.Info("请求新闻数据API成功")
+	}
 	return res.Results
 }
 
@@ -141,6 +151,9 @@ func GetRiskLevel(level string) []model.RiskArea {
 	resp, err := request.R().SetResult(&res).Get("https://eyesight.news.qq.com/sars/riskarea")
 	if err != nil || resp.StatusCode() != 200 {
 		log1.WithField("请求失败", "风险地区").Error(err)
+	}
+	if err == nil {
+		log1.Info("请求风险地区API成功")
 	}
 	risk := res.Data
 	if len(risk) == 0 {

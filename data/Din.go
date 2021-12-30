@@ -34,7 +34,7 @@ func init() {
 // Cro19map 定时更新地图
 func Cro19map() {
 	c := cron.New()
-	c.AddFunc("@every 1m", func() {
+	c.AddFunc("@every 12h", func() {
 		GetChMap()
 	})
 	c.Start()
@@ -85,7 +85,7 @@ func Screenshot(url, sel string, res *[]byte) chromedp.Tasks {
 // GetOverall 获取疫情概览
 func GetOverall() model.OverallData {
 	log1 := logrus.WithField("func", "GetOverall")
-	log1.Println("开始请求新闻概览API")
+	log1.Info("开始请求新闻概览API")
 	var overall struct {
 		Results []model.OverallData `json:"results"`
 	}

@@ -16,7 +16,7 @@ func Overall() {
 		data := data2.GetOverall()
 		//global := data.GlobalStatistics
 		tm := time.Unix(data.UpdateTime/1000, 0).Format("2006-01-02 15:04")
-		text.WriteString("🇨🇳国内疫情概况:")
+		text.WriteString("🇨🇳中国疫情概况:")
 		text.WriteString("\n现存确诊(含港澳台):" + strconv.Itoa(data.CurrentConfirmedCount) + " ⬆️" + strconv.Itoa(data.CurrentConfirmedIncr))
 		text.WriteString("\n现存无症状:" + strconv.Itoa(data.SeriousCount) + " ⬆️" + strconv.Itoa(data.SeriousIncr))
 		text.WriteString("\n境外输入:" + strconv.Itoa(data.SuspectedCount) + " ⬆️" + strconv.Itoa(data.SuspectedIncr))

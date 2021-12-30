@@ -34,7 +34,7 @@ func init() {
 // Cro19map 定时更新地图
 func Cro19map() {
 	c := cron.New()
-	c.AddFunc("@every 12h", func() {
+	c.AddFunc("@every 1m", func() {
 		GetChMap()
 	})
 	c.Start()

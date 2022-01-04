@@ -73,7 +73,7 @@ func GetChMap() {
 func GetState() {
 	log1 := logrus.WithField("GetState", "查看状态")
 	pwd, _ := os.Getwd()
-	file := "/public/map.png"
+	file := "/public/virus-map.png"
 	info, err := os.Stat(pwd + file)
 	if err != nil {
 		//log1.WithError(err).Logln(2, "获取文件更新时间失败")

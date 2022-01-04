@@ -3,6 +3,7 @@ package bot
 import (
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/varz1/nCovBot/channel"
+	"github.com/varz1/nCovBot/data"
 	"log"
 	"os"
 )
@@ -18,6 +19,7 @@ func initBot() *tgbotapi.BotAPI {
 	//初始化webHook
 	url := os.Getenv("baseURL") + api.Token
 	_, err = api.SetWebhook(tgbotapi.NewWebhook(url))
+	data.GetChMap() // 更新地图
 	return api
 }
 

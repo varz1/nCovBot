@@ -59,11 +59,6 @@ func GetChMap() {
 	ctx, cancel = context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 	var buf []byte
-	info, err := os.Stat(pwd + file)
-	if err != nil {
-		log1.WithError(err).Logln(2, "获取文件更新时间失败")
-	}
-	log1.Info("上次更新时间为" + info.ModTime().String())
 	if err := chromedp.Run(ctx,
 		Screenshot(url, sel, &buf)); err != nil {
 		log1.Error(err)
@@ -71,7 +66,21 @@ func GetChMap() {
 	if err := ioutil.WriteFile(pwd+file, buf, 0o644); err != nil {
 		log1.Error(err)
 	}
+	GetState()
 	log1.Info("地图已更新")
+}
+
+func GetState() {
+	log1 := logrus.WithField("GetState", "查看状态")
+	pwd, _ := os.Getwd()
+	file := "/public/map.png"
+	info, err := os.Stat(pwd + file)
+	if err != nil {
+		//log1.WithError(err).Logln(2, "获取文件更新时间失败")
+		log1.Info("尚未更新map")
+	} else {
+		log1.Info("上次更新时间为" + info.ModTime().String())
+	}
 }
 
 // Screenshot 截图

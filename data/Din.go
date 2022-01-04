@@ -46,7 +46,7 @@ func GetChMap() {
 	var url = "https://voice.baidu.com/act/newpneumonia/newpneumonia"
 	var sel = "#virus-map"
 	pwd, _ := os.Getwd()
-	file := "/public/virus-map.png"
+	file := "/public/virusMap.png"
 	options := []chromedp.ExecAllocatorOption{
 		chromedp.Flag("blink-settings", "imagesEnabled=false"),
 		chromedp.UserAgent(`Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36`),
@@ -73,7 +73,7 @@ func GetChMap() {
 func GetState() {
 	log1 := logrus.WithField("GetState", "查看状态")
 	pwd, _ := os.Getwd()
-	file := "/public/virus-map.png"
+	file := "/public/virusMap.png"
 	info, err := os.Stat(pwd + file)
 	if err != nil {
 		//log1.WithError(err).Logln(2, "获取文件更新时间失败")

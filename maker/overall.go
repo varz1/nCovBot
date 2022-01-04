@@ -50,3 +50,25 @@ func Overall() {
 		text.Reset()
 	}
 }
+
+func Trend() {
+	for update := range channel.TrendChannel {
+		text := "疫情本土趋势图"
+		var url = os.Getenv("baseURL") + "virusTrend.png"
+		var p []interface{}
+		pic := tgbotapi.InputMediaPhoto{
+			Type:      "photo",
+			Media:     url,
+			Caption:   text,
+			ParseMode: tgbotapi.ModeMarkdown,
+		}
+		p = append(p, pic)
+		msg := tgbotapi.MediaGroupConfig{
+			BaseChat: tgbotapi.BaseChat{
+				ChatID: update.Message.Chat.ID,
+			},
+			InputMedia: p,
+		}
+		channel.MessageChannel <- msg
+	}
+}

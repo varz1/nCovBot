@@ -36,6 +36,7 @@ func Cro19map() {
 	c := cron.New()
 	c.AddFunc("@every 1h", func() {
 		GetChMap()
+		GetTrend()
 	})
 	c.Start()
 }
@@ -66,14 +67,43 @@ func GetChMap() {
 	if err := ioutil.WriteFile(pwd+file, buf, 0o644); err != nil {
 		log1.Error(err)
 	}
-	GetState()
+	GetState("virusMap.png")
 	log1.Info("地图已更新")
 }
 
-func GetState() {
+func GetTrend() {
+	log1 := logrus.WithField("func GetMap", "chromeDp爬取趋势图")
+	var url = "https://voice.baidu.com/act/newpneumonia/newpneumonia"
+	var sel = "div.VirusTrend_1-1-321_1U4OF0"
+	pwd, _ := os.Getwd()
+	file := "/public/virusTrend.png"
+	options := []chromedp.ExecAllocatorOption{
+		chromedp.Flag("blink-settings", "imagesEnabled=false"),
+		chromedp.UserAgent(`Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36`),
+	}
+	options = append(chromedp.DefaultExecAllocatorOptions[:], options...)
+	ctx, cancel := chromedp.NewContext(context.Background())
+	defer cancel()
+	chromedp.ExecPath(os.Getenv("GOOGLE_CHROME_SHIM"))
+	// 超时设置
+	ctx, cancel = context.WithTimeout(ctx, 60*time.Second)
+	defer cancel()
+	var buf []byte
+	if err := chromedp.Run(ctx,
+		Screenshot(url, sel, &buf)); err != nil {
+		log1.Error(err)
+	}
+	if err := ioutil.WriteFile(pwd+file, buf, 0o644); err != nil {
+		log1.Error(err)
+	}
+	GetState("virusTrend.png")
+	log1.Info("地图已更新")
+}
+
+func GetState(name string) {
 	log1 := logrus.WithField("GetState", "查看状态")
 	pwd, _ := os.Getwd()
-	file := "/public/virusMap.png"
+	file := "/public/" + name
 	info, err := os.Stat(pwd + file)
 	if err != nil {
 		//log1.WithError(err).Logln(2, "获取文件更新时间失败")

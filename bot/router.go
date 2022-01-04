@@ -49,7 +49,9 @@ func baseRouter(update *tgbotapi.Update) {
 		case "hi":
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, "Hi👋 :) Administrator")
 		case "updateMap":
-			data.GetChMap();
+			data.GetChMap()
+		case "updateTrend":
+			data.GetTrend()
 		}
 	}
 	channel.MessageChannel <- msg
@@ -71,6 +73,8 @@ func commandRouter(update *tgbotapi.Update) {
 	case "/risk":
 		msg := GetRiskMenu(*update)
 		channel.MessageChannel <- msg
+	case "/trend":
+		channel.TrendChannel <- update
 	}
 }
 

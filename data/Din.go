@@ -85,17 +85,17 @@ func GetChMap() error {
 	return nil
 }
 
-func GetState(num int) string {
+func GetState(num int) int64 {
 	log1 := logrus.WithField("GetState", "查看状态")
 	pwd, _ := os.Getwd()
-	updateTime := "暂无数据"
+	var updateTime int64 = 0
 	var files []string
 	files = append(files, "/public/virusMap.png")
 	files = append(files, "/public/virusTrend.png")
 	for k, f := range files {
 		info, err := os.Stat(pwd + f)
 		if k == num {
-			updateTime = info.ModTime().String()
+			updateTime = info.ModTime().Unix()
 		}
 		if err != nil {
 			log1.Info("尚未更新map")

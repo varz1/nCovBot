@@ -15,7 +15,9 @@ func Overall() {
 	for overall := range channel.OverallUpdateChannel {
 		data := data2.GetOverall()
 		//global := data.GlobalStatistics
+		mapTime := data2.GetState(0)
 		tm := time.Unix(data.UpdateTime/1000, 0).Format("2006-01-02 15:04")
+		tm1 := time.Unix(mapTime, 0).Format("2006-01-02 15:04")
 		text.WriteString("🇨🇳中国疫情概况:")
 		text.WriteString("\n现存确诊(含港澳台):" + strconv.Itoa(data.CurrentConfirmedCount) + " ⬆️" + strconv.Itoa(data.CurrentConfirmedIncr))
 		text.WriteString("\n现存无症状:" + strconv.Itoa(data.SeriousCount) + " ⬆️" + strconv.Itoa(data.SeriousIncr))
@@ -28,7 +30,7 @@ func Overall() {
 		//text.WriteString("\n全球累计确诊" + strconv.Itoa(global.ConfirmedCount) + " ⬆️" + strconv.Itoa(global.ConfirmedIncr))
 		//text.WriteString("\n全球累计治愈" + strconv.Itoa(global.CuredCount) + " ⬆️" + strconv.Itoa(global.CuredIncr))
 		//text.WriteString("\n全球累计死亡" + strconv.Itoa(global.DeadCount) + " ⬆️" + strconv.Itoa(global.DeadIncr))
-		text.WriteString("\n地图更新时间:" + data2.GetState(0))
+		text.WriteString("\n地图更新时间:" + tm1)
 		text.WriteString("\n数据更新时间:" + tm)
 		var url = os.Getenv("baseURL") + "virusMap.png" + "?a=" + strconv.FormatInt(time.Now().Unix(), 10)
 		var p []interface{}
@@ -52,7 +54,9 @@ func Overall() {
 
 func Trend() {
 	for update := range channel.TrendChannel {
-		text := "本土疫情趋势图" + "\n图表更新时间:"+data2.GetState(1)
+		trendTime := data2.GetState(1)
+		tm1 := time.Unix(trendTime, 0).Format("2006-01-02 15:04")
+		text := "本土疫情趋势图" + "\n图表更新时间:" + tm1
 		// 时间戳更新地图
 		var url = os.Getenv("baseURL") + "virusTrend.png" + "?a=" + strconv.FormatInt(time.Now().Unix(), 10)
 		var p []interface{}

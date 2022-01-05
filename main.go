@@ -23,7 +23,7 @@ func main() {
 	go maker.RiskQuery()
 	go data.Cro19map()
 	app.Post("/"+os.Getenv("TOKEN"), bot.WebHookHandler)
-	app.Post("/"+"hi", bot.HiHandler)
+	app.Get("/hi", bot.HiHandler)
 	app.Use(bot.NotFoundHandler)
 	app.Listen(":" + os.Getenv("PORT"))
 }

@@ -209,8 +209,8 @@ func GetRiskLevel(level string) []model.RiskArea {
 func Ping() {
 	resp, err := request.R().Get("https://ncovbott.herokuapp.com/hi")
 	if err != nil {
-		logrus.Info("ping 失败")
+		logrus.Info("ping err")
 	} else {
-		logrus.Printf("Ping 成功 %v", resp.StatusCode())
+		logrus.Printf("Ping 成功 状态码: %v", resp.StatusCode())
 	}
 }

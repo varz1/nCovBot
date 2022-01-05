@@ -23,8 +23,7 @@ func WebHookHandler(c *fiber.Ctx) error {
 		log.Println("req解析失败")
 		return err
 	}
-	log.Printf("开始处理Update\nUpdateId:%v\nCallbackQuery:%v\nInlineQuery:%v\nMessage:%v\nEditedMessage:%v\n",
-		u.UpdateID, u.CallbackQuery, u.InlineQuery, u.Message, u.EditedMessage)
+	log.Printf("开始处理Update")
 	channel.UpdateChannel <- *u
 	return nil
 }
@@ -93,7 +92,9 @@ func callBackRouter(query *tgbotapi.CallbackQuery) {
 func GetStartMenu(update tgbotapi.Update) tgbotapi.MessageConfig {
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID,
 		"欢迎使用nCov疫情数据机器人🤖\n"+
-			"功能列表:\n/start:使用提示\n/list:支持查询的地区列表\n/overall:查看疫情数据概览\n/news:查看最新新闻\n"+
+			"功能列表:\n/start:使用提示\n/list:支持查询的地区列表\n/overall:查看疫情数据概览\n"+
+			"/trend:查看本土疫情趋势图\n"+
+			"/news:查看最新新闻\n"+
 			"/risk:中高风险地区列表\n"+
 			"\n使用Tip:\n发送列表中地区名可返回该地区疫情数据（注意格式）\n"+
 			"示例消息:上海市\n"+

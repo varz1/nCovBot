@@ -38,7 +38,7 @@ func Cro19map() {
 		if err := GetChMap(); err != nil {
 			logrus.Info("更新失败请重试")
 		} else {
-			GetState()
+			GetState(-1)
 		}
 	})
 	c.AddFunc("@every 60s", func() {
@@ -85,20 +85,25 @@ func GetChMap() error {
 	return nil
 }
 
-func GetState() {
+func GetState(num int) string {
 	log1 := logrus.WithField("GetState", "查看状态")
 	pwd, _ := os.Getwd()
+	updateTime := "暂无数据"
 	var files []string
 	files = append(files, "/public/virusMap.png")
 	files = append(files, "/public/virusTrend.png")
-	for _, f := range files {
+	for k, f := range files {
 		info, err := os.Stat(pwd + f)
+		if k == num {
+			updateTime = info.ModTime().String()
+		}
 		if err != nil {
 			log1.Info("尚未更新map")
 		} else {
 			log1.Info(f + "已更新" + "上次更新时间为" + info.ModTime().String())
 		}
 	}
+	return updateTime
 }
 
 // Screenshot 截图

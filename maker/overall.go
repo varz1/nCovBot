@@ -28,6 +28,7 @@ func Overall() {
 		//text.WriteString("\n全球累计确诊" + strconv.Itoa(global.ConfirmedCount) + " ⬆️" + strconv.Itoa(global.ConfirmedIncr))
 		//text.WriteString("\n全球累计治愈" + strconv.Itoa(global.CuredCount) + " ⬆️" + strconv.Itoa(global.CuredIncr))
 		//text.WriteString("\n全球累计死亡" + strconv.Itoa(global.DeadCount) + " ⬆️" + strconv.Itoa(global.DeadIncr))
+		text.WriteString("\n地图更新时间:" + data2.GetState(0))
 		text.WriteString("\n数据更新时间:" + tm)
 		var url = os.Getenv("baseURL") + "virusMap.png" + "?a=" + strconv.FormatInt(time.Now().Unix(), 10)
 		var p []interface{}
@@ -51,7 +52,7 @@ func Overall() {
 
 func Trend() {
 	for update := range channel.TrendChannel {
-		text := "本土疫情趋势图"
+		text := "本土疫情趋势图" + "\n图表更新时间:"+data2.GetState(1)
 		// 时间戳更新地图
 		var url = os.Getenv("baseURL") + "virusTrend.png" + "?a=" + strconv.FormatInt(time.Now().Unix(), 10)
 		var p []interface{}

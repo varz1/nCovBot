@@ -33,8 +33,7 @@ func NotFoundHandler(c *fiber.Ctx) error {
 }
 func baseRouter(update *tgbotapi.Update) {
 	message := update.Message.Text
-	text := "无该地区或格式错误"
-	msg := tgbotapi.NewMessage(update.Message.Chat.ID, text)
+	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "无该地区或格式错误")
 	if update.Message.IsCommand() {
 		go commandRouter(update)
 		return
@@ -50,9 +49,9 @@ func baseRouter(update *tgbotapi.Update) {
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, "Hi👋 :) Administrator")
 		case "update":
 			if err := data.GetChMap(); err != nil {
-				text = "更新失败 请重试"
+				msg = tgbotapi.NewMessage(update.Message.Chat.ID, "更新失败 请重试")
 			}else {
-				text = "地图已更新"
+				msg = tgbotapi.NewMessage(update.Message.Chat.ID, "地图已更新")
 			}
 		}
 	}

@@ -35,14 +35,18 @@ func init() {
 func Cro19map() {
 	c := cron.New()
 	c.AddFunc("@every 1h", func() {
-		GetChMap()
+		if err := GetChMap(); err != nil {
+			logrus.Info("更新失败请重试")
+		} else {
+			GetState()
+		}
 	})
 	c.Start()
 }
 
 // GetChMap 获取中国疫情地图
-func GetChMap() {
-	log1 := logrus.WithField("func GetChMap", "chromeDp爬取图表")
+func GetChMap() error {
+	logrus.WithField("GetChMap", "开始爬取图表")
 	var url = "https://voice.baidu.com/act/newpneumonia/newpneumonia"
 	var selMap = "#virus-map"
 	var selTrend = "div.VirusTrend_1-1-321_1U4OF0"
@@ -63,32 +67,34 @@ func GetChMap() {
 	var buf []byte
 	if err := chromedp.Run(ctx,
 		Screenshot(url, selMap, &buf)); err != nil {
-		log1.Error(err)
+		return err
 	}
 	if err := ioutil.WriteFile(pwd+fileMap, buf, 0o644); err != nil {
-		log1.Error(err)
+		return err
 	}
-	GetState("virusMap.png")
 	if err := chromedp.Run(ctx,
 		Screenshot(url, selTrend, &buf)); err != nil {
-		log1.Error(err)
+		return err
 	}
 	if err := ioutil.WriteFile(pwd+fileTrend, buf, 0o644); err != nil {
-		log1.Error(err)
+		return err
 	}
-	GetState("virusTrend.png")
+	return nil
 }
 
-func GetState(name string) {
+func GetState() {
 	log1 := logrus.WithField("GetState", "查看状态")
 	pwd, _ := os.Getwd()
-	file := "/public/" + name
-	info, err := os.Stat(pwd + file)
-	if err != nil {
-		//log1.WithError(err).Logln(2, "获取文件更新时间失败")
-		log1.Info("尚未更新map")
-	} else {
-		log1.Info(name + "已更新" + "上次更新时间为" + info.ModTime().String())
+	var files []string
+	files = append(files, "/public/virusMap.png")
+	files = append(files, "/public/virusTrend.png")
+	for _, f := range files {
+		info, err := os.Stat(pwd + f)
+		if err != nil {
+			log1.Info("尚未更新map")
+		} else {
+			log1.Info(f + "已更新" + "上次更新时间为" + info.ModTime().String())
+		}
 	}
 }
 

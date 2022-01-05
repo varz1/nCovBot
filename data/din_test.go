@@ -35,5 +35,10 @@ func Test3(t *testing.T) {
 
 //
 func Test4(t *testing.T) {
-	GetChMap()
+	var s []string
+	s = append(s, "xx")
+	s = append(s, "aa")
+	for _, fi := range s {
+		t.Log(fi)
+	}
 }

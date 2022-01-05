@@ -31,6 +31,9 @@ func WebHookHandler(c *fiber.Ctx) error {
 func NotFoundHandler(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusNotFound).SendString("Sorry can't find that!")
 }
+func HiHandler(c *fiber.Ctx) error {
+	return c.SendString("hi")
+}
 func baseRouter(update *tgbotapi.Update) {
 	message := update.Message.Text
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "无该地区或格式错误")

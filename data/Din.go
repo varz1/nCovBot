@@ -34,12 +34,15 @@ func init() {
 // Cro19map 定时更新地图
 func Cro19map() {
 	c := cron.New()
-	c.AddFunc("@every 1h", func() {
+	c.AddFunc("@every 6h", func() {
 		if err := GetChMap(); err != nil {
 			logrus.Info("更新失败请重试")
 		} else {
 			GetState()
 		}
+	})
+	c.AddFunc("@every 60s", func() {
+		Ping()
 	})
 	c.Start()
 }
@@ -200,5 +203,14 @@ func GetRiskLevel(level string) []model.RiskArea {
 		return risk[:count]
 	default:
 		return risk[count:]
+	}
+}
+
+func Ping() {
+	resp, err := request.R().Get("https://ncovbott.herokuapp.com/hi")
+	if err != nil {
+		logrus.Info("ping 失败")
+	} else {
+		logrus.Printf("Ping 成功 %v", resp.StatusCode())
 	}
 }

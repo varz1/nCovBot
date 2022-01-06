@@ -4,6 +4,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/varz1/nCovBot/channel"
 	data2 "github.com/varz1/nCovBot/data"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -17,6 +18,9 @@ func Overall() {
 		//global := data.GlobalStatistics
 		mapTime, err := data2.GetState(0)
 		if err != nil {
+			log.Println(err)
+			msg := tgbotapi.NewMessage(overall.Message.Chat.ID, "获取图表失败")
+			channel.MessageChannel <- msg
 			return
 		}
 		tm := time.Unix(data.UpdateTime/1000, 0).Format("2006-01-02 15:04")
@@ -59,6 +63,9 @@ func Trend() {
 	for update := range channel.TrendChannel {
 		trendTime, err := data2.GetState(1)
 		if err != nil {
+			log.Println(err)
+			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "获取图表失败")
+			channel.MessageChannel <- msg
 			return
 		}
 		tm := time.Unix(trendTime, 0).Format("2006-01-02 15:04")

@@ -65,7 +65,7 @@ func GetChMap() error {
 	defer cancel()
 	chromedp.ExecPath(os.Getenv("GOOGLE_CHROME_SHIM"))
 	// 超时设置
-	ctx, cancel = context.WithTimeout(ctx, 2*time.Minute)
+	ctx, cancel = context.WithTimeout(ctx, 5*time.Minute)
 	defer cancel()
 	var buf []byte
 	if err := chromedp.Run(ctx,
@@ -100,8 +100,9 @@ func GetState(num int) (int64, error) {
 		if err != nil {
 			log1.Info("尚未更新map")
 			return 0, err
+		}else {
+			log1.Info(f + "已更新" + "上次更新时间为" + info.ModTime().String())
 		}
-		log1.Info(f + "已更新" + "上次更新时间为" + info.ModTime().String())
 	}
 	return updateTime, nil
 }

@@ -58,7 +58,7 @@ func GetChMap() error {
 	fileTrend := "/public/virusTrend.png"
 	options := []chromedp.ExecAllocatorOption{
 		chromedp.Flag("blink-settings", "imagesEnabled=false"),
-		chromedp.UserAgent(`Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36`),
+		chromedp.UserAgent(`Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36`),
 	}
 	options = append(chromedp.DefaultExecAllocatorOptions[:], options...)
 	ctx, cancel := chromedp.NewContext(context.Background())

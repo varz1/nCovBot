@@ -61,9 +61,11 @@ func GetChMap() error {
 		chromedp.UserAgent(`Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36`),
 	}
 	options = append(chromedp.DefaultExecAllocatorOptions[:], options...)
+	ctx, cancel := chromedp.NewContext(context.Background())
+	defer cancel()
 	chromedp.ExecPath(os.Getenv("GOOGLE_CHROME_SHIM"))
 	// 超时设置
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	ctx, cancel = context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 	var buf []byte
 	if err := chromedp.Run(ctx,

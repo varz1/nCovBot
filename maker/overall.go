@@ -10,12 +10,21 @@ import (
 	"time"
 )
 
+func init() {
+	err := data2.GetChMap()
+	if err != nil {
+		return 
+	}
+}
 func Overall() {
 	text := strings.Builder{}
 	for overall := range channel.OverallUpdateChannel {
 		data := data2.GetOverall()
 		//global := data.GlobalStatistics
-		mapTime := data2.GetState(0)
+		mapTime, err := data2.GetState(0)
+		if err != nil {
+			return
+		}
 		tm := time.Unix(data.UpdateTime/1000, 0).Format("2006-01-02 15:04")
 		tm1 := time.Unix(mapTime, 0).Format("2006-01-02 15:04")
 		text.WriteString("🇨🇳中国疫情概况:")
@@ -54,7 +63,10 @@ func Overall() {
 
 func Trend() {
 	for update := range channel.TrendChannel {
-		trendTime := data2.GetState(1)
+		trendTime, err := data2.GetState(1)
+		if err != nil {
+			return
+		}
 		tm := time.Unix(trendTime, 0).Format("2006-01-02 15:04")
 		text := "本土疫情趋势图" + "\n图表更新时间:" + tm
 		// 时间戳更新地图

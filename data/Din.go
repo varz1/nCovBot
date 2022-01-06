@@ -85,7 +85,7 @@ func GetChMap() error {
 	return nil
 }
 
-func GetState(num int) int64 {
+func GetState(num int) (int64, error) {
 	log1 := logrus.WithField("GetState", "查看状态")
 	pwd, _ := os.Getwd()
 	var updateTime int64 = 0
@@ -99,11 +99,11 @@ func GetState(num int) int64 {
 		}
 		if err != nil {
 			log1.Info("尚未更新map")
-		} else {
-			log1.Info(f + "已更新" + "上次更新时间为" + info.ModTime().String())
+			return 0, err
 		}
+		log1.Info(f + "已更新" + "上次更新时间为" + info.ModTime().String())
 	}
-	return updateTime
+	return updateTime, nil
 }
 
 // Screenshot 截图

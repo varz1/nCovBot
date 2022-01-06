@@ -47,7 +47,7 @@ func Cro19map() {
 	c.Start()
 }
 
-// GetChMap 获取中国疫情地图
+// GetChMap 无头浏览器爬取数据图表
 func GetChMap() error {
 	logrus.WithField("GetChMap", "开始爬取图表")
 	var url = "https://voice.baidu.com/act/newpneumonia/newpneumonia"

@@ -52,7 +52,7 @@ func GetChMap() error {
 	logrus.WithField("GetChMap", "开始爬取图表")
 	var url = "https://voice.baidu.com/act/newpneumonia/newpneumonia"
 	var selMap = "#virus-map"
-	var selTrend = "div.VirusTrend_1-1-321_1U4OF0"
+	var selTrend = "div.VirusTrend_1-1-322_3XOh7y"
 	pwd, _ := os.Getwd()
 	fileMap := "/public/virusMap.png"
 	fileTrend := "/public/virusTrend.png"

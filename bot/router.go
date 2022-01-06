@@ -53,6 +53,7 @@ func baseRouter(update *tgbotapi.Update) {
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, "Hi👋 :) Administrator")
 		case "update":
 			if err := data.GetChMap(); err != nil {
+				log.Println(err)
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, "更新失败 请重试")
 			}else {
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, "地图已更新")

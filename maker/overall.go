@@ -10,12 +10,6 @@ import (
 	"time"
 )
 
-func init() {
-	err := data2.GetChMap()
-	if err != nil {
-		return 
-	}
-}
 func Overall() {
 	text := strings.Builder{}
 	for overall := range channel.OverallUpdateChannel {

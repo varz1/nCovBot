@@ -22,8 +22,8 @@ func main() {
 	go maker.News()
 	go maker.RiskQuery()
 	go data.Cro19map()
-	app.Post("/"+os.Getenv("TOKEN"), bot.WebHookHandler)
 	app.Get("/hi", bot.HiHandler)
+	app.Post("/"+os.Getenv("TOKEN"), bot.WebHookHandler)
 	app.Use(bot.NotFoundHandler)
 	app.Listen(":" + os.Getenv("PORT"))
 }

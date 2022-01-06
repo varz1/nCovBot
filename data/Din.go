@@ -41,7 +41,7 @@ func Cro19map() {
 			logrus.Info("更新成功")
 		}
 	})
-	c.AddFunc("@every 60s", func() {
+	c.AddFunc("@every 30m", func() {
 		Ping()
 	})
 	c.Start()

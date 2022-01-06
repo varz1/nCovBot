@@ -23,7 +23,6 @@ func WebHookHandler(c *fiber.Ctx) error {
 		log.Println("req解析失败")
 		return err
 	}
-	log.Printf("开始处理Update")
 	channel.UpdateChannel <- *u
 	return nil
 }

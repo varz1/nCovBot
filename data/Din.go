@@ -65,7 +65,7 @@ func GetChMap() error {
 	defer cancel()
 	chromedp.ExecPath(os.Getenv("GOOGLE_CHROME_SHIM"))
 	// 超时设置
-	ctx, cancel = context.WithTimeout(ctx, 60*time.Second)
+	ctx, cancel = context.WithTimeout(ctx, 2*time.Minute)
 	defer cancel()
 	var buf []byte
 	if err := chromedp.Run(ctx,

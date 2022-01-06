@@ -31,9 +31,11 @@ func WebHookHandler(c *fiber.Ctx) error {
 func NotFoundHandler(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusNotFound).SendString("Sorry can't find that!")
 }
+
 func HiHandler(c *fiber.Ctx) error {
 	return c.SendString("hi")
 }
+
 func baseRouter(update *tgbotapi.Update) {
 	message := update.Message.Text
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "无该地区或格式错误")
@@ -97,7 +99,7 @@ func callBackRouter(query *tgbotapi.CallbackQuery) {
 func GetStartMenu(update tgbotapi.Update) tgbotapi.MessageConfig {
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID,
 		"欢迎使用nCov疫情数据机器人🤖\n"+
-			"功能列表:\n/start:使用提示\n/list:支持查询的地区列表\n/overall:查看疫情数据概览\n"+
+			"功能列表:\n/start:使用提示\n/list:支持查询的地区列表\n/overall:查看中国疫情数据概览\n"+
 			"/trend:查看本土疫情趋势图\n"+
 			"/news:查看最新新闻\n"+
 			"/risk:中高风险地区列表\n"+

@@ -31,14 +31,14 @@ func init() {
 	request.SetHeaders(header)
 }
 
-// Cro19map 定时更新地图
+// Cro19map 定时更新数据图表
 func Cro19map() {
 	c := cron.New()
 	c.AddFunc("@every 6h", func() {
 		if err := GetChMap(); err != nil {
 			logrus.Info("更新失败请重试")
 		} else {
-			GetState(-1)
+			logrus.Info("更新成功")
 		}
 	})
 	c.AddFunc("@every 60s", func() {
@@ -47,7 +47,7 @@ func Cro19map() {
 	c.Start()
 }
 
-// GetChMap 获取中国疫情地图
+// GetChMap 无头浏览器爬取数据图表
 func GetChMap() error {
 	logrus.WithField("GetChMap", "开始爬取图表")
 	var url = "https://voice.baidu.com/act/newpneumonia/newpneumonia"
@@ -61,11 +61,9 @@ func GetChMap() error {
 		chromedp.UserAgent(`Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36`),
 	}
 	options = append(chromedp.DefaultExecAllocatorOptions[:], options...)
-	ctx, cancel := chromedp.NewContext(context.Background())
-	defer cancel()
 	chromedp.ExecPath(os.Getenv("GOOGLE_CHROME_SHIM"))
 	// 超时设置
-	ctx, cancel = context.WithTimeout(ctx, 60*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 	var buf []byte
 	if err := chromedp.Run(ctx,

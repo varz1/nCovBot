@@ -104,7 +104,7 @@ func GetStartMenu(update tgbotapi.Update) tgbotapi.MessageConfig {
 			"/risk:中高风险地区列表\n"+
 			"\n使用Tip:\n发送列表中地区名可返回该地区疫情数据（注意格式）\n"+
 			"示例消息:上海市\n"+
-			"\n数据图来自百度每6h更新一次"+
+			"\n数据图来自百度6h更新一次"+
 			"\n数据来自丁香园 本Bot不对数据负责")
 	return msg
 }

@@ -61,6 +61,7 @@ func Overall() {
 
 func Trend() {
 	for update := range channel.TrendChannel {
+		log.Println("开始处理Trend")
 		trendTime, err := data2.GetState(1)
 		if err != nil {
 			log.Println(err)
@@ -69,7 +70,7 @@ func Trend() {
 			return
 		}
 		tm := time.Unix(trendTime, 0).Format("2006-01-02 15:04")
-		text := "本土疫情趋势图" + "\n图表更新时间:" + tm
+		text := "图表更新时间:" + tm
 		// 时间戳更新地图
 		var url = os.Getenv("baseURL") + "virusTrend.png" + "?a=" + strconv.FormatInt(time.Now().Unix(), 10)
 		var p []interface{}

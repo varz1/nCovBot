@@ -80,7 +80,7 @@ func Trend() {
 				BaseChat: tgbotapi.BaseChat{ChatID: update.Message.Chat.ID},
 				File:     fi,
 			},
-			Caption: "七天内本土疫情地图\n横轴代表时间 纵轴代表病例数",
+			Caption: "七天内本土新增病例\n横轴代表时间 纵轴代表病例数",
 		}
 		channel.MessageChannel <- msg
 	}

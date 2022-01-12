@@ -10,6 +10,11 @@ type RiskArea struct {
 	Sid  int    `json:"sid"`
 }
 
+// Add 新增本土case数据
+type Add struct {
+	Date            string `json:"date"`
+	LocalConfirmAdd int    `json:"localConfirmadd"`
+}
 // NewsData 请求的新闻数据
 type NewsData struct {
 	PubDate    string `json:"pubDate"`    //发布时间

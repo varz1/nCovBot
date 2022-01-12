@@ -52,10 +52,8 @@ func GetChMap() error {
 	logrus.WithField("GetChMap", "开始爬取图表")
 	var url = "https://voice.baidu.com/act/newpneumonia/newpneumonia"
 	var selMap = "#virus-map"
-	var selTrend = "div.VirusTrend_1-1-322_3XOh7y"
 	pwd, _ := os.Getwd()
 	fileMap := "/public/virusMap.png"
-	fileTrend := "/public/virusTrend.png"
 	options := []chromedp.ExecAllocatorOption{
 		chromedp.Flag("blink-settings", "imagesEnabled=false"),
 		chromedp.UserAgent(`Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36`),
@@ -75,34 +73,20 @@ func GetChMap() error {
 	if err := ioutil.WriteFile(pwd+fileMap, buf, 0o644); err != nil {
 		return err
 	}
-	if err := chromedp.Run(ctx,
-		Screenshot(url, selTrend, &buf)); err != nil {
-		return err
-	}
-	if err := ioutil.WriteFile(pwd+fileTrend, buf, 0o644); err != nil {
-		return err
-	}
 	return nil
 }
 
-func GetState(num int) (int64, error) {
+func GetState() (int64, error) {
 	log1 := logrus.WithField("GetState", "查看状态")
 	pwd, _ := os.Getwd()
 	var updateTime int64 = 0
-	var files []string
-	files = append(files, "/public/virusMap.png")
-	files = append(files, "/public/virusTrend.png")
-	for k, f := range files {
-		info, err := os.Stat(pwd + f)
-		if k == num {
-			updateTime = info.ModTime().Unix()
-		}
-		if err != nil {
-			log1.Info("尚未更新map")
-			return 0, err
-		}else {
-			log1.Info(f + "已更新" + "上次更新时间为" + info.ModTime().String())
-		}
+	f := "/public/virusMap.png"
+	info, err := os.Stat(pwd + f)
+	if err != nil {
+		log1.Info("尚未更新map")
+		return 0, err
+	} else {
+		log1.Info(f + "已更新" + "上次更新时间为" + info.ModTime().String())
 	}
 	return updateTime, nil
 }
@@ -219,4 +203,20 @@ func Ping() {
 	} else {
 		logrus.Printf("Ping 成功 状态码: %v", resp.StatusCode())
 	}
+}
+
+// GetAdds 获取新增数据用于绘制图表
+func GetAdds(day int) []model.Add {
+	// day:需要的数据个数 这里只渲染最近七天数据
+	var res struct {
+		Data struct {
+			Adds []model.Add `json:"chinaDayAddList"`
+		} `json:"data"`
+	}
+	resp, _ := request.R().SetResult(&res).Get("https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=chinaDayAddList")
+	if !resp.IsSuccess() {
+		logrus.Error("请求数据失败")
+		return nil
+	}
+	return res.Data.Adds[len(res.Data.Adds)-day:]
 }

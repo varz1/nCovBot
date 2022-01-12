@@ -11,14 +11,6 @@
 
 ![nCovBot](https://github.com/varz1/pics/blob/master/bot.png?raw=true)
 
-## 第三方模块
-
-- Http客户端 — [Resty](https://github.com/go-resty/resty)
-- 消息 — [Telegram bot](https://github.com/go-telegram-bot-api/telegram-bot-api)
-- 日志 — [Logrus](https://github.com/spf13/viper)
-- 无头浏览器—[ChromeDp](https://github.com/chromedp/chromedp)
-- net框架—[Fiber](https://github.com/gofiber/fiber)
-
 ## 主要功能
 
 - 支持地区列表
@@ -28,11 +20,8 @@
 - 中高风险地区查询
 - 输入地区名称返回疫情数据
 
-## 我的环境以及用到的服务
-- Go 1.17
-- Debian 10
-- Telegram [Api](https://github.com/go-telegram-bot-api/telegram-bot-api)
-- [Heroku](https://dashboard.heroku.com/apps)
-- Telegram 客户端
+## 数据以及图表来源
 
-
+[丁香园](https://github.com/BlankerL/DXY-COVID-19-Data)
+[腾讯](https://news.qq.com/zt2020/page/feiyan.htm#/)
+[百度](https://voice.baidu.com/act/newpneumonia/newpneumonia)

@@ -2,3 +2,4 @@
 data/din_test.go
 bot/bot_test.go
 ncovbot.md
+jsonfile

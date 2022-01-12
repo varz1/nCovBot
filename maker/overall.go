@@ -14,15 +14,14 @@ import (
 func Overall() {
 	text := strings.Builder{}
 	for overall := range channel.OverallUpdateChannel {
-		data := data2.GetOverall()
-		//global := data.GlobalStatistics
-		mapTime, err := data2.GetState(0)
+		mapTime, err := data2.GetState()
 		if err != nil {
 			log.Println(err)
 			msg := tgbotapi.NewMessage(overall.Message.Chat.ID, "获取图表失败")
 			channel.MessageChannel <- msg
 			return
 		}
+		data := data2.GetOverall()
 		tm := time.Unix(data.UpdateTime/1000, 0).Format("2006-01-02 15:04")
 		tm1 := time.Unix(mapTime, 0).Format("2006-01-02 15:04")
 		text.WriteString("🇨🇳中国疫情概况:")
@@ -32,11 +31,6 @@ func Overall() {
 		text.WriteString("\n累计确诊:" + strconv.Itoa(data.ConfirmedCount) + " ⬆️" + strconv.Itoa(data.ConfirmedIncr))
 		text.WriteString("\n累计治愈:" + strconv.Itoa(data.CuredCount) + " ⬆️" + strconv.Itoa(data.CuredIncr))
 		text.WriteString("\n累计死亡" + strconv.Itoa(data.DeadCount) + " ⬆️" + strconv.Itoa(data.DeadIncr))
-		//text.WriteString("\n🌏全球疫情概况")
-		//text.WriteString("\n全球现存确诊" + strconv.Itoa(global.CurrentConfirmedCount) + " ⬆️" + strconv.Itoa(global.CurrentConfirmedIncr))
-		//text.WriteString("\n全球累计确诊" + strconv.Itoa(global.ConfirmedCount) + " ⬆️" + strconv.Itoa(global.ConfirmedIncr))
-		//text.WriteString("\n全球累计治愈" + strconv.Itoa(global.CuredCount) + " ⬆️" + strconv.Itoa(global.CuredIncr))
-		//text.WriteString("\n全球累计死亡" + strconv.Itoa(global.DeadCount) + " ⬆️" + strconv.Itoa(global.DeadIncr))
 		text.WriteString("\n地图更新时间:" + tm1)
 		text.WriteString("\n数据更新时间:" + tm)
 		var url = os.Getenv("baseURL") + "virusMap.png" + "?a=" + strconv.FormatInt(time.Now().Unix(), 10)
@@ -61,32 +55,32 @@ func Overall() {
 
 func Trend() {
 	for update := range channel.TrendChannel {
-		log.Println("开始处理Trend")
-		trendTime, err := data2.GetState(1)
-		if err != nil {
-			log.Println(err)
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "获取图表失败")
-			channel.MessageChannel <- msg
+		log.Println("开始绘图Trend")
+		adds := data2.GetAdds(7) //获取七天本地新增
+		var xRange, yRange []float64
+		for _, v := range adds {
+			s := strings.ReplaceAll(v.Date, ".", "")
+			res := Time2TimeStamp(s)
+			xRange = append(xRange, float64(res))
+			yRange = append(yRange, float64(v.LocalConfirmAdd))
+		}
+		buf := Scatter(xRange, yRange, "7Days Local Case Increment")
+		if buf == nil {
+			errMsg := tgbotapi.NewMessage(update.Message.Chat.ID, "渲染错误")
+			channel.MessageChannel <- errMsg
 			return
 		}
-		tm := time.Unix(trendTime, 0).Format("2006-01-02 15:04")
-		text := "图表更新时间:" + tm
-		// 时间戳更新地图
-		var url = os.Getenv("baseURL") + "virusTrend.png" + "?a=" + strconv.FormatInt(time.Now().Unix(), 10)
-		var p []interface{}
-		pic := tgbotapi.InputMediaPhoto{
-			Type:      "photo",
-			Media:     url,
-			Caption:   text,
-			ParseMode: tgbotapi.ModeMarkdown,
+		fi := tgbotapi.FileBytes{
+			Name:  "trend.jpg",
+			Bytes: buf.Bytes(),
 		}
-		p = append(p, pic)
-		msg := tgbotapi.MediaGroupConfig{
-			BaseChat: tgbotapi.BaseChat{
-				ChatID: update.Message.Chat.ID,
-			},
-			InputMedia: p,
-		}
+		msg := tgbotapi.NewPhotoUpload(update.Message.Chat.ID, fi)
 		channel.MessageChannel <- msg
 	}
+}
+
+func Time2TimeStamp(t string) int64 {
+	loc, _ := time.LoadLocation("Asia/Shanghai")
+	tt, _ := time.ParseInLocation("20060102", "2022"+t, loc)
+	return tt.Unix()
 }

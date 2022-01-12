@@ -56,12 +56,13 @@ func Overall() {
 func Trend() {
 	for update := range channel.TrendChannel {
 		log.Println("开始绘图Trend")
+		const Day = 86400
 		adds := data2.GetAdds(7) //获取七天本地新增
 		var xRange, yRange []float64
 		for _, v := range adds {
 			s := strings.ReplaceAll(v.Date, ".", "")
 			res := Time2TimeStamp(s)
-			xRange = append(xRange, float64(res))
+			xRange = append(xRange, float64(res+Day))
 			yRange = append(yRange, float64(v.LocalConfirmAdd))
 		}
 		buf := Scatter(xRange, yRange, "7Days Local Case Increment")
@@ -74,7 +75,13 @@ func Trend() {
 			Name:  "trend.jpg",
 			Bytes: buf.Bytes(),
 		}
-		msg := tgbotapi.NewPhotoUpload(update.Message.Chat.ID, fi)
+		msg := tgbotapi.PhotoConfig{
+			BaseFile: tgbotapi.BaseFile{
+				BaseChat: tgbotapi.BaseChat{ChatID: update.Message.Chat.ID},
+				File:     fi,
+			},
+			Caption: "七天内本土疫情地图\n横轴代表时间 纵轴代表病例数",
+		}
 		channel.MessageChannel <- msg
 	}
 }

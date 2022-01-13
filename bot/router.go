@@ -81,7 +81,7 @@ func commandRouter(update *tgbotapi.Update) {
 		channel.MessageChannel <- msg
 	case "/trend":
 		channel.TrendChannel <- update
-	case "world":
+	case "/world":
 		channel.WorldUpdateChannel <- update
 	}
 }

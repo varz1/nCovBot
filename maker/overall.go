@@ -95,6 +95,7 @@ func Trend() {
 func WorldOverall() {
 	for update := range channel.WorldUpdateChannel {
 		data := data2.GetOverall()
+		global := data.GlobalStatistics
 		c, err1 := data2.GetWorldData()
 		if err1 != nil {
 			log.Println("获取数据失败")
@@ -102,7 +103,6 @@ func WorldOverall() {
 			channel.MessageChannel <- msg
 			return
 		}
-		global := data.GlobalStatistics
 		caption := strings.Builder{}
 		tm := time.Unix(data.UpdateTime/1000, 0).Format("2006-01-02 15:04")
 		caption.WriteString("\n🌏全球疫情概况")

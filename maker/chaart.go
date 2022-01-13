@@ -65,6 +65,7 @@ func Scatter(x, y []float64, chartName string) *bytes.Buffer {
 	return &dumper.img
 }
 
+// PieChart 渲染饼状图
 func PieChart(continent map[string]int, chartName string) *bytes.Buffer {
 	dumper := NewDumper(1, 1, 500, 300)
 

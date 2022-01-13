@@ -10,6 +10,7 @@ var (
 	ListQueryChannel      chan *tgbotapi.CallbackQuery // 地区列表CallbackChannel
 	ProvinceQueryChannel  chan *tgbotapi.CallbackQuery // 省份数据CallbackChannel
 	OverallUpdateChannel  chan *tgbotapi.Update        // 概览UpdateChannel
+	WorldUpdateChannel    chan *tgbotapi.Update        // 世界概览UpdateChannel
 	ProvinceUpdateChannel chan *tgbotapi.Update        // 地区数据UpdateChannel
 	NewsUpdateChannel     chan *tgbotapi.Update        // 新闻数据UpdateChannel
 	RiskQueryChannel      chan *tgbotapi.CallbackQuery // 风险地区Callback
@@ -23,6 +24,7 @@ func init() {
 	ListQueryChannel = make(chan *tgbotapi.CallbackQuery)
 	ProvinceQueryChannel = make(chan *tgbotapi.CallbackQuery)
 	OverallUpdateChannel = make(chan *tgbotapi.Update)
+	WorldUpdateChannel = make(chan *tgbotapi.Update)
 	ProvinceUpdateChannel = make(chan *tgbotapi.Update)
 	NewsUpdateChannel = make(chan *tgbotapi.Update)
 	RiskQueryChannel = make(chan *tgbotapi.CallbackQuery)

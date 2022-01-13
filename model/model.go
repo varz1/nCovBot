@@ -10,11 +10,21 @@ type RiskArea struct {
 	Sid  int    `json:"sid"`
 }
 
+// World 世界数据
+type World struct {
+	Continent  string `json:"continent"`
+	Name       string `json:"name"`
+	PubDate    string `json:"pub_date"`
+	Confirm int    `json:"confirm"`
+}
+
 // Add 新增本土case数据
 type Add struct {
 	Date            string `json:"date"`
 	LocalConfirmAdd int    `json:"localConfirmadd"`
+	Year            string `json:"y"`
 }
+
 // NewsData 请求的新闻数据
 type NewsData struct {
 	PubDate    string `json:"pubDate"`    //发布时间

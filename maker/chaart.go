@@ -9,6 +9,7 @@ import (
 	"image/draw"
 	"image/png"
 	"log"
+	"strconv"
 	"time"
 )
 
@@ -41,22 +42,49 @@ func (d *Dumper) Plot(c chart.Chart) error {
 // Scatter 渲染散点图
 func Scatter(x, y []float64, chartName string) *bytes.Buffer {
 	dumper := NewDumper(1, 1, 800, 600)
-	var STEP float64 = 86400 // 一天的时间戳
+	const DAY float64 = 86400 // 一天的时间戳
 	pl := chart.ScatterChart{Title: chartName}
 	pl.Key.Pos = "itl"
-	pl.AddDataPair("case", x, y, chart.PlotStyleLinesPoints,
+	todayAdd := "Today Add " + strconv.FormatFloat(y[len(y)-1], 'g', -1, 32) //将今日新增标注上
+	pl.AddDataPair(todayAdd, x, y, chart.PlotStyleLinesPoints,
 		chart.Style{Symbol: '#', SymbolColor: color.NRGBA{R: 0xE3, G: 0x17, B: 0x0D, A: 0xff}, LineStyle: chart.SolidLine})
 	pl.XRange.TicSetting.Mirror = 1
 	pl.XRange.TicSetting.TLocation = time.Local
 	pl.XRange.Time = true
 	pl.XRange.DataMin = x[0]
-	pl.XRange.DataMax = x[len(x)-1]-STEP
-	pl.XRange.TicSetting.TDelta = chart.MatchingTimeDelta(float64(time.Now().Unix()), STEP) //x轴时间间隔
+	pl.XRange.DataMax = x[len(x)-1] - DAY
+	pl.XRange.TicSetting.TDelta = chart.MatchingTimeDelta(float64(time.Now().Unix()), DAY) //x轴时间间隔
 
 	pl.YRange.TicSetting.Mirror = 1
 	pl.XRange.Label = "date"
 	pl.YRange.Label = "cases"
 	err := dumper.Plot(&pl)
+	if err != nil {
+		return nil
+	}
+	return &dumper.img
+}
+
+func PieChart(continent map[string]int, chartName string) *bytes.Buffer {
+	dumper := NewDumper(1, 1, 500, 300)
+
+	var names []string
+	var cases []int
+	for k, v := range continent {
+		if k =="PubDate" {
+			continue
+		}
+		names = append(names, k)
+		cases = append(cases, v)
+	}
+
+	pie := chart.PieChart{Title: chartName}
+	pie.AddIntDataPair("World", names, cases)
+	pie.Data[0].Samples[3].Flag = true
+
+	pie.Inner = 0.55 //面积比例
+	pie.FmtVal = chart.PercentValue
+	err := dumper.Plot(&pie)
 	if err != nil {
 		return nil
 	}

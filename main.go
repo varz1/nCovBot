@@ -16,6 +16,7 @@ func main() {
 	go bot.Run()
 	go maker.List()
 	go maker.Overall()
+	go maker.WorldOverall()
 	go maker.Trend()
 	go maker.Province()
 	go maker.QueryProvince()

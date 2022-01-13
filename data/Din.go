@@ -220,3 +220,38 @@ func GetAdds(day int) []model.Add {
 	}
 	return res.Data.Adds[len(res.Data.Adds)-day:]
 }
+
+// GetWorldData 获取大洲累积确诊返回map
+func GetWorldData() (map[string]int, error) {
+	var res struct {
+		Data struct {
+			WomAboard []model.World `json:"WomAboard"`
+		} `json:"data"`
+	}
+	resp, err := request.R().SetResult(&res).SetQueryString("modules=WomAboard").
+		Get("https://api.inews.qq.com/newsqa/v1/automation/modules/list?")
+	if resp.StatusCode() != 200 {
+		logrus.Error("获取世界数据失败")
+		return nil, err
+	}
+	continent := make(map[string]int)
+	for _, v := range res.Data.WomAboard {
+		switch v.Continent {
+		case "北美洲":
+			continent["North America"] = continent["North America"] + v.Confirm
+		case "亚洲":
+			continent["Asia"] = continent["Asia"] + v.Confirm
+		case "南美洲":
+			continent["South America"] = continent["South America"] + v.Confirm
+		case "欧洲":
+			continent["Europe"] = continent["Europe"] + v.Confirm
+		case "大洋洲":
+			continent["Oceania"] = continent["Oceania"] + v.Confirm
+		case "非洲":
+			continent["Africa"] = continent["Africa"] + v.Confirm
+		}
+	}
+	PubDate,_:=strconv.Atoi(res.Data.WomAboard[0].PubDate)
+	continent["PubDate"] = PubDate
+	return continent, nil
+}

@@ -21,7 +21,7 @@ func Overall() {
 			channel.MessageChannel <- msg
 			return
 		}
-		data := data2.GetOverall()//
+		data := data2.GetOverall() //
 		tm := time.Unix(data.UpdateTime/1000, 0).Format("2006-01-02 15:04")
 		tm1 := time.Unix(mapTime, 0).Format("2006-01-02 15:04")
 		text.WriteString("🇨🇳中国疫情概况:")
@@ -70,8 +70,8 @@ func Trend() {
 			xRange = append(xRange, float64(res+Day))
 			yRange = append(yRange, float64(v.LocalConfirmAdd))
 		}
-		uT := "2022." + adds[len(adds)-1].Date
-		buf := Scatter(xRange, yRange, "7 Days Local Case Increment")
+		uT := adds[0].Year + "." + adds[len(adds)-1].Date
+		buf := Scatter(xRange, yRange, "Local Cases Increment In 7 Days")
 		if buf == nil {
 			errMsg := tgbotapi.NewMessage(update.Message.Chat.ID, "渲染错误")
 			channel.MessageChannel <- errMsg
@@ -89,6 +89,51 @@ func Trend() {
 			Caption: "七天内本土新增病例\n横轴代表日期 纵轴代表病例数\n数据更新时间" + uT,
 		}
 		channel.MessageChannel <- msg
+	}
+}
+
+func WorldOverall() {
+	for update := range channel.WorldUpdateChannel {
+		data := data2.GetOverall()
+		c,err1 := data2.GetWorldData()
+		if err1!=nil {
+			log.Println("获取数据失败")
+			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "获取数据失败")
+			channel.MessageChannel <- msg
+			return
+		}
+		global := data.GlobalStatistics
+		caption := strings.Builder{}
+		tm := time.Unix(data.UpdateTime/1000, 0).Format("2006-01-02 15:04")
+		caption.WriteString("\n🌏全球疫情概况")
+		caption.WriteString("\n全球现存确诊" + strconv.Itoa(global.CurrentConfirmedCount) + " ⬆️" + strconv.Itoa(global.CurrentConfirmedIncr))
+		caption.WriteString("\n全球累计确诊" + strconv.Itoa(global.ConfirmedCount) + " ⬆️" + strconv.Itoa(global.ConfirmedIncr))
+		caption.WriteString("\n全球累计治愈" + strconv.Itoa(global.CuredCount) + " ⬆️" + strconv.Itoa(global.CuredIncr))
+		caption.WriteString("\n全球累计死亡" + strconv.Itoa(global.DeadCount) + " ⬆️" + strconv.Itoa(global.DeadIncr))
+		caption.WriteString("\n数据更新时间:" + tm)
+		buf :=PieChart(c,"World Cases")
+		if  buf==nil {
+			log.Println("获取图表失败")
+			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "获取图表渲染失败")
+			channel.MessageChannel <- msg
+			return
+		}
+		caption.WriteString("\n图表为各大洲累计病例数占比\n图表数据更新时间" + strconv.Itoa(c["PubDate"]))
+		fi := tgbotapi.FileBytes{
+			Name:  "world.jpg",
+			Bytes: buf.Bytes(),
+		}
+		p := tgbotapi.PhotoConfig{
+			BaseFile: tgbotapi.BaseFile{
+				BaseChat: tgbotapi.BaseChat{
+					ChatID: update.Message.Chat.ID,
+				},
+				File: fi,
+			},
+			Caption: caption.String(),
+		}
+		channel.MessageChannel <- p
+		caption.Reset()
 	}
 }
 

@@ -21,7 +21,7 @@ func Overall() {
 			channel.MessageChannel <- msg
 			return
 		}
-		data := data2.GetOverall()
+		data := data2.GetOverall()//
 		tm := time.Unix(data.UpdateTime/1000, 0).Format("2006-01-02 15:04")
 		tm1 := time.Unix(mapTime, 0).Format("2006-01-02 15:04")
 		text.WriteString("🇨🇳中国疫情概况:")

@@ -49,9 +49,9 @@ func Scatter(x, y []float64, chartName string) *bytes.Buffer {
 	pl.XRange.TicSetting.Mirror = 1
 	pl.XRange.TicSetting.TLocation = time.Local
 	pl.XRange.Time = true
-	pl.XRange.DataMin = float64(time.Now().Unix()) - 8*STEP
-	pl.XRange.DataMax = float64(time.Now().Unix()) - STEP
-	pl.XRange.TicSetting.TDelta = chart.MatchingTimeDelta(float64(time.Now().Unix()), STEP)
+	pl.XRange.DataMin = x[0]
+	pl.XRange.DataMax = x[len(x)-1]-STEP
+	pl.XRange.TicSetting.TDelta = chart.MatchingTimeDelta(float64(time.Now().Unix()), STEP) //x轴时间间隔
 
 	pl.YRange.TicSetting.Mirror = 1
 	pl.XRange.Label = "date"

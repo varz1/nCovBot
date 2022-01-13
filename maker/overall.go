@@ -58,6 +58,11 @@ func Trend() {
 		log.Println("开始绘图Trend")
 		const Day = 86400
 		adds := data2.GetAdds(7) //获取七天本地新增
+		if adds == nil {
+			errMsg := tgbotapi.NewMessage(update.Message.Chat.ID, "请求数据错误")
+			channel.MessageChannel <- errMsg
+			return
+		}
 		var xRange, yRange []float64
 		for _, v := range adds {
 			s := strings.ReplaceAll(v.Date, ".", "")
@@ -65,7 +70,8 @@ func Trend() {
 			xRange = append(xRange, float64(res+Day))
 			yRange = append(yRange, float64(v.LocalConfirmAdd))
 		}
-		buf := Scatter(xRange, yRange, "7Days Local Case Increment")
+		uT := "2022." + adds[len(adds)-1].Date
+		buf := Scatter(xRange, yRange, "7 Days Local Case Increment")
 		if buf == nil {
 			errMsg := tgbotapi.NewMessage(update.Message.Chat.ID, "渲染错误")
 			channel.MessageChannel <- errMsg
@@ -80,7 +86,7 @@ func Trend() {
 				BaseChat: tgbotapi.BaseChat{ChatID: update.Message.Chat.ID},
 				File:     fi,
 			},
-			Caption: "七天内本土新增病例\n横轴代表时间 纵轴代表病例数",
+			Caption: "七天内本土新增病例\n横轴代表日期 纵轴代表病例数\n数据更新时间" + uT,
 		}
 		channel.MessageChannel <- msg
 	}

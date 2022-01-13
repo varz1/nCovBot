@@ -29,6 +29,11 @@ func init() {
 		"upgrade-insecure-requests": "1",
 	}
 	request.SetHeaders(header)
+	if err := GetChMap(); err != nil {
+		logrus.Info("更新失败请重试")
+	} else {
+		logrus.Info("更新成功")
+	}
 }
 
 // Cro19map 定时更新数据图表
@@ -74,21 +79,6 @@ func GetChMap() error {
 		return err
 	}
 	return nil
-}
-
-func GetState() (int64, error) {
-	log1 := logrus.WithField("GetState", "查看状态")
-	pwd, _ := os.Getwd()
-	var updateTime int64 = 0
-	f := "/public/virusMap.png"
-	info, err := os.Stat(pwd + f)
-	if err != nil {
-		log1.Info("尚未更新map")
-		return 0, err
-	} else {
-		log1.Info(f + "已更新" + "上次更新时间为" + info.ModTime().String())
-	}
-	return updateTime, nil
 }
 
 // Screenshot 截图

@@ -58,6 +58,11 @@ func baseRouter(update *tgbotapi.Update) {
 			} else {
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, "地图已更新")
 			}
+			err := maker.GetScatter()
+			if err != nil {
+				log.Println("初始化图表失败")
+				return
+			}
 		}
 	}
 	channel.MessageChannel <- msg

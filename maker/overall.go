@@ -14,14 +14,6 @@ import (
 
 var SCATTER = bytes.Buffer{}
 
-func init() {
-	err := GetScatter()
-	if err != nil {
-		log.Println("初始化图表失败")
-		return
-	}
-}
-
 func Overall() {
 	text := strings.Builder{}
 	for overall := range channel.OverallUpdateChannel {

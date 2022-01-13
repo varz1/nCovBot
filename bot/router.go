@@ -58,25 +58,6 @@ func baseRouter(update *tgbotapi.Update) {
 			} else {
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, "地图已更新")
 			}
-		case "init":
-			err := maker.GetScatter()
-			if err != nil {
-				log.Println("初始化图表失败")
-				return
-			}
-		case "trend":
-			fi := tgbotapi.FileBytes{
-				Name:  "trend.jpg",
-				Bytes: maker.SCATTER.Bytes(),
-			}
-			msg1 := tgbotapi.PhotoConfig{
-				BaseFile: tgbotapi.BaseFile{
-					BaseChat: tgbotapi.BaseChat{ChatID: update.Message.Chat.ID},
-					File:     fi,
-				},
-				Caption: "七天内本土新增病例\n横轴代表日期 纵轴代表病例数\n数据更新时间",
-			}
-			channel.MessageChannel <- msg1
 		}
 	}
 	channel.MessageChannel <- msg

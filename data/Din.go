@@ -6,6 +6,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
+	"github.com/varz1/nCovBot/maker"
 	"github.com/varz1/nCovBot/model"
 	"io/ioutil"
 	"os"
@@ -33,13 +34,20 @@ func init() {
 
 // Cro19map 定时更新数据图表
 func Cro19map() {
+	logrus.WithField("Cro19map","开始定时任务")
 	c := cron.New()
 	c.AddFunc("@every 6h", func() {
 		if err := GetChMap(); err != nil {
-			logrus.Info("更新失败请重试")
-		} else {
-			logrus.Info("更新成功")
+			logrus.Error("更新map失败请重试")
+			return
 		}
+		logrus.Info("已更新map")
+		err := maker.GetScatter()
+		if err != nil {
+			logrus.Error("更新trend失败")
+			return
+		}
+		logrus.Info("已更新trend")
 	})
 	c.AddFunc("@every 30m", func() {
 		Ping()
@@ -236,7 +244,7 @@ func GetWorldData() (map[string]int, error) {
 			continent["Africa"] = continent["Africa"] + v.Confirm
 		}
 	}
-	PubDate,_:=strconv.Atoi(res.Data.WomAboard[0].PubDate)
+	PubDate, _ := strconv.Atoi(res.Data.WomAboard[0].PubDate)
 	continent["PubDate"] = PubDate
 	return continent, nil
 }

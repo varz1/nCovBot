@@ -15,8 +15,6 @@ import (
 	"time"
 )
 
-var SCATTER = bytes.Buffer{}
-
 type Dumper struct {
 	N, M, W, H, Cnt int
 	I               *image.RGBA

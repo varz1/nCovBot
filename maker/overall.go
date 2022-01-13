@@ -1,7 +1,6 @@
 package maker
 
 import (
-	"bytes"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/varz1/nCovBot/channel"
 	data2 "github.com/varz1/nCovBot/data"
@@ -12,7 +11,7 @@ import (
 	"time"
 )
 
-var SCATTER = bytes.Buffer{}
+//var SCATTER = bytes.Buffer{}
 
 func Overall() {
 	text := strings.Builder{}
@@ -49,31 +48,30 @@ func Overall() {
 
 func Trend() {
 	for update := range channel.TrendChannel {
-		//log.Println("开始绘图Trend")
-		//const Day = 86400
-		//adds := data2.GetAdds(7) //获取七天本地新增
-		//if adds == nil {
-		//	errMsg := tgbotapi.NewMessage(update.Message.Chat.ID, "请求数据错误")
-		//	channel.MessageChannel <- errMsg
-		//	return
-		//}
-		//var xRange, yRange []float64
-		//for _, v := range adds {
-		//	s := strings.ReplaceAll(v.Date, ".", "")
-		//	res := Time2TimeStamp(s)
-		//	xRange = append(xRange, float64(res+Day))
-		//	yRange = append(yRange, float64(v.LocalConfirmAdd))
-		//}
-		//uT := adds[0].Year + "." + adds[len(adds)-1].Date
-		//buf := Scatter(xRange, yRange, "Local Cases Increment In 7 Days")
-		//if buf == nil {
-		//	errMsg := tgbotapi.NewMessage(update.Message.Chat.ID, "渲染错误")
-		//	channel.MessageChannel <- errMsg
-		//	return
-		//}
+		log.Println("开始绘图Trend")
+		const Day = 86400
+		adds := data2.GetAdds(7) //获取七天本地新增
+		if adds == nil {
+			errMsg := tgbotapi.NewMessage(update.Message.Chat.ID, "请求数据错误")
+			channel.MessageChannel <- errMsg
+			return
+		}
+		var xRange, yRange []float64
+		for _, v := range adds {
+			s := strings.ReplaceAll(v.Date, ".", "")
+			res := Time2TimeStamp(s)
+			xRange = append(xRange, float64(res+Day))
+			yRange = append(yRange, float64(v.LocalConfirmAdd))
+		}
+		buf := Scatter(xRange, yRange, "Local Cases Increment In 7 Days")
+		if buf == nil {
+			errMsg := tgbotapi.NewMessage(update.Message.Chat.ID, "渲染错误")
+			channel.MessageChannel <- errMsg
+			return
+		}
 		fi := tgbotapi.FileBytes{
 			Name:  "trend.jpg",
-			Bytes: SCATTER.Bytes(),
+			Bytes: buf.Bytes(),
 		}
 		msg := tgbotapi.PhotoConfig{
 			BaseFile: tgbotapi.BaseFile{

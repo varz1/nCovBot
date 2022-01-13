@@ -59,13 +59,6 @@ github.com/chromedp/chromedp/kb
 github.com/chromedp/sysutil
 # github.com/go-echarts/go-echarts/v2 v2.2.4
 ## explicit; go 1.15
-github.com/go-echarts/go-echarts/v2/charts
-github.com/go-echarts/go-echarts/v2/components
-github.com/go-echarts/go-echarts/v2/datasets
-github.com/go-echarts/go-echarts/v2/opts
-github.com/go-echarts/go-echarts/v2/render
-github.com/go-echarts/go-echarts/v2/templates
-github.com/go-echarts/go-echarts/v2/types
 # github.com/go-resty/resty/v2 v2.7.0
 ## explicit; go 1.11
 github.com/go-resty/resty/v2

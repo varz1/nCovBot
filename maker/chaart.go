@@ -2,6 +2,7 @@ package maker
 
 import (
 	"bytes"
+	data2 "github.com/varz1/nCovBot/data"
 	"github.com/vdobler/chart"
 	"github.com/vdobler/chart/imgg"
 	"image"
@@ -10,8 +11,11 @@ import (
 	"image/png"
 	"log"
 	"strconv"
+	"strings"
 	"time"
 )
+
+var SCATTER = bytes.Buffer{}
 
 type Dumper struct {
 	N, M, W, H, Cnt int
@@ -72,7 +76,7 @@ func PieChart(continent map[string]int, chartName string) *bytes.Buffer {
 	var names []string
 	var cases []int
 	for k, v := range continent {
-		if k =="PubDate" {
+		if k == "PubDate" {
 			continue
 		}
 		names = append(names, k)
@@ -90,4 +94,27 @@ func PieChart(continent map[string]int, chartName string) *bytes.Buffer {
 		return nil
 	}
 	return &dumper.img
+}
+
+func GetScatter() error {
+	log.Println("开始绘图Trend")
+	var err error
+	const Day = 86400
+	adds := data2.GetAdds(7) //获取七天本地新增
+	if adds == nil {
+		return err
+	}
+	var xRange, yRange []float64
+	for _, v := range adds {
+		s := strings.ReplaceAll(v.Date, ".", "")
+		res := Time2TimeStamp(s)
+		xRange = append(xRange, float64(res+Day))
+		yRange = append(yRange, float64(v.LocalConfirmAdd))
+	}
+	buf := Scatter(xRange, yRange, "Local Cases Increment In 7 Days")
+	if buf == nil {
+		return err
+	}
+	SCATTER = *buf
+	return nil
 }

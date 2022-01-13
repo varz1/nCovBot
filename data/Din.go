@@ -29,11 +29,6 @@ func init() {
 		"upgrade-insecure-requests": "1",
 	}
 	request.SetHeaders(header)
-	if err := GetChMap(); err != nil {
-		logrus.Info("更新失败请重试")
-	} else {
-		logrus.Info("更新成功")
-	}
 }
 
 // Cro19map 定时更新数据图表

@@ -23,7 +23,7 @@ func initBot() *tgbotapi.BotAPI {
 
 func Run() {
 	botAPI = initBot()
-	botAPI.Debug = false
+	botAPI.Debug = true
 	go sender()
 	go receiver()
 }

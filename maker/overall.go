@@ -95,8 +95,8 @@ func Trend() {
 func WorldOverall() {
 	for update := range channel.WorldUpdateChannel {
 		data := data2.GetOverall()
-		c,err1 := data2.GetWorldData()
-		if err1!=nil {
+		c, err1 := data2.GetWorldData()
+		if err1 != nil {
 			log.Println("获取数据失败")
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "获取数据失败")
 			channel.MessageChannel <- msg
@@ -111,8 +111,8 @@ func WorldOverall() {
 		caption.WriteString("\n全球累计治愈" + strconv.Itoa(global.CuredCount) + " ⬆️" + strconv.Itoa(global.CuredIncr))
 		caption.WriteString("\n全球累计死亡" + strconv.Itoa(global.DeadCount) + " ⬆️" + strconv.Itoa(global.DeadIncr))
 		caption.WriteString("\n数据更新时间:" + tm)
-		buf :=PieChart(c,"World Cases")
-		if  buf==nil {
+		buf := PieChart(c, "World Cases")
+		if buf == nil {
 			log.Println("获取图表失败")
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "获取图表渲染失败")
 			channel.MessageChannel <- msg

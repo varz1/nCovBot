@@ -27,7 +27,7 @@ func WebHookHandler(c *fiber.Ctx) error {
 }
 
 func NotFoundHandler(c *fiber.Ctx) error {
-	return c.Status(fiber.StatusNotFound).SendString("Sorry can't find that!")
+	return c.Status(fiber.StatusNotFound).SendString("走错路啦")
 }
 
 func HiHandler(c *fiber.Ctx) error {
@@ -50,13 +50,10 @@ func baseRouter(update *tgbotapi.Update) {
 		switch message {
 		case "hi":
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, "Hi👋 :) Administrator")
-		//case "update":
-		//	if err := data.GetChMap(); err != nil {
-		//		log.Println(err)
-		//		msg = tgbotapi.NewMessage(update.Message.Chat.ID, "更新失败 请重试")
-		//	} else {
-		//		msg = tgbotapi.NewMessage(update.Message.Chat.ID, "地图已更新")
-		//	}
+		case "update":
+			maker.GetChMap()
+			maker.GetScatter()
+			maker.GetPie()
 		}
 	}
 	channel.MessageChannel <- msg

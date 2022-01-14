@@ -21,19 +21,14 @@ var (
 	Map     = model.Chartt{}
 )
 
-// 初始化图表
+// 初始化图表以及定时任务
 func init() {
 	GetScatter()
 	GetPie()
 	GetChMap()
-	timer.AddFunc("@every 12h", func() {
-		GetPie()
-	})
 	timer.AddFunc("@every 6h", func() {
 		GetScatter()
 		GetChMap()
-	})
-	timer.AddFunc("@every 1m", func() {
 		GetPie()
 	})
 	timer.AddFunc("@every 30m", func() {

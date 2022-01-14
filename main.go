@@ -21,7 +21,6 @@ func main() {
 	go maker.QueryProvince()
 	go maker.News()
 	go maker.RiskQuery()
-//	go data.Cro19map()
 	app.Get("/hi", bot.HiHandler)
 	app.Post("/"+os.Getenv("TOKEN"), bot.WebHookHandler)
 	app.Use(bot.NotFoundHandler)

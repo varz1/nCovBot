@@ -97,6 +97,7 @@ func PieChart(continent map[string]int, chartName string) *bytes.Buffer {
 	return &dumper.img
 }
 
+// GetScatter 生成Scatter图
 func GetScatter() {
 	logrus.WithField("开始绘图Trend", "GetScatter")
 	const Day = 86400
@@ -121,6 +122,7 @@ func GetScatter() {
 	logrus.Info("渲染成功")
 }
 
+// GetPie 生成饼状图
 func GetPie() {
 	logrus.WithField("开始绘制Pie", "GetPie")
 	c, err1 := data2.GetWorldData()
@@ -134,9 +136,9 @@ func GetPie() {
 	logrus.Info("渲染成功")
 }
 
-// GetChMap 无头浏览器爬取数据图表
+// GetChMap 无头浏览器爬取疫情地图
 func GetChMap() {
-	logrus.WithField("开始爬取图表", "GetChMap")
+	logrus.WithField("开始爬取地图", "GetChMap")
 	var url = "https://voice.baidu.com/act/newpneumonia/newpneumonia"
 	var selMap = "#virus-map"
 	options := []chromedp.ExecAllocatorOption{

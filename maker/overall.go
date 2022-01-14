@@ -6,15 +6,18 @@ import (
 	"github.com/varz1/nCovBot/channel"
 	data2 "github.com/varz1/nCovBot/data"
 	"log"
-	"os"
 	"strconv"
 	"strings"
 	"time"
 )
 
-var SCATTER = bytes.Buffer{}
+var (
+	MAP = bytes.Buffer{}
+	SCATTER = bytes.Buffer{}
+)
 
 func init() {
+	data2.GetChMap()
 	GetScatter()
 }
 func Overall() {
@@ -30,21 +33,38 @@ func Overall() {
 		text.WriteString("\n累计治愈:" + strconv.Itoa(data.CuredCount) + " ⬆️" + strconv.Itoa(data.CuredIncr))
 		text.WriteString("\n累计死亡" + strconv.Itoa(data.DeadCount) + " ⬆️" + strconv.Itoa(data.DeadIncr))
 		text.WriteString("\n数据更新时间:" + tm)
-		var url = os.Getenv("baseURL") + "virusMap.png" + "?a=" + strconv.FormatInt(time.Now().Unix(), 10)
-		var p []interface{}
-		pic := tgbotapi.InputMediaPhoto{
-			Type:      "photo",
-			Media:     url,
-			Caption:   text.String(),
-			ParseMode: tgbotapi.ModeMarkdown,
+		if MAP.Bytes() == nil {
+			log.Println("地图为空")
+			errMsg := tgbotapi.NewMessage(overall.Message.Chat.ID,"地图渲染失败")
+			channel.MessageChannel <- errMsg
+			return
 		}
-		p = append(p, pic)
-		msg := tgbotapi.MediaGroupConfig{
-			BaseChat: tgbotapi.BaseChat{
-				ChatID: overall.Message.Chat.ID,
+		fi := tgbotapi.FileBytes{
+			Name:  "map.jpg",
+			Bytes: MAP.Bytes(),
+		}
+		msg := tgbotapi.PhotoConfig{
+			BaseFile: tgbotapi.BaseFile{
+				BaseChat: tgbotapi.BaseChat{ChatID: overall.Message.Chat.ID},
+				File:     fi,
 			},
-			InputMedia: p,
+			Caption: text.String(),
 		}
+		//var url = os.Getenv("baseURL") + "virusMap.png" + "?a=" + strconv.FormatInt(time.Now().Unix(), 10)
+		//var p []interface{}
+		//pic := tgbotapi.InputMediaPhoto{
+		//	Type:      "photo",
+		//	Media:     url,
+		//	Caption:   text.String(),
+		//	ParseMode: tgbotapi.ModeMarkdown,
+		//}
+		//p = append(p, pic)
+		//msg := tgbotapi.MediaGroupConfig{
+		//	BaseChat: tgbotapi.BaseChat{
+		//		ChatID: overall.Message.Chat.ID,
+		//	},
+		//	InputMedia: p,
+		//}
 		channel.MessageChannel <- msg
 		text.Reset()
 	}

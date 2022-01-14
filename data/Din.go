@@ -6,8 +6,8 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
+	"github.com/varz1/nCovBot/maker"
 	"github.com/varz1/nCovBot/model"
-	"io/ioutil"
 	"os"
 	"sort"
 	"strconv"
@@ -35,19 +35,19 @@ func init() {
 func Cro19map() {
 	logrus.WithField("Cro19map","开始定时任务")
 	c := cron.New()
-	c.AddFunc("@every 6h", func() {
-		if err := GetChMap(); err != nil {
-			logrus.Error("更新map失败请重试")
-			return
-		}
-		logrus.Info("已更新map")
-		//err := maker.GetScatter()
-		//if err != nil {
-		//	logrus.Error("更新trend失败")
-		//	return
-		//}
-		//logrus.Info("已更新trend")
-	})
+	//c.AddFunc("@every 6h", func() {
+	//	//if err := GetChMap(); err != nil {
+	//	//	logrus.Error("更新map失败请重试")
+	//	//	return
+	//	//}
+	//	//logrus.Info("已更新map")
+	//	//err := maker.GetScatter()
+	//	//if err != nil {
+	//	//	logrus.Error("更新trend失败")
+	//	//	return
+	//	//}
+	//	//logrus.Info("已更新trend")
+	//})
 	c.AddFunc("@every 30m", func() {
 		Ping()
 	})
@@ -55,12 +55,12 @@ func Cro19map() {
 }
 
 // GetChMap 无头浏览器爬取数据图表
-func GetChMap() error {
+func GetChMap()  {
 	logrus.WithField("GetChMap", "开始爬取图表")
 	var url = "https://voice.baidu.com/act/newpneumonia/newpneumonia"
 	var selMap = "#virus-map"
-	pwd, _ := os.Getwd()
-	fileMap := "/public/virusMap.png"
+	//pwd, _ := os.Getwd()
+	//fileMap := "/public/virusMap.png"
 	options := []chromedp.ExecAllocatorOption{
 		chromedp.Flag("blink-settings", "imagesEnabled=false"),
 		chromedp.UserAgent(`Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36`),
@@ -75,12 +75,12 @@ func GetChMap() error {
 	var buf []byte
 	if err := chromedp.Run(ctx,
 		Screenshot(url, selMap, &buf)); err != nil {
-		return err
+		logrus.Error("爬取地图失败")
 	}
-	if err := ioutil.WriteFile(pwd+fileMap, buf, 0o644); err != nil {
-		return err
-	}
-	return nil
+	maker.MAP.Write(buf)
+	//if err := ioutil.WriteFile(pwd+fileMap, buf, 0o644); err != nil {
+	//	logrus.Error("写入地图失败")
+	//}
 }
 
 // Screenshot 截图

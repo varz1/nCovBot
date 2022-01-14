@@ -1,12 +1,17 @@
 package data
 
 import (
+	"context"
+	"github.com/chromedp/chromedp"
 	"github.com/go-resty/resty/v2"
 	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
 	"github.com/varz1/nCovBot/model"
+	"io/ioutil"
+	"os"
 	"sort"
 	"strconv"
+	"time"
 )
 
 var request = resty.New()
@@ -28,25 +33,62 @@ func init() {
 
 // Cro19map 定时更新数据图表
 func Cro19map() {
-	logrus.WithField("Cro19map", "开始定时任务")
+	logrus.WithField("Cro19map","开始定时任务")
 	c := cron.New()
-	//c.AddFunc("@every 6h", func() {
-	//	//if err := GetChMap(); err != nil {
-	//	//	logrus.Error("更新map失败请重试")
-	//	//	return
-	//	//}
-	//	//logrus.Info("已更新map")
-	//	//err := maker.GetScatter()
-	//	//if err != nil {
-	//	//	logrus.Error("更新trend失败")
-	//	//	return
-	//	//}
-	//	//logrus.Info("已更新trend")
-	//})
+	c.AddFunc("@every 6h", func() {
+		if err := GetChMap(); err != nil {
+			logrus.Error("更新map失败请重试")
+			return
+		}
+		logrus.Info("已更新map")
+		//err := maker.GetScatter()
+		//if err != nil {
+		//	logrus.Error("更新trend失败")
+		//	return
+		//}
+		//logrus.Info("已更新trend")
+	})
 	c.AddFunc("@every 30m", func() {
 		Ping()
 	})
 	c.Start()
+}
+
+// GetChMap 无头浏览器爬取数据图表
+func GetChMap() error {
+	logrus.WithField("GetChMap", "开始爬取图表")
+	var url = "https://voice.baidu.com/act/newpneumonia/newpneumonia"
+	var selMap = "#virus-map"
+	pwd, _ := os.Getwd()
+	fileMap := "/public/virusMap.png"
+	options := []chromedp.ExecAllocatorOption{
+		chromedp.Flag("blink-settings", "imagesEnabled=false"),
+		chromedp.UserAgent(`Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36`),
+	}
+	options = append(chromedp.DefaultExecAllocatorOptions[:], options...)
+	ctx, cancel := chromedp.NewContext(context.Background())
+	defer cancel()
+	chromedp.ExecPath(os.Getenv("GOOGLE_CHROME_SHIM"))
+	// 超时设置
+	ctx, cancel = context.WithTimeout(ctx, 5*time.Minute)
+	defer cancel()
+	var buf []byte
+	if err := chromedp.Run(ctx,
+		Screenshot(url, selMap, &buf)); err != nil {
+		return err
+	}
+	if err := ioutil.WriteFile(pwd+fileMap, buf, 0o644); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Screenshot 截图
+func Screenshot(url, sel string, res *[]byte) chromedp.Tasks {
+	return chromedp.Tasks{
+		chromedp.Navigate(url),
+		chromedp.Screenshot(sel, res, chromedp.NodeVisible),
+	}
 }
 
 // GetOverall 获取疫情概览

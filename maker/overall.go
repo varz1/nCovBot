@@ -5,20 +5,20 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/varz1/nCovBot/channel"
 	data2 "github.com/varz1/nCovBot/data"
-	"log"
+	"os"
 	"strconv"
 	"strings"
 	"time"
 )
 
 var (
-	MAP = bytes.Buffer{}
 	SCATTER = bytes.Buffer{}
+	Pie     = bytes.Buffer{}
 )
 
 func init() {
-	GetChMap()
 	GetScatter()
+	GetPie()
 }
 func Overall() {
 	text := strings.Builder{}
@@ -33,38 +33,21 @@ func Overall() {
 		text.WriteString("\n累计治愈:" + strconv.Itoa(data.CuredCount) + " ⬆️" + strconv.Itoa(data.CuredIncr))
 		text.WriteString("\n累计死亡" + strconv.Itoa(data.DeadCount) + " ⬆️" + strconv.Itoa(data.DeadIncr))
 		text.WriteString("\n数据更新时间:" + tm)
-		if MAP.Bytes() == nil {
-			log.Println("地图为空")
-			errMsg := tgbotapi.NewMessage(overall.Message.Chat.ID,"地图渲染失败")
-			channel.MessageChannel <- errMsg
-			return
+		var url = os.Getenv("baseURL") + "virusMap.png" + "?a=" + strconv.FormatInt(time.Now().Unix(), 10)
+		var p []interface{}
+		pic := tgbotapi.InputMediaPhoto{
+			Type:      "photo",
+			Media:     url,
+			Caption:   text.String(),
+			ParseMode: tgbotapi.ModeMarkdown,
 		}
-		fi := tgbotapi.FileBytes{
-			Name:  "map.jpg",
-			Bytes: MAP.Bytes(),
-		}
-		msg := tgbotapi.PhotoConfig{
-			BaseFile: tgbotapi.BaseFile{
-				BaseChat: tgbotapi.BaseChat{ChatID: overall.Message.Chat.ID},
-				File:     fi,
+		p = append(p, pic)
+		msg := tgbotapi.MediaGroupConfig{
+			BaseChat: tgbotapi.BaseChat{
+				ChatID: overall.Message.Chat.ID,
 			},
-			Caption: text.String(),
+			InputMedia: p,
 		}
-		//var url = os.Getenv("baseURL") + "virusMap.png" + "?a=" + strconv.FormatInt(time.Now().Unix(), 10)
-		//var p []interface{}
-		//pic := tgbotapi.InputMediaPhoto{
-		//	Type:      "photo",
-		//	Media:     url,
-		//	Caption:   text.String(),
-		//	ParseMode: tgbotapi.ModeMarkdown,
-		//}
-		//p = append(p, pic)
-		//msg := tgbotapi.MediaGroupConfig{
-		//	BaseChat: tgbotapi.BaseChat{
-		//		ChatID: overall.Message.Chat.ID,
-		//	},
-		//	InputMedia: p,
-		//}
 		channel.MessageChannel <- msg
 		text.Reset()
 	}
@@ -72,22 +55,6 @@ func Overall() {
 
 func Trend() {
 	for update := range channel.TrendChannel {
-		//log.Println("开始绘图Trend")
-		//const Day = 86400
-		//adds := data2.GetAdds(7) //获取七天本地新增
-		//if adds == nil {
-		//	errMsg := tgbotapi.NewMessage(update.Message.Chat.ID, "请求数据错误")
-		//	channel.MessageChannel <- errMsg
-		//	return
-		//}
-		//var xRange, yRange []float64
-		//for _, v := range adds {
-		//	s := strings.ReplaceAll(v.Date, ".", "")
-		//	res := Time2TimeStamp(s)
-		//	xRange = append(xRange, float64(res+Day))
-		//	yRange = append(yRange, float64(v.LocalConfirmAdd))
-		//}
-		//buf := Scatter(xRange, yRange, "Local Cases Increment In 7 Days")
 		if SCATTER.Bytes() == nil {
 			errMsg := tgbotapi.NewMessage(update.Message.Chat.ID, "渲染错误")
 			channel.MessageChannel <- errMsg
@@ -112,13 +79,18 @@ func WorldOverall() {
 	for update := range channel.WorldUpdateChannel {
 		data := data2.GetOverall()
 		global := data.GlobalStatistics
-		c, err1 := data2.GetWorldData()
-		if err1 != nil {
-			log.Println(err1)
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "获取数据失败")
+		if Pie.Bytes()==nil {
+			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "图表为空")
 			channel.MessageChannel <- msg
 			return
 		}
+		//c, err1 := data2.GetWorldData()
+		//if err1 != nil {
+		//	log.Println(err1)
+		//	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "获取数据失败")
+		//	channel.MessageChannel <- msg
+		//	return
+		//}
 		caption := strings.Builder{}
 		tm := time.Unix(data.UpdateTime/1000, 0).Format("2006-01-02 15:04")
 		caption.WriteString("\n🌏全球疫情概况")
@@ -127,17 +99,17 @@ func WorldOverall() {
 		caption.WriteString("\n全球累计治愈" + strconv.Itoa(global.CuredCount) + " ⬆️" + strconv.Itoa(global.CuredIncr))
 		caption.WriteString("\n全球累计死亡" + strconv.Itoa(global.DeadCount) + " ⬆️" + strconv.Itoa(global.DeadIncr))
 		caption.WriteString("\n数据更新时间:" + tm)
-		buf := PieChart(c, "World Confirmed Cases")
-		if buf == nil {
-			log.Println("获取图表失败")
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "图表渲染失败")
-			channel.MessageChannel <- msg
-			return
-		}
-		caption.WriteString("\n图表为各大洲累计病例数占比\n图表数据更新时间" + strconv.Itoa(c["PubDate"]))
+		//buf := PieChart(c, "World Confirmed Cases")
+		//if buf == nil {
+		//	log.Println("获取图表失败")
+		//	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "图表渲染失败")
+		//	channel.MessageChannel <- msg
+		//	return
+		//}
+		caption.WriteString("\n图表为各大洲累计病例数占比 统计至今")
 		fi := tgbotapi.FileBytes{
 			Name:  "world.jpg",
-			Bytes: buf.Bytes(),
+			Bytes: Pie.Bytes(),
 		}
 		p := tgbotapi.PhotoConfig{
 			BaseFile: tgbotapi.BaseFile{

@@ -4,6 +4,7 @@ import (
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/gofiber/fiber/v2"
 	"github.com/varz1/nCovBot/channel"
+	"github.com/varz1/nCovBot/data"
 	"github.com/varz1/nCovBot/maker"
 	"log"
 	"os"
@@ -51,8 +52,8 @@ func baseRouter(update *tgbotapi.Update) {
 		case "hi":
 			msg = tgbotapi.NewMessage(update.Message.Chat.ID, "Hi👋 :) Administrator")
 		case "update":
-			maker.GetChMap()
-			if maker.MAP.Bytes() == nil {
+			if err := data.GetChMap(); err != nil {
+				log.Println(err)
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, "更新失败 请重试")
 			} else {
 				msg = tgbotapi.NewMessage(update.Message.Chat.ID, "地图已更新")

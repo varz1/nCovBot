@@ -4,7 +4,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/varz1/nCovBot/bot"
-	"github.com/varz1/nCovBot/data"
 	"github.com/varz1/nCovBot/maker"
 	"os"
 )
@@ -22,7 +21,7 @@ func main() {
 	go maker.QueryProvince()
 	go maker.News()
 	go maker.RiskQuery()
-	go data.Cro19map()
+//	go data.Cro19map()
 	app.Get("/hi", bot.HiHandler)
 	app.Post("/"+os.Getenv("TOKEN"), bot.WebHookHandler)
 	app.Use(bot.NotFoundHandler)

@@ -6,7 +6,6 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
-	"github.com/varz1/nCovBot/maker"
 	"github.com/varz1/nCovBot/model"
 	"io/ioutil"
 	"os"
@@ -43,11 +42,11 @@ func Cro19map() {
 			return
 		}
 		logrus.Info("已更新map 开始更新趋势图")
-		maker.GetScatter()
+		//maker.GetScatter()
 	})
-	c.AddFunc("@every 1m", func() {
-		maker.GetPie()
-	})
+	//c.AddFunc("@every 1m", func() {
+	//	maker.GetPie()
+	//})
 	c.AddFunc("@every 30m", func() {
 		Ping()
 	})

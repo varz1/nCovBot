@@ -7,7 +7,7 @@
 
 ## 简介
 
-一个Telegram 疫情Bot。
+一个Telegram Covid-19 Bot。
 
 ![nCovBot](https://github.com/varz1/pics/blob/master/bot.png?raw=true)
 
@@ -21,7 +21,7 @@
 - 输入地区名称返回疫情数据
 
 ## ChangeLog
-**2022.1.14** V96:使用文件传输图表,优化了定时器，初始化图表🎂
+**2022.1.14** V97:使用文件传输图表,优化了定时器，初始化图表🎂
 
 ## 数据以及图表来源
 

@@ -1,10 +1,10 @@
 package maker
 
 import (
-	"bytes"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/varz1/nCovBot/channel"
 	data2 "github.com/varz1/nCovBot/data"
+	"github.com/varz1/nCovBot/model"
 	"os"
 	"strconv"
 	"strings"
@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	SCATTER = bytes.Buffer{}
-	Pie     = bytes.Buffer{}
+	SCATTER = model.Chartt{}
+	Pie     = model.Chartt{}
 )
 
 func init() {
@@ -56,7 +56,7 @@ func Overall() {
 
 func Trend() {
 	for update := range channel.TrendChannel {
-		if SCATTER.Bytes() == nil {
+		if SCATTER.Pie.Bytes() == nil {
 			errMsg := tgbotapi.NewMessage(update.Message.Chat.ID, "渲染错误")
 			channel.MessageChannel <- errMsg
 			return
@@ -66,10 +66,10 @@ func Trend() {
 				BaseChat: tgbotapi.BaseChat{ChatID: update.Message.Chat.ID},
 				File: tgbotapi.FileBytes{
 					Name:  "trend.jpg",
-					Bytes: SCATTER.Bytes(),
+					Bytes: SCATTER.Pie.Bytes(),
 				},
 			},
-			Caption: "七天内本土新增病例\n横轴代表日期 纵轴代表病例数",
+			Caption: "七天内本土新增病例\n横轴代表日期 纵轴代表病例数\n图表更新时间:"+SCATTER.Date,
 		}
 		channel.MessageChannel <- msg
 	}
@@ -79,7 +79,7 @@ func WorldOverall() {
 	for update := range channel.WorldUpdateChannel {
 		data := data2.GetOverall()
 		global := data.GlobalStatistics
-		if Pie.Bytes() == nil {
+		if Pie.Pie.Bytes() == nil {
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "图表为空")
 			channel.MessageChannel <- msg
 			return
@@ -92,7 +92,7 @@ func WorldOverall() {
 		caption.WriteString("\n全球累计治愈" + strconv.Itoa(global.CuredCount) + " ⬆️" + strconv.Itoa(global.CuredIncr))
 		caption.WriteString("\n全球累计死亡" + strconv.Itoa(global.DeadCount) + " ⬆️" + strconv.Itoa(global.DeadIncr))
 		caption.WriteString("\n数据更新时间:" + tm)
-		caption.WriteString("\n图表为各大洲累计病例数占比 统计至今")
+		caption.WriteString("\n图表为各大洲累计病例数占比 更新时间:"+Pie.Date)
 		p := tgbotapi.PhotoConfig{
 			BaseFile: tgbotapi.BaseFile{
 				BaseChat: tgbotapi.BaseChat{
@@ -100,7 +100,7 @@ func WorldOverall() {
 				},
 				File: tgbotapi.FileBytes{
 					Name:  "world.jpg",
-					Bytes: Pie.Bytes(),
+					Bytes: Pie.Pie.Bytes(),
 				},
 			},
 			Caption: caption.String(),

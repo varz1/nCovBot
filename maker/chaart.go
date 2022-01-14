@@ -97,6 +97,7 @@ func PieChart(continent map[string]int, chartName string) *bytes.Buffer {
 func GetScatter() {
 	log.Println("开始绘图Trend")
 	const Day = 86400
+	SCATTER.Date = time.Unix(time.Now().Unix(), 0).Format("2006-01-02 15:04")
 	adds := data2.GetAdds(7) //获取七天本地新增
 	if adds == nil {
 		log.Println("数据为空")
@@ -113,17 +114,18 @@ func GetScatter() {
 		log.Println("渲染失败")
 		return
 	}
-	SCATTER = *buf
+	SCATTER.Pie = *buf
 	log.Println("渲染成功")
 }
 
 func GetPie() {
 	log.Println("开始绘制Pie")
+	Pie.Date =  time.Unix(time.Now().Unix(), 0).Format("2006-01-02 15:04")
 	c, err1 := data2.GetWorldData()
 	if err1 != nil {
 		log.Println("获取Pie数据失败")
 		return
 	}
 	buf := PieChart(c, "World Confirmed Cases")
-	Pie = *buf
+	Pie.Pie = *buf
 }

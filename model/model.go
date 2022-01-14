@@ -1,8 +1,14 @@
 package model
 
 import (
+	"bytes"
 	"reflect"
 )
+
+type Chartt struct {
+	Pie bytes.Buffer
+	Date string
+}
 
 type RiskArea struct {
 	Area string `json:"area"`
@@ -12,10 +18,10 @@ type RiskArea struct {
 
 // World 世界数据
 type World struct {
-	Continent  string `json:"continent"`
-	Name       string `json:"name"`
-	PubDate    string `json:"pub_date"`
-	Confirm int    `json:"confirm"`
+	Continent string `json:"continent"`
+	Name      string `json:"name"`
+	PubDate   string `json:"pub_date"`
+	Confirm   int    `json:"confirm"`
 }
 
 // Add 新增本土case数据

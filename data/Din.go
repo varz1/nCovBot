@@ -6,6 +6,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
+	"github.com/varz1/nCovBot/maker"
 	"github.com/varz1/nCovBot/model"
 	"io/ioutil"
 	"os"
@@ -35,18 +36,17 @@ func init() {
 func Cro19map() {
 	logrus.WithField("Cro19map","开始定时任务")
 	c := cron.New()
+	logrus.Info("开始更新Map")
 	c.AddFunc("@every 6h", func() {
 		if err := GetChMap(); err != nil {
 			logrus.Error("更新map失败请重试")
 			return
 		}
-		logrus.Info("已更新map")
-		//err := maker.GetScatter()
-		//if err != nil {
-		//	logrus.Error("更新trend失败")
-		//	return
-		//}
-		//logrus.Info("已更新trend")
+		logrus.Info("已更新map 开始更新趋势图")
+		maker.GetScatter()
+	})
+	c.AddFunc("@every 1m", func() {
+		maker.GetPie()
 	})
 	c.AddFunc("@every 30m", func() {
 		Ping()

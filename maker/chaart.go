@@ -111,8 +111,10 @@ func GetScatter() {
 	buf := Scatter(xRange, yRange, "Local Cases Increment In 7 Days")
 	if buf == nil {
 		log.Println("渲染失败")
+		return
 	}
 	SCATTER = *buf
+	log.Println("渲染成功")
 }
 
 func GetPie() {

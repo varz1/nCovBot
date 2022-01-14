@@ -7,7 +7,7 @@
 
 ## 简介
 
-一个Telegram的聊天机器人疫情信息聚合机器人,数据来自丁香园开放Api，地图来自百度，使用无头浏览器爬取,本土疫情趋势后端绘制数据来自百度。
+一个Telegram 疫情Bot。
 
 ![nCovBot](https://github.com/varz1/pics/blob/master/bot.png?raw=true)
 
@@ -20,11 +20,11 @@
 - 中高风险地区查询
 - 输入地区名称返回疫情数据
 
+## ChangeLog
+**2022.1.14** V96:使用文件传输图表,优化了定时器，初始化图表🎂
+
 ## 数据以及图表来源
 
 [丁香园](https://github.com/BlankerL/DXY-COVID-19-Data)
 [腾讯](https://news.qq.com/zt2020/page/feiyan.htm#/)
 [百度](https://voice.baidu.com/act/newpneumonia/newpneumonia)
-
-## ChangeLog
-**2022.1.14** V95:使用文件传输图表,优化了定时器，初始化图表

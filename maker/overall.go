@@ -92,7 +92,7 @@ func WorldOverall() {
 		caption.WriteString("\n全球累计治愈" + strconv.Itoa(global.CuredCount) + " ⬆️" + strconv.Itoa(global.CuredIncr))
 		caption.WriteString("\n全球累计死亡" + strconv.Itoa(global.DeadCount) + " ⬆️" + strconv.Itoa(global.DeadIncr))
 		caption.WriteString("\n数据更新时间:" + tm)
-		caption.WriteString("\n图表为各大洲累计病例数占比 更新时间:"+Pie.Date)
+		caption.WriteString("\n图表为各大洲累计病例数占比 \n更新时间:"+Pie.Date)
 		p := tgbotapi.PhotoConfig{
 			BaseFile: tgbotapi.BaseFile{
 				BaseChat: tgbotapi.BaseChat{

@@ -15,6 +15,7 @@ import (
 )
 
 var request = resty.New()
+var timer =cron.New()
 
 func init() {
 	header := map[string]string{
@@ -29,29 +30,21 @@ func init() {
 		"upgrade-insecure-requests": "1",
 	}
 	request.SetHeaders(header)
-}
-
-// Cro19map 定时更新数据图表
-func Cro19map() {
-	logrus.WithField("Cro19map","开始定时任务")
-	c := cron.New()
-	logrus.Info("开始更新Map")
-	c.AddFunc("@every 6h", func() {
+	
+	timer.AddFunc("@every 6h", func() {
+		logrus.Info("开始更新Map")
 		if err := GetChMap(); err != nil {
 			logrus.Error("更新map失败请重试")
 			return
 		}
 		logrus.Info("已更新map 开始更新趋势图")
-		//maker.GetScatter()
 	})
-	//c.AddFunc("@every 1m", func() {
-	//	maker.GetPie()
-	//})
-	c.AddFunc("@every 30m", func() {
+	timer.AddFunc("@every 30m", func() {
 		Ping()
 	})
-	c.Start()
+	timer.Start()
 }
+
 
 // GetChMap 无头浏览器爬取数据图表
 func GetChMap() error {

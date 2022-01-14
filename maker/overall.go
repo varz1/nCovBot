@@ -17,7 +17,7 @@ var (
 )
 
 func init() {
-	data2.GetChMap()
+	GetChMap()
 	GetScatter()
 }
 func Overall() {

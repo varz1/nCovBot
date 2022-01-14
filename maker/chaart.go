@@ -2,6 +2,9 @@ package maker
 
 import (
 	"bytes"
+	"context"
+	"github.com/chromedp/chromedp"
+	"github.com/sirupsen/logrus"
 	data2 "github.com/varz1/nCovBot/data"
 	"github.com/vdobler/chart"
 	"github.com/vdobler/chart/imgg"
@@ -10,6 +13,7 @@ import (
 	"image/draw"
 	"image/png"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -113,4 +117,43 @@ func GetScatter()  {
 		log.Println("渲染失败")
 	}
 	SCATTER = *buf
+}
+
+
+
+// GetChMap 无头浏览器爬取数据图表
+func GetChMap()  {
+	logrus.WithField("GetChMap", "开始爬取图表")
+	var url = "https://voice.baidu.com/act/newpneumonia/newpneumonia"
+	var selMap = "#virus-map"
+	//pwd, _ := os.Getwd()
+	//fileMap := "/public/virusMap.png"
+	options := []chromedp.ExecAllocatorOption{
+		chromedp.Flag("blink-settings", "imagesEnabled=false"),
+		chromedp.UserAgent(`Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36`),
+	}
+	options = append(chromedp.DefaultExecAllocatorOptions[:], options...)
+	ctx, cancel := chromedp.NewContext(context.Background())
+	defer cancel()
+	chromedp.ExecPath(os.Getenv("GOOGLE_CHROME_SHIM"))
+	// 超时设置
+	ctx, cancel = context.WithTimeout(ctx, 5*time.Minute)
+	defer cancel()
+	var buf []byte
+	if err := chromedp.Run(ctx,
+		Screenshot(url, selMap, &buf)); err != nil {
+		logrus.Error("爬取地图失败")
+	}
+	MAP.Write(buf)
+	//if err := ioutil.WriteFile(pwd+fileMap, buf, 0o644); err != nil {
+	//	logrus.Error("写入地图失败")
+	//}
+}
+
+// Screenshot 截图
+func Screenshot(url, sel string, res *[]byte) chromedp.Tasks {
+	return chromedp.Tasks{
+		chromedp.Navigate(url),
+		chromedp.Screenshot(sel, res, chromedp.NodeVisible),
+	}
 }

@@ -10,6 +10,21 @@ import (
 
 var request = resty.New()
 
+const (
+	OVERALL = "https://lab.isaaclin.cn/nCoV/api/overall"                                                    //新闻概览API
+	AREA    = "https://lab.isaaclin.cn/nCoV/api/area?"                                                      //地区数据API
+	NEWS    = "https://lab.isaaclin.cn/nCoV/api/news"                                                       //新闻API
+	RISK    = "https://eyesight.news.qq.com/sars/riskarea"                                                  //风险地区API
+	LOCAL   = "https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=chinaDayAddList" //本土新增时间线
+	WORLD   = "https://api.inews.qq.com/newsqa/v1/automation/modules/list?"                                 //世界数据API
+	NA      = "North America"
+	AS      = "Asia"
+	SA      = "South America"
+	EU      = "Europe"
+	OC      = "Oceania"
+	AF      = "Africa"
+)
+
 func init() {
 	header := map[string]string{
 		"accept":                    `text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9`,
@@ -32,7 +47,7 @@ func GetOverall() model.OverallData {
 	var overall struct {
 		Results []model.OverallData `json:"results"`
 	}
-	resp, err := request.R().SetResult(&overall).Get("https://lab.isaaclin.cn/nCoV/api/overall")
+	resp, err := request.R().SetResult(&overall).Get(OVERALL)
 	if err != nil {
 		log1.WithField("resp err", err).Error(err)
 	}
@@ -52,8 +67,7 @@ func GetAreaData(area string) model.ProvinceData {
 		Results []model.ProvinceData `json:"results"`
 	}
 	log1.Println("开始请求地区数据API")
-	resp, err := request.R().SetResult(&res).SetQueryString("province=" + area).
-		Get("https://lab.isaaclin.cn/nCoV/api/area?")
+	resp, err := request.R().SetResult(&res).SetQueryString("province=" + area).Get(AREA)
 	if err != nil || resp.StatusCode() != 200 {
 		log1.WithField("请求地区数据失败", "").Errorln(err)
 		return model.ProvinceData{}
@@ -71,7 +85,7 @@ func GetNews() []model.NewsData {
 		Results []model.NewsData `json:"results"`
 	}
 	log1.Println("开始请求新闻数据API")
-	resp, err := request.R().SetResult(&res).Get("https://lab.isaaclin.cn/nCoV/api/news")
+	resp, err := request.R().SetResult(&res).Get(NEWS)
 	if err != nil || resp.StatusCode() != 200 {
 		log1.WithField("请求失败", "新闻API").Errorln(err)
 		return []model.NewsData{}
@@ -90,7 +104,7 @@ func GetRiskLevel(level string) []model.RiskArea {
 	}
 	count := 0
 	log1.Println("开始请求风险地区API")
-	resp, err := request.R().SetResult(&res).Get("https://eyesight.news.qq.com/sars/riskarea")
+	resp, err := request.R().SetResult(&res).Get(RISK)
 	if err != nil || resp.StatusCode() != 200 {
 		log1.WithField("请求失败", "风险地区").Error(err)
 	}
@@ -124,13 +138,14 @@ func GetRiskLevel(level string) []model.RiskArea {
 
 // GetAdds 获取新增数据用于绘制图表
 func GetAdds(day int) []model.Add {
+	logrus.WithField("请求本土新增数据", "GetAdds")
 	// day:需要的数据个数 这里只渲染最近七天数据
 	var res struct {
 		Data struct {
 			Adds []model.Add `json:"chinaDayAddList"`
 		} `json:"data"`
 	}
-	resp, _ := request.R().SetResult(&res).Get("https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=chinaDayAddList")
+	resp, _ := request.R().SetResult(&res).Get(LOCAL)
 	if !resp.IsSuccess() {
 		logrus.Error("请求数据失败")
 		return nil
@@ -140,13 +155,13 @@ func GetAdds(day int) []model.Add {
 
 // GetWorldData 获取大洲累积确诊返回map
 func GetWorldData() (map[string]int, error) {
+	logrus.WithField("请求大洲数据", "GetWorldData")
 	var res struct {
 		Data struct {
 			WomAboard []model.World `json:"WomAboard"`
 		} `json:"data"`
 	}
-	resp, err := request.R().SetResult(&res).SetQueryString("modules=WomAboard").
-		Get("https://api.inews.qq.com/newsqa/v1/automation/modules/list?")
+	resp, err := request.R().SetResult(&res).SetQueryString("modules=WomAboard").Get(WORLD)
 	if resp.StatusCode() != 200 {
 		logrus.Error("获取世界数据失败")
 		return nil, err
@@ -155,20 +170,20 @@ func GetWorldData() (map[string]int, error) {
 	for _, v := range res.Data.WomAboard {
 		switch v.Continent {
 		case "北美洲":
-			continent["North America"] = continent["North America"] + v.Confirm
+			continent[NA] = continent[NA] + v.Confirm
 		case "亚洲":
-			continent["Asia"] = continent["Asia"] + v.Confirm
+			continent[AS] = continent[AS] + v.Confirm
 		case "南美洲":
-			continent["South America"] = continent["South America"] + v.Confirm
+			continent[SA] = continent[SA] + v.Confirm
 		case "欧洲":
-			continent["Europe"] = continent["Europe"] + v.Confirm
+			continent[EU] = continent[EU] + v.Confirm
 		case "大洋洲":
-			continent["Oceania"] = continent["Oceania"] + v.Confirm
+			continent[OC] = continent[OC] + v.Confirm
 		case "非洲":
-			continent["Africa"] = continent["Africa"] + v.Confirm
+			continent[AF] = continent[AF] + v.Confirm
 		}
 	}
-	PubDate, _ := strconv.Atoi(res.Data.WomAboard[0].PubDate)
-	continent["PubDate"] = PubDate
+	//PubDate, _ := strconv.Atoi(res.Data.WomAboard[0].PubDate)
+	//continent["PubDate"] = PubDate
 	return continent, nil
 }

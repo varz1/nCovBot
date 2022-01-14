@@ -101,7 +101,7 @@ func WorldOverall() {
 		data := data2.GetOverall()
 		global := data.GlobalStatistics
 		if Pie.Pie.Bytes() == nil {
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "图表为空")
+			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "渲染错误")
 			channel.MessageChannel <- msg
 			return
 		}

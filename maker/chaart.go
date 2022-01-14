@@ -18,6 +18,10 @@ import (
 	"time"
 )
 
+const PIE = "World Confirmed Cases"
+const TREND = "Local Cases Increment In 7 Days"
+const DAY float64 = 86400 // 一天的时间戳
+
 type Dumper struct {
 	N, M, W, H, Cnt int
 	I               *image.RGBA
@@ -45,10 +49,9 @@ func (d *Dumper) Plot(c chart.Chart) error {
 }
 
 // Scatter 渲染散点图
-func Scatter(x, y []float64, chartName string) *bytes.Buffer {
+func Scatter(x, y []float64) *bytes.Buffer {
 	dumper := NewDumper(1, 1, 800, 600)
-	const DAY float64 = 86400 // 一天的时间戳
-	pl := chart.ScatterChart{Title: chartName}
+	pl := chart.ScatterChart{Title: TREND}
 	pl.Key.Pos = "itl"
 	todayAdd := "Today Add " + strconv.FormatFloat(y[len(y)-1], 'g', -1, 32) //将今日新增标注上
 	pl.AddDataPair(todayAdd, x, y, chart.PlotStyleLinesPoints,
@@ -71,20 +74,16 @@ func Scatter(x, y []float64, chartName string) *bytes.Buffer {
 }
 
 // PieChart 渲染饼状图
-func PieChart(continent map[string]int, chartName string) *bytes.Buffer {
+func PieChart(continent map[string]int) *bytes.Buffer {
 	dumper := NewDumper(1, 1, 500, 300)
-
 	var names []string
 	var cases []int
 	for k, v := range continent {
-		if k == "PubDate" {
-			continue
-		}
 		names = append(names, k)
 		cases = append(cases, v)
 	}
 
-	pie := chart.PieChart{Title: chartName}
+	pie := chart.PieChart{Title: PIE}
 	pie.AddIntDataPair("World", names, cases)
 	pie.Data[0].Samples[3].Flag = true
 
@@ -112,7 +111,7 @@ func GetScatter() {
 		xRange = append(xRange, float64(res+Day))
 		yRange = append(yRange, float64(v.LocalConfirmAdd))
 	}
-	buf := Scatter(xRange, yRange, "Local Cases Increment In 7 Days")
+	buf := Scatter(xRange, yRange)
 	if buf == nil {
 		logrus.Error("渲染失败")
 		return
@@ -130,7 +129,7 @@ func GetPie() {
 		logrus.Error("获取Pie数据失败")
 		return
 	}
-	buf := PieChart(c, "World Confirmed Cases")
+	buf := PieChart(c)
 	Pie.Pie = *buf
 	Pie.Date = time.Unix(time.Now().Unix(), 0).Format("2006-01-02 15:04")
 	logrus.Info("渲染成功")

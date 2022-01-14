@@ -2,6 +2,9 @@ package maker
 
 import (
 	"bytes"
+	"context"
+	"github.com/chromedp/chromedp"
+	"github.com/sirupsen/logrus"
 	data2 "github.com/varz1/nCovBot/data"
 	"github.com/vdobler/chart"
 	"github.com/vdobler/chart/imgg"
@@ -9,7 +12,7 @@ import (
 	"image/color"
 	"image/draw"
 	"image/png"
-	"log"
+	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -35,7 +38,7 @@ func (d *Dumper) Plot(c chart.Chart) error {
 	c.Plot(igr)
 	err := png.Encode(&d.img, d.I)
 	if err != nil {
-		log.Println("编码PNG失败")
+		logrus.Error("编码PNG失败")
 		return err
 	}
 	return nil
@@ -95,12 +98,11 @@ func PieChart(continent map[string]int, chartName string) *bytes.Buffer {
 }
 
 func GetScatter() {
-	log.Println("开始绘图Trend")
+	logrus.WithField("开始绘图Trend", "GetScatter")
 	const Day = 86400
-	SCATTER.Date = time.Unix(time.Now().Unix(), 0).Format("2006-01-02 15:04")
 	adds := data2.GetAdds(7) //获取七天本地新增
 	if adds == nil {
-		log.Println("数据为空")
+		logrus.Error("数据为空")
 	}
 	var xRange, yRange []float64
 	for _, v := range adds {
@@ -111,21 +113,57 @@ func GetScatter() {
 	}
 	buf := Scatter(xRange, yRange, "Local Cases Increment In 7 Days")
 	if buf == nil {
-		log.Println("渲染失败")
+		logrus.Error("渲染失败")
 		return
 	}
 	SCATTER.Pie = *buf
-	log.Println("渲染成功")
+	SCATTER.Date = time.Unix(time.Now().Unix(), 0).Format("2006-01-02 15:04")
+	logrus.Info("渲染成功")
 }
 
 func GetPie() {
-	log.Println("开始绘制Pie")
-	Pie.Date =  time.Unix(time.Now().Unix(), 0).Format("2006-01-02 15:04")
+	logrus.WithField("开始绘制Pie", "GetPie")
 	c, err1 := data2.GetWorldData()
 	if err1 != nil {
-		log.Println("获取Pie数据失败")
+		logrus.Error("获取Pie数据失败")
 		return
 	}
 	buf := PieChart(c, "World Confirmed Cases")
 	Pie.Pie = *buf
+	Pie.Date = time.Unix(time.Now().Unix(), 0).Format("2006-01-02 15:04")
+	logrus.Info("渲染成功")
+}
+
+// GetChMap 无头浏览器爬取数据图表
+func GetChMap() {
+	logrus.WithField("开始爬取图表", "GetChMap")
+	var url = "https://voice.baidu.com/act/newpneumonia/newpneumonia"
+	var selMap = "#virus-map"
+	options := []chromedp.ExecAllocatorOption{
+		chromedp.Flag("blink-settings", "imagesEnabled=false"),
+		chromedp.UserAgent(`Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36`),
+	}
+	options = append(chromedp.DefaultExecAllocatorOptions[:], options...)
+	ctx, cancel := chromedp.NewContext(context.Background())
+	defer cancel()
+	chromedp.ExecPath(os.Getenv("GOOGLE_CHROME_SHIM"))
+	// 超时设置
+	ctx, cancel = context.WithTimeout(ctx, 5*time.Minute)
+	defer cancel()
+	var buf []byte
+	if err := chromedp.Run(ctx,
+		Screenshot(url, selMap, &buf)); err != nil {
+		logrus.Error("截图失败")
+	}
+	Map.Pie.Write(buf)
+	Map.Date = time.Unix(time.Now().Unix(), 0).Format("2006-01-02 15:04")
+	logrus.Info("截图成功")
+}
+
+// Screenshot 截图
+func Screenshot(url, sel string, res *[]byte) chromedp.Tasks {
+	return chromedp.Tasks{
+		chromedp.Navigate(url),
+		chromedp.Screenshot(sel, res, chromedp.NodeVisible),
+	}
 }

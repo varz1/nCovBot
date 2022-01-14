@@ -2,13 +2,18 @@ package maker
 
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/robfig/cron/v3"
 	"github.com/varz1/nCovBot/channel"
 	data2 "github.com/varz1/nCovBot/data"
 	"github.com/varz1/nCovBot/model"
+	"log"
+	"net/http"
 	"strconv"
 	"strings"
 	"time"
 )
+
+var timer = cron.New()
 
 var (
 	SCATTER = model.Chartt{}
@@ -16,25 +21,50 @@ var (
 	Map     = model.Chartt{}
 )
 
+// 初始化图表
 func init() {
 	GetScatter()
 	GetPie()
 	GetChMap()
+	timer.AddFunc("@every 12h", func() {
+		GetPie()
+	})
+	timer.AddFunc("@every 6h", func() {
+		GetScatter()
+		GetChMap()
+	})
+	timer.AddFunc("@every 1m", func() {
+		GetPie()
+	})
+	timer.AddFunc("@every 30m", func() {
+		resp, err := http.Get("https://ncovbott.herokuapp.com/hi")
+		if err != nil {
+			log.Println("定时ping失败")
+			return
+		}
+		log.Printf("Ping成功 %v",resp.StatusCode)
+	})
+	timer.Start()
 }
 
 func Overall() {
-	text := strings.Builder{}
+	caption := strings.Builder{}
 	for overall := range channel.OverallUpdateChannel {
+		if Map.Pie.Bytes() == nil {
+			errMsg := tgbotapi.NewMessage(overall.Message.Chat.ID, "获取图表失败")
+			channel.MessageChannel <- errMsg
+			return
+		}
 		data := data2.GetOverall() //
 		tm := time.Unix(data.UpdateTime/1000, 0).Format("2006-01-02 15:04")
-		text.WriteString("🇨🇳中国疫情概况:")
-		text.WriteString("\n现存确诊(含港澳台):" + strconv.Itoa(data.CurrentConfirmedCount) + " ⬆️" + strconv.Itoa(data.CurrentConfirmedIncr))
-		text.WriteString("\n现存无症状:" + strconv.Itoa(data.SeriousCount) + " ⬆️" + strconv.Itoa(data.SeriousIncr))
-		text.WriteString("\n境外输入:" + strconv.Itoa(data.SuspectedCount) + " ⬆️" + strconv.Itoa(data.SuspectedIncr))
-		text.WriteString("\n累计确诊:" + strconv.Itoa(data.ConfirmedCount) + " ⬆️" + strconv.Itoa(data.ConfirmedIncr))
-		text.WriteString("\n累计治愈:" + strconv.Itoa(data.CuredCount) + " ⬆️" + strconv.Itoa(data.CuredIncr))
-		text.WriteString("\n累计死亡" + strconv.Itoa(data.DeadCount) + " ⬆️" + strconv.Itoa(data.DeadIncr))
-		text.WriteString("\n数据更新时间:" + tm)
+		caption.WriteString("🇨🇳中国疫情概况:")
+		caption.WriteString("\n现存确诊(含港澳台):" + strconv.Itoa(data.CurrentConfirmedCount) + " ⬆️" + strconv.Itoa(data.CurrentConfirmedIncr))
+		caption.WriteString("\n现存无症状:" + strconv.Itoa(data.SeriousCount) + " ⬆️" + strconv.Itoa(data.SeriousIncr))
+		caption.WriteString("\n境外输入:" + strconv.Itoa(data.SuspectedCount) + " ⬆️" + strconv.Itoa(data.SuspectedIncr))
+		caption.WriteString("\n累计确诊:" + strconv.Itoa(data.ConfirmedCount) + " ⬆️" + strconv.Itoa(data.ConfirmedIncr))
+		caption.WriteString("\n累计治愈:" + strconv.Itoa(data.CuredCount) + " ⬆️" + strconv.Itoa(data.CuredIncr))
+		caption.WriteString("\n累计死亡" + strconv.Itoa(data.DeadCount) + " ⬆️" + strconv.Itoa(data.DeadIncr))
+		caption.WriteString("\n数据更新时间:" + tm)
 		msg := tgbotapi.PhotoConfig{
 			BaseFile: tgbotapi.BaseFile{
 				BaseChat: tgbotapi.BaseChat{ChatID: overall.Message.Chat.ID},
@@ -43,25 +73,10 @@ func Overall() {
 					Bytes: Map.Pie.Bytes(),
 				},
 			},
-			Caption: text.String(),
+			Caption: caption.String() + "\n图表更新时间:" + Map.Date,
 		}
-		//var url = os.Getenv("baseURL") + "virusMap.png" + "?a=" + strconv.FormatInt(time.Now().Unix(), 10)
-		//var p []interface{}
-		//pic := tgbotapi.InputMediaPhoto{
-		//	Type:      "photo",
-		//	Media:     url,
-		//	Caption:   text.String(),
-		//	ParseMode: tgbotapi.ModeMarkdown,
-		//}
-		//p = append(p, pic)
-		//msg := tgbotapi.MediaGroupConfig{
-		//	BaseChat: tgbotapi.BaseChat{
-		//		ChatID: overall.Message.Chat.ID,
-		//	},
-		//	InputMedia: p,
-		//}
 		channel.MessageChannel <- msg
-		text.Reset()
+		caption.Reset()
 	}
 }
 

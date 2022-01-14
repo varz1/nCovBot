@@ -10,8 +10,6 @@ import (
 
 var request = resty.New()
 
-//var timer =cron.New()
-
 func init() {
 	header := map[string]string{
 		"accept":                    `text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9`,
@@ -25,57 +23,7 @@ func init() {
 		"upgrade-insecure-requests": "1",
 	}
 	request.SetHeaders(header)
-
-	//timer.AddFunc("@every 6h", func() {
-	//	logrus.Info("开始更新Map")
-	//	if err := GetChMap(); err != nil {
-	//		logrus.Error("更新map失败请重试")
-	//		return
-	//	}
-	//	logrus.Info("已更新map 开始更新趋势图")
-	//})
-	//timer.AddFunc("@every 30m", func() {
-	//	Ping()
-	//})
-	//timer.Start()
 }
-
-//// GetChMap 无头浏览器爬取数据图表
-//func GetChMap() error {
-//	logrus.WithField("GetChMap", "开始爬取图表")
-//	var url = "https://voice.baidu.com/act/newpneumonia/newpneumonia"
-//	var selMap = "#virus-map"
-//	pwd, _ := os.Getwd()
-//	fileMap := "/public/virusMap.png"
-//	options := []chromedp.ExecAllocatorOption{
-//		chromedp.Flag("blink-settings", "imagesEnabled=false"),
-//		chromedp.UserAgent(`Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36`),
-//	}
-//	options = append(chromedp.DefaultExecAllocatorOptions[:], options...)
-//	ctx, cancel := chromedp.NewContext(context.Background())
-//	defer cancel()
-//	chromedp.ExecPath(os.Getenv("GOOGLE_CHROME_SHIM"))
-//	// 超时设置
-//	ctx, cancel = context.WithTimeout(ctx, 5*time.Minute)
-//	defer cancel()
-//	var buf []byte
-//	if err := chromedp.Run(ctx,
-//		Screenshot(url, selMap, &buf)); err != nil {
-//		return err
-//	}
-//	if err := ioutil.WriteFile(pwd+fileMap, buf, 0o644); err != nil {
-//		return err
-//	}
-//	return nil
-//}
-//
-//// Screenshot 截图
-//func Screenshot(url, sel string, res *[]byte) chromedp.Tasks {
-//	return chromedp.Tasks{
-//		chromedp.Navigate(url),
-//		chromedp.Screenshot(sel, res, chromedp.NodeVisible),
-//	}
-//}
 
 // GetOverall 获取疫情概览
 func GetOverall() model.OverallData {
@@ -171,15 +119,6 @@ func GetRiskLevel(level string) []model.RiskArea {
 		return risk[:count]
 	default:
 		return risk[count:]
-	}
-}
-
-func Ping() {
-	resp, err := request.R().Get("https://ncovbott.herokuapp.com/hi")
-	if err != nil {
-		logrus.Info("ping err")
-	} else {
-		logrus.Printf("Ping 成功 状态码: %v", resp.StatusCode())
 	}
 }
 

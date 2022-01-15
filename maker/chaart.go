@@ -14,6 +14,8 @@ import (
 	"image/color"
 	"image/draw"
 	"image/png"
+	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -25,9 +27,10 @@ const DAY float64 = 86400 // 一天的时间戳
 
 var font *truetype.Font
 
+// 初始化字体
 func init() {
 	var err error
-	font, err = freetype.ParseFont(data2.YaHeiFontData())
+	font, err = freetype.ParseFont(YaHeiFontData())
 	if err != nil {
 		panic(err)
 	}
@@ -64,7 +67,7 @@ func Scatter(x, y []float64) *bytes.Buffer {
 	dumper := NewDumper(1, 1, 800, 600)
 	pl := chart.ScatterChart{Title: TREND}
 	pl.Key.Pos = "itl"
-	todayAdd := "病例 单位/例" //将今日新增标注上
+	todayAdd := "单位/例" //将今日新增标注上
 	pl.AddDataPair(todayAdd, x, y, chart.PlotStyleLinesPoints,
 		chart.Style{Symbol: '#', SymbolColor: color.NRGBA{R: 0xE3, G: 0x17, B: 0x0D, A: 0xff}, LineStyle: chart.SolidLine})
 	pl.XRange.TicSetting.Mirror = 1
@@ -77,6 +80,8 @@ func Scatter(x, y []float64) *bytes.Buffer {
 	pl.YRange.TicSetting.Mirror = 1
 	pl.XRange.Label = "日期"
 	pl.YRange.Label = "病例数"
+	pl.YRange.Min=0
+	pl.YRange.Max=300
 	err := dumper.Plot(&pl)
 	if err != nil {
 		return nil
@@ -178,4 +183,15 @@ func Screenshot(url, sel string, res *[]byte) chromedp.Tasks {
 		chromedp.Navigate(url),
 		chromedp.Screenshot(sel, res, chromedp.NodeVisible),
 	}
+}
+
+// YaHeiFontData 微软雅黑
+func YaHeiFontData() []byte {
+	p,_ := os.Getwd()
+	fontBytes, err := ioutil.ReadFile(p+"/.fonts/WeiRuanYaHei-1.ttf")
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	return fontBytes
 }

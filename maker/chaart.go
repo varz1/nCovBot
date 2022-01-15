@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"github.com/chromedp/chromedp"
+	"github.com/golang/freetype"
+	"github.com/golang/freetype/truetype"
 	"github.com/sirupsen/logrus"
 	data2 "github.com/varz1/nCovBot/data"
 	"github.com/vdobler/chart"
@@ -13,14 +15,23 @@ import (
 	"image/draw"
 	"image/png"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 )
 
-const PIE = "World Confirmed Cases"
-const TREND = "Local Cases Increment In 7 Days"
+const PIE = "各大洲累计确诊比"
+const TREND = "七天内新增病例数量"
 const DAY float64 = 86400 // 一天的时间戳
+
+var font *truetype.Font
+
+func init() {
+	var err error
+	font, err = freetype.ParseFont(data2.YaHeiFontData())
+	if err != nil {
+		panic(err)
+	}
+}
 
 type Dumper struct {
 	N, M, W, H, Cnt int
@@ -38,7 +49,7 @@ func NewDumper(n, m, w, h int) *Dumper {
 
 func (d *Dumper) Plot(c chart.Chart) error {
 	row, col := d.Cnt/d.N, d.Cnt%d.N
-	igr := imgg.AddTo(d.I, col*d.W, row*d.H, d.W, d.H, color.RGBA{R: 0xff, G: 0xff, B: 0xff, A: 0xff}, nil, nil)
+	igr := imgg.AddTo(d.I, col*d.W, row*d.H, d.W, d.H, color.RGBA{R: 0xff, G: 0xff, B: 0xff, A: 0xff}, font, nil)
 	c.Plot(igr)
 	err := png.Encode(&d.img, d.I)
 	if err != nil {
@@ -53,7 +64,7 @@ func Scatter(x, y []float64) *bytes.Buffer {
 	dumper := NewDumper(1, 1, 800, 600)
 	pl := chart.ScatterChart{Title: TREND}
 	pl.Key.Pos = "itl"
-	todayAdd := "Today Add " + strconv.FormatFloat(y[len(y)-1], 'g', -1, 32) //将今日新增标注上
+	todayAdd := "病例 单位/例" //将今日新增标注上
 	pl.AddDataPair(todayAdd, x, y, chart.PlotStyleLinesPoints,
 		chart.Style{Symbol: '#', SymbolColor: color.NRGBA{R: 0xE3, G: 0x17, B: 0x0D, A: 0xff}, LineStyle: chart.SolidLine})
 	pl.XRange.TicSetting.Mirror = 1
@@ -64,8 +75,8 @@ func Scatter(x, y []float64) *bytes.Buffer {
 	pl.XRange.TicSetting.TDelta = chart.MatchingTimeDelta(float64(time.Now().Unix()), DAY) //x轴时间间隔
 
 	pl.YRange.TicSetting.Mirror = 1
-	pl.XRange.Label = "date"
-	pl.YRange.Label = "cases"
+	pl.XRange.Label = "日期"
+	pl.YRange.Label = "病例数"
 	err := dumper.Plot(&pl)
 	if err != nil {
 		return nil
@@ -84,7 +95,7 @@ func PieChart(continent map[string]int) *bytes.Buffer {
 	}
 
 	pie := chart.PieChart{Title: PIE}
-	pie.AddIntDataPair("World", names, cases)
+	pie.AddIntDataPair("大洲", names, cases)
 	pie.Data[0].Samples[3].Flag = true
 
 	pie.Inner = 0.55 //面积比例

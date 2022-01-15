@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	UpdateChannel         chan tgbotapi.Update
+	UpdateChannel         chan tgbotapi.Update         //一级路由
 	MessageChannel        chan tgbotapi.Chattable      // 普通消息Channel
 	ListQueryChannel      chan *tgbotapi.CallbackQuery // 地区列表CallbackChannel
 	ProvinceQueryChannel  chan *tgbotapi.CallbackQuery // 省份数据CallbackChannel
@@ -15,7 +15,6 @@ var (
 	NewsUpdateChannel     chan *tgbotapi.Update        // 新闻数据UpdateChannel
 	RiskQueryChannel      chan *tgbotapi.CallbackQuery // 风险地区Callback
 	TrendChannel          chan *tgbotapi.Update        // 风险地区Callback
-	//NumChannel chan string
 )
 
 func init() {
@@ -29,5 +28,4 @@ func init() {
 	NewsUpdateChannel = make(chan *tgbotapi.Update)
 	RiskQueryChannel = make(chan *tgbotapi.CallbackQuery)
 	TrendChannel = make(chan *tgbotapi.Update)
-	//NumChannel = make(chan string)
 }

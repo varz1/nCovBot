@@ -90,7 +90,7 @@ func Trend() {
 					Bytes: SCATTER.Pie.Bytes(),
 				},
 			},
-			Caption: "七天内本土新增病例\n横轴代表日期 纵轴代表病例数\n图表更新时间:" + SCATTER.Date,
+			Caption: "图表更新时间:" + SCATTER.Date,
 		}
 		channel.MessageChannel <- msg
 	}
@@ -113,7 +113,7 @@ func WorldOverall() {
 		caption.WriteString("\n全球累计治愈" + strconv.Itoa(global.CuredCount) + " ⬆️" + strconv.Itoa(global.CuredIncr))
 		caption.WriteString("\n全球累计死亡" + strconv.Itoa(global.DeadCount) + " ⬆️" + strconv.Itoa(global.DeadIncr))
 		caption.WriteString("\n数据更新时间:" + tm)
-		caption.WriteString("\n图表为各大洲累计病例数占比 \n图表更新时间:" + Pie.Date)
+		caption.WriteString("\n图表更新时间:" + Pie.Date)
 		p := tgbotapi.PhotoConfig{
 			BaseFile: tgbotapi.BaseFile{
 				BaseChat: tgbotapi.BaseChat{

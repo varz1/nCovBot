@@ -17,12 +17,12 @@ const (
 	RISK    = "https://eyesight.news.qq.com/sars/riskarea"                                                  //风险地区API
 	LOCAL   = "https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=chinaDayAddList" //本土新增时间线
 	WORLD   = "https://api.inews.qq.com/newsqa/v1/automation/modules/list?"                                 //世界数据API
-	NA      = "North America"
-	AS      = "Asia"
-	SA      = "South America"
-	EU      = "Europe"
-	OC      = "Oceania"
-	AF      = "Africa"
+	NA      = "北美洲"
+	AS      = "亚洲"
+	SA      = "南美洲"
+	EU      = "欧洲"
+	OC      = "大洋州"
+	AF      = "非洲"
 )
 
 func init() {

@@ -16,14 +16,14 @@ var listJson = Jsons{}
 
 func init() {
 	log1 := logrus.WithField("打开List文件", "init listJson")
-	var post Jsons
+	//var post Jsons
 	p,_ := os.Getwd()
 	jsonData, err := ioutil.ReadFile(p+"/list.json")
 	if err != nil {
 		log1.Errorln(err)
 	}
 	// 解析json数据到post中
-	err = json.Unmarshal(jsonData, &post)
+	err = json.Unmarshal(jsonData, &listJson)
 	if err != nil {
 		log1.Errorln(err)
 	}
@@ -34,8 +34,6 @@ type Jsons struct {
 }
 
 func List() {
-	log1 := logrus.WithField("func", "ListQueryChannel")
-	log1.Info("打开文件")
 	//post, err := GetData()
 	//if err != nil {
 	//	log1.Errorln("打开文件错误", err)

@@ -7,11 +7,27 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/varz1/nCovBot/channel"
 	"io/ioutil"
-	"log"
 	"os"
 	"strconv"
 	"strings"
 )
+
+var listJson = Jsons{}
+
+func init() {
+	log1 := logrus.WithField("打开List文件", "init listJson")
+	var post Jsons
+	p,_ := os.Getwd()
+	jsonData, err := ioutil.ReadFile(p+"/list.json")
+	if err != nil {
+		log1.Errorln(err)
+	}
+	// 解析json数据到post中
+	err = json.Unmarshal(jsonData, &post)
+	if err != nil {
+		log1.Errorln(err)
+	}
+}
 
 type Jsons struct {
 	Results []string `json:"results"`
@@ -20,11 +36,11 @@ type Jsons struct {
 func List() {
 	log1 := logrus.WithField("func", "ListQueryChannel")
 	log1.Info("打开文件")
-	post, err := GetData()
-	if err != nil {
-		log1.Errorln("打开文件错误", err)
-		return
-	}
+	//post, err := GetData()
+	//if err != nil {
+	//	log1.Errorln("打开文件错误", err)
+	//	return
+	//}
 	text := ""
 	var row []tgbotapi.InlineKeyboardButton
 	var board = tgbotapi.NewInlineKeyboardMarkup()
@@ -33,11 +49,11 @@ func List() {
 		switch split[1] {
 		case "province":
 			row = append(row[0:0], tgbotapi.NewInlineKeyboardButtonData("各国家地区", "list-country-1"))
-			text = strings.Join(post.Results[0:34], " ")
+			text = strings.Join(listJson.Results[0:34], " ")
 			board = tgbotapi.NewInlineKeyboardMarkup(row)
 		case "country":
 			i, _ := strconv.Atoi(split[2])
-			text = strings.Join(post.Results[35+(i-1)*50:35+i*50], " ")
+			text = strings.Join(listJson.Results[35+(i-1)*50:35+i*50], " ")
 			board = GetPage(i)
 		}
 		editedMsg := tgbotapi.EditMessageTextConfig{
@@ -70,40 +86,40 @@ func GetPage(currentPage int) (markup tgbotapi.InlineKeyboardMarkup) {
 	return
 }
 
-func GetData() (Jsons, error) {
-	log1 := logrus.WithField("打开List文件", "GetData")
-	var post Jsons
-	// 打开json文件
-	fh, err := os.Open("list.json")
-	if err != nil {
-		log1.Errorln(err)
-		return post, err
-	}
-	defer func(fh *os.File) {
-		err := fh.Close()
-		if err != nil {
-			log1.Errorln(err)
-		}
-		log.Println("关闭文件")
-	}(fh)
-	// 读取json文件，保存到jsonData中
-	jsonData, err := ioutil.ReadAll(fh)
-	if err != nil {
-		log1.Errorln(err)
-		return post, err
-	}
-	// 解析json数据到post中
-	err = json.Unmarshal(jsonData, &post)
-	if err != nil {
-		log1.Errorln(err)
-		return post, err
-	}
-	return post, nil
-}
+//func GetData() (Jsons, error) {
+//	log1 := logrus.WithField("打开List文件", "GetData")
+//	var post Jsons
+//	// 打开json文件
+//	fh, err := os.Open("list.json")
+//	if err != nil {
+//		log1.Errorln(err)
+//		return post, err
+//	}
+//	defer func(fh *os.File) {
+//		err := fh.Close()
+//		if err != nil {
+//			log1.Errorln(err)
+//		}
+//		log.Println("关闭文件")
+//	}(fh)
+//	// 读取json文件，保存到jsonData中
+//	jsonData, err := ioutil.ReadAll(fh)
+//	if err != nil {
+//		log1.Errorln(err)
+//		return post, err
+//	}
+//	// 解析json数据到post中
+//	err = json.Unmarshal(jsonData, &post)
+//	if err != nil {
+//		log1.Errorln(err)
+//		return post, err
+//	}
+//	return post, nil
+//}
 
 func IsContain(data string) bool {
-	var post, _ = GetData()
-	for _, v := range post.Results {
+	//var post, _ = GetData()
+	for _, v := range listJson.Results {
 		if v == data {
 			return true
 		}

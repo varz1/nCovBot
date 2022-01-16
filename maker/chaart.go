@@ -46,7 +46,7 @@ func NewDumper(n, m, w, h int) *Dumper {
 	dumper := Dumper{N: n, M: m, W: w, H: h}
 	dumper.I = image.NewRGBA(image.Rect(0, 0, n*w, m*h))
 	bg := image.NewUniform(color.RGBA{R: 0xff, G: 0xff, B: 0xff, A: 0xff})
-	draw.Draw(dumper.I, dumper.I.Bounds(), bg, image.ZP, draw.Src)
+	draw.Draw(dumper.I, dumper.I.Bounds(), bg, image.Point{}, draw.Src)
 	return &dumper
 }
 
@@ -115,7 +115,6 @@ func PieChart(continent map[string]int) *bytes.Buffer {
 // GetScatter 生成Scatter图
 func GetScatter() {
 	logrus.WithField("开始绘图Trend", "GetScatter")
-	const Day = 86400
 	adds := data2.GetAdds(7) //获取七天本地新增
 	if adds == nil {
 		logrus.Error("数据为空")
@@ -124,7 +123,7 @@ func GetScatter() {
 	for _, v := range adds {
 		s := strings.ReplaceAll(v.Date, ".", "")
 		res := Time2TimeStamp(s)
-		xRange = append(xRange, float64(res+Day))
+		xRange = append(xRange, float64(res+86400))
 		yRange = append(yRange, float64(v.LocalConfirmAdd))
 	}
 	buf := Scatter(xRange, yRange)
@@ -165,7 +164,7 @@ func GetChMap() {
 	defer cancel()
 	chromedp.ExecPath(os.Getenv("GOOGLE_CHROME_SHIM"))
 	// 超时设置
-	ctx, cancel = context.WithTimeout(ctx, 5*time.Minute)
+	ctx, cancel = context.WithTimeout(ctx, 2*time.Minute)
 	defer cancel()
 	var buf []byte
 	if err := chromedp.Run(ctx,

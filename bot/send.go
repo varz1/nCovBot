@@ -13,7 +13,3 @@ func sender() {
 		}
 	}
 }
-
-func TimerSender() {
-
-}

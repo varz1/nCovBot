@@ -106,6 +106,7 @@ func GetNews() {
 	resp, err := request.R().SetResult(&res).Get(NEWS)
 	if err != nil || resp.StatusCode() != 200 {
 		log1.WithField("请求失败", "新闻API").Errorln(err)
+		return
 	}
 	if err == nil {
 		log1.Info("请求新闻数据API成功")
@@ -124,6 +125,7 @@ func GetRiskLevel() {
 	resp, err := request.R().SetResult(&res).Get(RISK)
 	if err != nil || resp.StatusCode() != 200 {
 		log1.WithField("请求失败", "风险地区").Error(err)
+		return
 	}
 	if err == nil {
 		log1.Info("请求风险地区API成功")

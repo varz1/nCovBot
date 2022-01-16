@@ -22,7 +22,7 @@ import (
 )
 
 const PIE = "各大洲累计确诊比"
-const TREND = "七天内新增病例数量"
+const TREND = "七天内新增本土病例"
 const DAY float64 = 86400 // 一天的时间戳
 
 var font *truetype.Font

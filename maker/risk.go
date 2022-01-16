@@ -38,20 +38,20 @@ func GetText(level string, page int) (string, tgbotapi.InlineKeyboardMarkup) {
 	case "return":
 		var menu = tgbotapi.NewInlineKeyboardMarkup(
 			tgbotapi.NewInlineKeyboardRow(
-				tgbotapi.NewInlineKeyboardButtonData("高风险地区", "risk-2-1"),
+				tgbotapi.NewInlineKeyboardButtonData("高风险地区("+strconv.Itoa(len(data.RiskData.High))+"个)▶️", "risk-2-1"),
 			),
 			tgbotapi.NewInlineKeyboardRow(
-				tgbotapi.NewInlineKeyboardButtonData("中风险地区", "risk-1-1"),
+				tgbotapi.NewInlineKeyboardButtonData("中风险地区("+strconv.Itoa(len(data.RiskData.Mid))+"个)▶️", "risk-1-1"),
 			),
 		)
 		markup = menu
-		return "请选择区域", markup
+		return "点击展开详细列表", markup
 	case "2":
-		text.WriteString("高风险地区:")
 		areas = data.RiskData.High
+		text.WriteString("高风险地区("+strconv.Itoa(len(areas))+"个):🔽")
 	default:
-		text.WriteString("中风险地区:")
 		areas = data.RiskData.Mid
+		text.WriteString("中风险地区("+ strconv.Itoa(len(areas))+"个):🔽")
 	}
 	if areas == nil {
 		text.WriteString("暂无该风险等级地区")

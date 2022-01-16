@@ -5,11 +5,19 @@ import (
 	"reflect"
 )
 
+type Risks struct {
+	High []RiskArea
+	Mid []RiskArea
+	Tm string
+}
+
+// Chartt 图表结构体
 type Chartt struct {
 	Pie bytes.Buffer
 	Date string
 }
 
+// RiskArea 风险地区数据
 type RiskArea struct {
 	Area string `json:"area"`
 	Type string `json:"type"`

@@ -2,13 +2,24 @@ package data
 
 import (
 	"github.com/go-resty/resty/v2"
+	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
 	"github.com/varz1/nCovBot/model"
 	"sort"
 	"strconv"
+	"time"
 )
 
-var request = resty.New()
+var (
+	request = resty.New()
+	timer   = cron.New()
+)
+
+var (
+	NewsData    []model.NewsData
+	OverallData model.OverallData
+	RiskData    model.Risks
+)
 
 const (
 	OVERALL = "https://lab.isaaclin.cn/nCoV/api/overall"                                                    //新闻概览API
@@ -38,12 +49,22 @@ func init() {
 		"upgrade-insecure-requests": "1",
 	}
 	request.SetHeaders(header)
+	logrus.Info("开始初始化数据")
+	GetNews()
+	GetOverall()
+	GetRiskLevel()
+	timer.AddFunc("@every 6h", func() {
+		logrus.Info("开始更新数据")
+		GetNews()
+		GetOverall()
+		GetRiskLevel()
+	})
+	timer.Start()
 }
 
 // GetOverall 获取疫情概览
-func GetOverall() model.OverallData {
+func GetOverall() {
 	log1 := logrus.WithField("func", "GetOverall")
-	log1.Info("开始请求数据概览API")
 	var overall struct {
 		Results []model.OverallData `json:"results"`
 	}
@@ -57,7 +78,7 @@ func GetOverall() model.OverallData {
 	if err == nil {
 		log1.Info("请求数据概览API成功")
 	}
-	return overall.Results[0]
+	OverallData = overall.Results[0]
 }
 
 // GetAreaData 获取地区数据
@@ -79,31 +100,29 @@ func GetAreaData(area string) model.ProvinceData {
 }
 
 // GetNews 获取新闻
-func GetNews() []model.NewsData {
+func GetNews() {
 	log1 := logrus.WithField("func", "GetNews")
 	var res struct {
 		Results []model.NewsData `json:"results"`
 	}
-	log1.Println("开始请求新闻数据API")
 	resp, err := request.R().SetResult(&res).Get(NEWS)
 	if err != nil || resp.StatusCode() != 200 {
 		log1.WithField("请求失败", "新闻API").Errorln(err)
-		return []model.NewsData{}
 	}
 	if err == nil {
 		log1.Info("请求新闻数据API成功")
 	}
-	return res.Results
+	NewsData = res.Results
 }
 
 // GetRiskLevel 获取风险等级
-func GetRiskLevel(level string) []model.RiskArea {
+func GetRiskLevel() {
 	log1 := logrus.WithField("func", "GetRiskLevel")
+	tm := time.Unix(time.Now().Unix(), 0).Format("2006-01-02 15:04")
 	var res struct {
 		Data []model.RiskArea `json:"data"`
 	}
 	count := 0
-	log1.Println("开始请求风险地区API")
 	resp, err := request.R().SetResult(&res).Get(RISK)
 	if err != nil || resp.StatusCode() != 200 {
 		log1.WithField("请求失败", "风险地区").Error(err)
@@ -113,7 +132,8 @@ func GetRiskLevel(level string) []model.RiskArea {
 	}
 	risk := res.Data
 	if len(risk) == 0 {
-		return nil
+		RiskData.Mid = nil
+		RiskData.High = nil
 	}
 	sort.SliceStable(risk, func(i, j int) bool {
 		m, _ := strconv.Atoi(risk[i].Type)
@@ -128,12 +148,9 @@ func GetRiskLevel(level string) []model.RiskArea {
 			count = count + 1
 		}
 	}
-	switch level {
-	case "2":
-		return risk[:count]
-	default:
-		return risk[count:]
-	}
+	RiskData.High = risk[:count]
+	RiskData.Mid = risk[count:]
+	RiskData.Tm = tm
 }
 
 // GetAdds 获取新增数据用于绘制图表
@@ -183,7 +200,5 @@ func GetWorldData() (map[string]int, error) {
 			continent[AF] = continent[AF] + v.Confirm
 		}
 	}
-	//PubDate, _ := strconv.Atoi(res.Data.WomAboard[0].PubDate)
-	//continent["PubDate"] = PubDate
 	return continent, nil
 }

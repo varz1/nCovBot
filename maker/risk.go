@@ -5,6 +5,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/varz1/nCovBot/channel"
 	"github.com/varz1/nCovBot/data"
+	"github.com/varz1/nCovBot/model"
 	"strconv"
 	"strings"
 )
@@ -31,6 +32,7 @@ func RiskQuery() {
 func GetText(level string, page int) (string, tgbotapi.InlineKeyboardMarkup) {
 	var markup = tgbotapi.NewInlineKeyboardMarkup()
 	var row []tgbotapi.InlineKeyboardButton
+	var areas []model.RiskArea
 	text := strings.Builder{}
 	switch level {
 	case "return":
@@ -46,10 +48,11 @@ func GetText(level string, page int) (string, tgbotapi.InlineKeyboardMarkup) {
 		return "请选择区域", markup
 	case "2":
 		text.WriteString("高风险地区:")
+		areas = data.RiskData.High
 	default:
 		text.WriteString("中风险地区:")
+		areas = data.RiskData.Mid
 	}
-	areas := data.GetRiskLevel(level)
 	if areas == nil {
 		text.WriteString("暂无该风险等级地区")
 		return text.String(), markup

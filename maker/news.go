@@ -9,10 +9,11 @@ import (
 	"time"
 )
 
+
 func News() {
 	for newsUpdate := range channel.NewsUpdateChannel {
 		text := strings.Builder{}
-		data1 := data.GetNews() // 请求API
+		data1 := data.NewsData // 请求API
 		var row1 []tgbotapi.InlineKeyboardButton
 		var row2 []tgbotapi.InlineKeyboardButton
 		for k, newsData := range data1 {

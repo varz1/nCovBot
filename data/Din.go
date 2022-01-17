@@ -59,7 +59,7 @@ func init() {
 	timer.Start()
 }
 
-// GetOverall 获取疫情概览
+// GetOverall 获取疫情概览 TODO 全局概览
 func GetOverall() model.OverallData {
 	log1 := logrus.WithField("func", "GetOverall")
 	log1.Info("开始请求数据概览API")

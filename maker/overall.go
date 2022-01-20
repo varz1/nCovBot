@@ -50,7 +50,7 @@ func Overall() {
 			channel.MessageChannel <- errMsg
 			return
 		}
-		data := data2.GetOverall() //
+		data := data2.OA //
 		tm := time.Unix(data.UpdateTime/1000, 0).Format("2006-01-02 15:04")
 		caption.WriteString("🇨🇳中国疫情概况:")
 		caption.WriteString("\n现存确诊(含港澳台):" + strconv.Itoa(data.CurrentConfirmedCount) + " ⬆️" + strconv.Itoa(data.CurrentConfirmedIncr))
@@ -98,7 +98,7 @@ func Trend() {
 
 func WorldOverall() {
 	for update := range channel.WorldUpdateChannel {
-		data := data2.GetOverall()
+		data := data2.OA
 		global := data.GlobalStatistics
 		if Pie.Pie.Bytes() == nil {
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "渲染错误")

@@ -18,6 +18,7 @@ var (
 var (
 	NewsData []model.NewsData
 	RiskData model.Risks
+	OA model.OverallData
 )
 
 const (
@@ -51,16 +52,18 @@ func init() {
 	logrus.Info("开始初始化数据")
 	GetNews()
 	GetRiskLevel()
+	GetOverall()
 	timer.AddFunc("@every 6h", func() {
 		logrus.Info("开始更新数据")
 		GetNews()
 		GetRiskLevel()
+		GetOverall()
 	})
 	timer.Start()
 }
 
 // GetOverall 获取疫情概览 TODO 全局概览
-func GetOverall() model.OverallData {
+func GetOverall()  {
 	log1 := logrus.WithField("func", "GetOverall")
 	log1.Info("开始请求数据概览API")
 	var overall struct {
@@ -72,11 +75,12 @@ func GetOverall() model.OverallData {
 	}
 	if resp.StatusCode() != 200 {
 		log1.WithField("status err", err).Error(err)
+		return
 	}
 	if err == nil {
 		log1.Info("请求数据概览API成功")
 	}
-	return overall.Results[0]
+	OA = overall.Results[0]
 }
 
 // GetAreaData 获取地区数据

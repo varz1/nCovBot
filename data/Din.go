@@ -65,21 +65,19 @@ func init() {
 // GetOverall 获取疫情概览 TODO 全局概览
 func GetOverall()  {
 	log1 := logrus.WithField("func", "GetOverall")
-	log1.Info("开始请求数据概览API")
 	var overall struct {
 		Results []model.OverallData `json:"results"`
 	}
 	resp, err := request.R().SetResult(&overall).Get(OVERALL)
 	if err != nil {
 		log1.WithField("resp err", err).Error(err)
+		return
 	}
 	if resp.StatusCode() != 200 {
 		log1.WithField("status err", err).Error(err)
 		return
 	}
-	if err == nil {
-		log1.Info("请求数据概览API成功")
-	}
+	log1.Info("请求数据概览API成功")
 	OA = overall.Results[0]
 }
 
@@ -112,9 +110,7 @@ func GetNews() {
 		log1.WithField("请求失败", "新闻API").Errorln(err)
 		return
 	}
-	if err == nil {
-		log1.Info("请求新闻数据API成功")
-	}
+	log1.Info("请求新闻数据API成功")
 	NewsData = res.Results
 }
 
@@ -131,9 +127,7 @@ func GetRiskLevel() {
 		log1.WithField("请求失败", "风险地区").Error(err)
 		return
 	}
-	if err == nil {
-		log1.Info("请求风险地区API成功")
-	}
+	log1.Info("请求风险地区API成功")
 	risk := res.Data
 	if len(risk) == 0 {
 		RiskData.Mid = nil

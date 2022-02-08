@@ -13,9 +13,8 @@ import (
 	"time"
 )
 
-
 var (
-	timer = cron.New()
+	timer   = cron.New()
 	SCATTER = model.Chartt{}
 	Pie     = model.Chartt{}
 	Map     = model.Chartt{}
@@ -37,7 +36,7 @@ func init() {
 			log.Println("定时ping失败")
 			return
 		}
-		log.Printf("Ping成功 %v",resp.StatusCode)
+		log.Printf("Ping成功 %v", resp.StatusCode)
 	})
 	timer.Start()
 }
@@ -50,7 +49,8 @@ func Overall() {
 			channel.MessageChannel <- errMsg
 			return
 		}
-		data := data2.OA //
+		oa, _ := data2.C.Get("overall")
+		data := oa.(model.OverallData)
 		tm := time.Unix(data.UpdateTime/1000, 0).Format("2006-01-02 15:04")
 		caption.WriteString("🇨🇳中国疫情概况:")
 		caption.WriteString("\n现存确诊(含港澳台):" + strconv.Itoa(data.CurrentConfirmedCount) + " ⬆️" + strconv.Itoa(data.CurrentConfirmedIncr))

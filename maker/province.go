@@ -18,9 +18,9 @@ func Province() {
 		cities := data.Cities
 		tm := time.Unix(data.UpdateTime/1000, 0).Format("2006-01-02 15:04")
 		var msg = tgbotapi.MessageConfig{}
-		if data.IsEmpty() {
-			text.WriteString("请求错误")
-		}
+		//if data.IsEmpty() {
+		//	text.WriteString("请求错误")
+		//}
 		if len(cities) == 0 {
 			cities = nil
 		}

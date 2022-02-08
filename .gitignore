@@ -1,7 +1,2 @@
 .idea
-data/din_test.go
-bot/bot_test.go
-bot/.fonts
-bot/list.json
-ncovbot.md
-jsonfile
+/model/mm_test.go

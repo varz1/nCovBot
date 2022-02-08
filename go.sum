@@ -1,4 +1,6 @@
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
+github.com/akyoto/cache v1.0.6 h1:5XGVVYoi2i+DZLLPuVIXtsNIJ/qaAM16XT0LaBaXd2k=
+github.com/akyoto/cache v1.0.6/go.mod h1:WfxTRqKhfgAG71Xh6E3WLpjhBtZI37O53G4h5s+3iM4=
 github.com/andybalholm/brotli v1.0.2 h1:JKnhI/XQ75uFBTiuzXpzFrUriDPiZjlOSzh6wXogP0E=
 github.com/andybalholm/brotli v1.0.2/go.mod h1:loMXtMfwqflxFJPmdbJO0a3KNoPuLBgiu3qAvBg8x/Y=
 github.com/chromedp/cdproto v0.0.0-20211126220118-81fa0469ad77 h1:Et/9YcQRCsaZVT74sy6AHwWy/FcbYqm39jNprlfXF7c=
@@ -7,6 +9,7 @@ github.com/chromedp/chromedp v0.7.6 h1:2juGaktzjwULlsn+DnvIZXFUckEp5xs+GOBroaea+
 github.com/chromedp/chromedp v0.7.6/go.mod h1:ayT4YU/MGAALNfOg9gNrpGSAdnU51PMx+FCeuT1iXzo=
 github.com/chromedp/sysutil v1.0.0 h1:+ZxhTpfpZlmchB58ih/LBHX52ky7w2VhQVKQMucy3Ic=
 github.com/chromedp/sysutil v1.0.0/go.mod h1:kgWmDdq8fTzXYcKIBqIYvRRTnYb9aNS9moAV0xufSww=
+github.com/go-echarts/go-echarts/v2 v2.2.4/go.mod h1:6TOomEztzGDVDkOSCFBq3ed7xOYfbOqhaBzD0YV771A=
 github.com/go-resty/resty/v2 v2.7.0 h1:me+K9p3uhSmXtrBZ4k9jcEAfJmuC8IivWHwaLZwPrFY=
 github.com/go-resty/resty/v2 v2.7.0/go.mod h1:9PWDzw47qPphMRFfhsyk0NnSgvluHcljSMVIq3w7q0I=
 github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible h1:2cauKuaELYAEARXRkq2LrJ0yDDv1rW7+wrTEdVL3uaU=

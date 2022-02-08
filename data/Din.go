@@ -4,6 +4,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
+	"github.com/varz1/nCovBot/cache"
 	"github.com/varz1/nCovBot/model"
 	"sort"
 	"strconv"
@@ -13,12 +14,13 @@ import (
 var (
 	request = resty.New()
 	timer   = cron.New()
+	C       = cache.New()
 )
 
 var (
 	NewsData []model.NewsData
 	RiskData model.Risks
-	OA model.OverallData
+	OA       model.OverallData
 )
 
 const (
@@ -62,8 +64,8 @@ func init() {
 	timer.Start()
 }
 
-// GetOverall 获取疫情概览 TODO 全局概览
-func GetOverall()  {
+// GetOverall 获取疫情概览
+func GetOverall() {
 	log1 := logrus.WithField("func", "GetOverall")
 	var overall struct {
 		Results []model.OverallData `json:"results"`
@@ -79,6 +81,7 @@ func GetOverall()  {
 	}
 	log1.Info("请求数据概览API成功")
 	OA = overall.Results[0]
+	C.Set("overall", overall.Results[0])
 }
 
 // GetAreaData 获取地区数据

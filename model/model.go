@@ -2,8 +2,11 @@ package model
 
 import (
 	"bytes"
-	"reflect"
 )
+
+//type Data interface {
+//	IsEmpty() bool
+//}
 
 type Risks struct {
 	High []RiskArea
@@ -48,10 +51,10 @@ type NewsData struct {
 	SourceUrl  string `json:"sourceUrl"`  //新闻源地址
 }
 
-// IsEmpty ProvinceData 判空
-func (msg ProvinceData) IsEmpty() bool {
-	return reflect.DeepEqual(msg, ProvinceData{})
-}
+//// IsEmpty ProvinceData 判空
+//func (msg ProvinceData) IsEmpty() bool {
+//	return reflect.DeepEqual(msg, ProvinceData{})
+//}
 
 // ProvinceData 请求的省份详细数据
 type ProvinceData struct {
@@ -68,6 +71,7 @@ type ProvinceData struct {
 	Cities                []Cities    `json:"cities"`
 	UpdateTime            int64       `json:"updateTime"`
 }
+
 type Cities struct {
 	CityName                 string `json:"cityName"`
 	ConfirmedCount           int    `json:"confirmedCount"` //累计确诊
@@ -98,6 +102,7 @@ type OverallData struct {
 	GlobalStatistics      GlobalStatistics `json:"globalStatistics"`
 	UpdateTime            int64            `json:"updateTime"` //更新时间戳
 }
+
 type GlobalStatistics struct {
 	CurrentConfirmedCount       int `json:"currentConfirmedCount"`       //全球现存确诊
 	ConfirmedCount              int `json:"confirmedCount"`              //全球累计确诊

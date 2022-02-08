@@ -44,12 +44,12 @@ func init() {
 func Overall() {
 	caption := strings.Builder{}
 	for overall := range channel.OverallUpdateChannel {
-		if Map.Pie.Bytes() == nil {
-			errMsg := tgbotapi.NewMessage(overall.Message.Chat.ID, "获取图表失败")
+		oa, exist := data2.C.Get("overall")
+		if Map.Pie.Bytes() == nil || !exist {
+			errMsg := tgbotapi.NewMessage(overall.Message.Chat.ID, "获取数据失败")
 			channel.MessageChannel <- errMsg
 			return
 		}
-		oa, _ := data2.C.Get("overall")
 		data := oa.(model.OverallData)
 		tm := time.Unix(data.UpdateTime/1000, 0).Format("2006-01-02 15:04")
 		caption.WriteString("🇨🇳中国疫情概况:")
@@ -98,10 +98,11 @@ func Trend() {
 
 func WorldOverall() {
 	for update := range channel.WorldUpdateChannel {
-		data := data2.OA
+		world, exist := data2.C.Get("overall")
+		data := world.(model.OverallData)
 		global := data.GlobalStatistics
-		if Pie.Pie.Bytes() == nil {
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "渲染错误")
+		if Pie.Pie.Bytes() == nil || !exist {
+			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "数据错误")
 			channel.MessageChannel <- msg
 			return
 		}

@@ -4,6 +4,7 @@ import (
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/varz1/nCovBot/channel"
 	"github.com/varz1/nCovBot/data"
+	"github.com/varz1/nCovBot/model"
 	"strconv"
 	"strings"
 	"time"
@@ -13,7 +14,16 @@ import (
 func News() {
 	for newsUpdate := range channel.NewsUpdateChannel {
 		text := strings.Builder{}
-		data1 := data.NewsData // 请求API
+		data2,exist := data.C.Get("news") // 请求API
+		if !exist {
+			text.WriteString("获取新闻数据失败")
+			msg := tgbotapi.NewMessage(newsUpdate.Message.Chat.ID, text.String())
+			channel.MessageChannel <- msg
+			text.Reset()
+			return
+		}
+		data1 := data2.([]model.NewsData)
+		//data1 := data.NewsData // 请求API
 		var row1 []tgbotapi.InlineKeyboardButton
 		var row2 []tgbotapi.InlineKeyboardButton
 		for k, newsData := range data1 {

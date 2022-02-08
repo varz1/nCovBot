@@ -4,7 +4,6 @@ import "sync"
 
 type Cache struct {
 	obj sync.Map
-	Tm string
 }
 
 func New() *Cache {

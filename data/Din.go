@@ -17,11 +17,11 @@ var (
 	C       = cache.New()
 )
 
-var (
-	NewsData []model.NewsData
-	RiskData model.Risks
-	OA       model.OverallData
-)
+//var (
+//	NewsData []model.NewsData
+//	RiskData model.Risks
+//	OA       model.OverallData
+//)
 
 const (
 	OVERALL = "https://lab.isaaclin.cn/nCoV/api/overall"                                                    //新闻概览API
@@ -80,7 +80,7 @@ func GetOverall() {
 		return
 	}
 	log1.Info("请求数据概览API成功")
-	OA = overall.Results[0]
+	//OA = overall.Results[0]
 	C.Set("overall", overall.Results[0])
 }
 
@@ -114,7 +114,8 @@ func GetNews() {
 		return
 	}
 	log1.Info("请求新闻数据API成功")
-	NewsData = res.Results
+	//NewsData = res.Results
+	C.Set("news",res.Results)
 }
 
 // GetRiskLevel 获取风险等级
@@ -131,10 +132,11 @@ func GetRiskLevel() {
 		return
 	}
 	log1.Info("请求风险地区API成功")
+	var riskdata model.Risks
 	risk := res.Data
 	if len(risk) == 0 {
-		RiskData.Mid = nil
-		RiskData.High = nil
+		riskdata.Mid = nil
+		riskdata.High = nil
 	}
 	sort.SliceStable(risk, func(i, j int) bool {
 		m, _ := strconv.Atoi(risk[i].Type)
@@ -149,9 +151,10 @@ func GetRiskLevel() {
 			count = count + 1
 		}
 	}
-	RiskData.High = risk[:count]
-	RiskData.Mid = risk[count:]
-	RiskData.Tm = tm
+	riskdata.High = risk[:count]
+	riskdata.Mid = risk[count:]
+	riskdata.Tm = tm
+	C.Set("risk",riskdata)
 }
 
 // GetAdds 获取新增数据用于绘制图表

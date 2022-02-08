@@ -6,6 +6,7 @@ import (
 	"github.com/varz1/nCovBot/channel"
 	"github.com/varz1/nCovBot/data"
 	"github.com/varz1/nCovBot/maker"
+	"github.com/varz1/nCovBot/model"
 	"log"
 	"os"
 	"strconv"
@@ -123,12 +124,15 @@ func GetListMenu(update tgbotapi.Update) tgbotapi.MessageConfig {
 }
 
 func GetRiskMenu(update tgbotapi.Update) tgbotapi.MessageConfig {
+	var riskdata model.Risks
+	risk, _ := data.C.Get("risk")
+	riskdata = risk.(model.Risks)
 	var menu = tgbotapi.NewInlineKeyboardMarkup(
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData("高风险地区("+strconv.Itoa(len(data.RiskData.High))+"个)▶️", "risk-2-1"),
+			tgbotapi.NewInlineKeyboardButtonData("高风险地区("+strconv.Itoa(len(riskdata.High))+"个)▶️", "risk-2-1"),
 		),
 		tgbotapi.NewInlineKeyboardRow(
-			tgbotapi.NewInlineKeyboardButtonData("中风险地区("+strconv.Itoa(len(data.RiskData.Mid))+"个)▶️", "risk-1-1"),
+			tgbotapi.NewInlineKeyboardButtonData("中风险地区("+strconv.Itoa(len(riskdata.Mid))+"个)▶️", "risk-1-1"),
 		),
 	)
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "点击展开详细列表")

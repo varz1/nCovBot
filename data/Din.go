@@ -17,12 +17,6 @@ var (
 	C       = cache.New()
 )
 
-//var (
-//	NewsData []model.NewsData
-//	RiskData model.Risks
-//	OA       model.OverallData
-//)
-
 const (
 	OVERALL = "https://lab.isaaclin.cn/nCoV/api/overall"                                                    //新闻概览API
 	AREA    = "https://lab.isaaclin.cn/nCoV/api/area?"                                                      //地区数据API

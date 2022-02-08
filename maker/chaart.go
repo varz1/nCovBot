@@ -8,6 +8,7 @@ import (
 	"github.com/golang/freetype/truetype"
 	"github.com/sirupsen/logrus"
 	data2 "github.com/varz1/nCovBot/data"
+	"github.com/varz1/nCovBot/model"
 	"github.com/vdobler/chart"
 	"github.com/vdobler/chart/imgg"
 	"image"
@@ -80,8 +81,8 @@ func Scatter(x, y []float64) *bytes.Buffer {
 	pl.YRange.TicSetting.Mirror = 1
 	pl.XRange.Label = "日期"
 	pl.YRange.Label = "病例数"
-	pl.YRange.Min=0
-	pl.YRange.Max=300
+	pl.YRange.Min = 0
+	pl.YRange.Max = 300
 	err := dumper.Plot(&pl)
 	if err != nil {
 		return nil
@@ -131,8 +132,10 @@ func GetScatter() {
 		logrus.Error("渲染失败")
 		return
 	}
+	var SCATTER model.Chartt
 	SCATTER.Pie = *buf
 	SCATTER.Date = time.Unix(time.Now().Unix(), 0).Format("2006-01-02 15:04")
+	C.Set("scatter", SCATTER)
 	logrus.Info("渲染成功")
 }
 
@@ -145,8 +148,10 @@ func GetPie() {
 		return
 	}
 	buf := PieChart(c)
+	var Pie model.Chartt
 	Pie.Pie = *buf
 	Pie.Date = time.Unix(time.Now().Unix(), 0).Format("2006-01-02 15:04")
+	C.Set("pie", Pie)
 	logrus.Info("渲染成功")
 }
 
@@ -171,8 +176,10 @@ func GetChMap() {
 		Screenshot(url, selMap, &buf)); err != nil {
 		logrus.Error("截图失败")
 	}
+	var Map model.Chartt
 	Map.Pie.Write(buf)
 	Map.Date = time.Unix(time.Now().Unix(), 0).Format("2006-01-02 15:04")
+	C.Set("map",Map)
 	logrus.Info("截图成功")
 }
 
@@ -186,8 +193,8 @@ func Screenshot(url, sel string, res *[]byte) chromedp.Tasks {
 
 // YaHeiFontData 微软雅黑
 func YaHeiFontData() []byte {
-	p,_ := os.Getwd()
-	fontBytes, err := ioutil.ReadFile(p+"/.fonts/WeiRuanYaHei-1.ttf")
+	p, _ := os.Getwd()
+	fontBytes, err := ioutil.ReadFile(p + "/.fonts/WeiRuanYaHei-1.ttf")
 	if err != nil {
 		log.Println(err)
 		return nil

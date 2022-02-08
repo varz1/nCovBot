@@ -3,6 +3,7 @@ package maker
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/robfig/cron/v3"
+	"github.com/varz1/nCovBot/cache"
 	"github.com/varz1/nCovBot/channel"
 	data2 "github.com/varz1/nCovBot/data"
 	"github.com/varz1/nCovBot/model"
@@ -14,10 +15,11 @@ import (
 )
 
 var (
-	timer   = cron.New()
-	SCATTER = model.Chartt{}
-	Pie     = model.Chartt{}
-	Map     = model.Chartt{}
+	timer = cron.New()
+	C     = cache.New()
+	//SCATTER = model.Chartt{}
+	//Pie     = model.Chartt{}
+	//Map = model.Chartt{}
 )
 
 // 初始化图表以及定时任务
@@ -45,6 +47,9 @@ func Overall() {
 	caption := strings.Builder{}
 	for overall := range channel.OverallUpdateChannel {
 		oa, exist := data2.C.Get("overall")
+		var Map model.Chartt
+		m, _ := C.Get("map")
+		Map = m.(model.Chartt)
 		if Map.Pie.Bytes() == nil || !exist {
 			errMsg := tgbotapi.NewMessage(overall.Message.Chat.ID, "获取数据失败")
 			channel.MessageChannel <- errMsg
@@ -77,6 +82,9 @@ func Overall() {
 
 func Trend() {
 	for update := range channel.TrendChannel {
+		var SCATTER model.Chartt
+		s, _ := C.Get("scatter")
+		SCATTER = s.(model.Chartt)
 		if SCATTER.Pie.Bytes() == nil {
 			errMsg := tgbotapi.NewMessage(update.Message.Chat.ID, "渲染错误")
 			channel.MessageChannel <- errMsg
@@ -100,6 +108,9 @@ func WorldOverall() {
 	for update := range channel.WorldUpdateChannel {
 		world, exist := data2.C.Get("overall")
 		data := world.(model.OverallData)
+		var Pie model.Chartt
+		p1, _ := C.Get("pie")
+		Pie = p1.(model.Chartt)
 		global := data.GlobalStatistics
 		if Pie.Pie.Bytes() == nil || !exist {
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "数据错误")

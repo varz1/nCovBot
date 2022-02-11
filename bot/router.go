@@ -18,6 +18,7 @@ import (
 
 func baseRouter(update *tgbotapi.Update) {
 	message := update.Message.Text
+	admin, _ := strconv.Atoi(os.Getenv("AdminId"))
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "无该地区或格式错误")
 	if update.Message.IsCommand() {
 		go commandRouter(update)
@@ -27,21 +28,19 @@ func baseRouter(update *tgbotapi.Update) {
 		channel.ProvinceUpdateChannel <- update
 		return
 	}
-	if strconv.Itoa(int(update.Message.Chat.ID)) != os.Getenv("AdminId") {
-		id, _ := strconv.Atoi(os.Getenv("AdminId"))
-		notice := tgbotapi.NewMessage(int64(id), fmt.Sprintf("User:%s\nId:%d",update.Message.Chat.UserName,update.Message.Chat.ID))
-		channel.MessageChannel <- notice
-	}
 	// 管理员消息
-	if strconv.Itoa(int(update.Message.Chat.ID)) == os.Getenv("AdminId") {
+	if update.Message.Chat.ID == int64(admin) {
 		switch message {
 		case "hi":
-			msg = tgbotapi.NewMessage(update.Message.Chat.ID, "Hi👋 :) Administrator")
+			msg = tgbotapi.NewMessage(int64(admin), "Hi👋 :) Administrator")
 		case "update":
 			maker.GetChMap()
 			maker.GetScatter()
 			maker.GetPie()
 		}
+	}else {
+		notice := tgbotapi.NewMessage(int64(admin), fmt.Sprintf("User:%v\nId:%d",update.Message.Chat.UserName,update.Message.Chat.ID))
+		channel.MessageChannel <- notice
 	}
 	channel.MessageChannel <- msg
 }

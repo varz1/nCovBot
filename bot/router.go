@@ -2,12 +2,10 @@ package bot
 
 import (
 	"github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/gofiber/fiber/v2"
 	"github.com/varz1/nCovBot/channel"
 	"github.com/varz1/nCovBot/data"
 	"github.com/varz1/nCovBot/maker"
 	"github.com/varz1/nCovBot/model"
-	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -16,25 +14,6 @@ import (
 //func SetUpRouter(app *fiber.App) {
 //	app.Post("/"+botAPI.Token, WebHookHandler)
 //}
-
-func WebHookHandler(c *fiber.Ctx) error {
-	u := new(tgbotapi.Update)
-	err := c.BodyParser(&u)
-	if err != nil {
-		log.Println("req解析失败")
-		return err
-	}
-	channel.UpdateChannel <- *u
-	return nil
-}
-
-func NotFoundHandler(c *fiber.Ctx) error {
-	return c.Status(fiber.StatusNotFound).SendString("走错路啦")
-}
-
-func HiHandler(c *fiber.Ctx) error {
-	return c.SendString("hi")
-}
 
 func baseRouter(update *tgbotapi.Update) {
 	message := update.Message.Text

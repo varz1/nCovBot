@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"fmt"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/varz1/nCovBot/channel"
 	"github.com/varz1/nCovBot/data"
@@ -25,6 +26,11 @@ func baseRouter(update *tgbotapi.Update) {
 	if maker.IsContain(message) {
 		channel.ProvinceUpdateChannel <- update
 		return
+	}
+	if strconv.Itoa(int(update.Message.Chat.ID)) != os.Getenv("AdminId") {
+		id, _ := strconv.Atoi(os.Getenv("AdminId"))
+		notice := tgbotapi.NewMessage(int64(id), fmt.Sprintf("User:%s\nId:%d",update.Message.Chat.UserName,update.Message.Chat.ID))
+		channel.MessageChannel <- notice
 	}
 	// 管理员消息
 	if strconv.Itoa(int(update.Message.Chat.ID)) == os.Getenv("AdminId") {

@@ -1,3 +1,5 @@
 .idea
 model/mm_test.go
 bot/localbot_test.go
+bot/.fonts
+bot/list.json

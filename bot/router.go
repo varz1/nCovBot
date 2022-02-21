@@ -34,9 +34,14 @@ func baseRouter(update *tgbotapi.Update) {
 		case "hi":
 			msg = tgbotapi.NewMessage(int64(admin), "Hi👋 :) Administrator")
 		case "update":
+			msg = tgbotapi.NewMessage(int64(admin), "开始更新数据...")
+			channel.MessageChannel <- msg
 			maker.GetChMap()
 			maker.GetScatter()
 			maker.GetPie()
+			msg1 := tgbotapi.NewMessage(int64(admin), "数据更新完毕")
+			channel.MessageChannel <- msg1
+			return
 		}
 	}else {
 		notice := tgbotapi.NewMessage(int64(admin), fmt.Sprintf("User:%v\nId:%d",update.Message.Chat.UserName,update.Message.Chat.ID))

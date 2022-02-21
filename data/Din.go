@@ -163,7 +163,7 @@ func GetAdds(day int) []model.Add {
 			Adds []model.Add `json:"chinaDayAddList"`
 		} `json:"data"`
 	}
-	resp, _ := request.R().SetResult(&res).Get(variables.LOCALMap)
+	resp, _ := request.R().SetResult(&res).Get(variables.LOCALTimeLine)
 	if !resp.IsSuccess() {
 		logrus.Error("请求数据失败")
 		return nil

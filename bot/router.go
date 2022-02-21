@@ -25,6 +25,8 @@ func baseRouter(update *tgbotapi.Update) {
 		return
 	}
 	if maker.IsContain(message) {
+		msg = tgbotapi.NewMessage(int64(admin), "正在查找...")
+		channel.MessageChannel <- msg
 		channel.ProvinceUpdateChannel <- update
 		return
 	}
@@ -33,12 +35,22 @@ func baseRouter(update *tgbotapi.Update) {
 		switch message {
 		case "hi":
 			msg = tgbotapi.NewMessage(int64(admin), "Hi👋 :) Administrator")
-		case "update":
-			msg = tgbotapi.NewMessage(int64(admin), "开始更新数据...")
+		case "update-map":
+			msg = tgbotapi.NewMessage(int64(admin), "开始更新图表数据...")
 			channel.MessageChannel <- msg
 			maker.GetChMap()
 			maker.GetScatter()
 			maker.GetPie()
+			msg1 := tgbotapi.NewMessage(int64(admin), "图表数据更新完毕")
+			channel.MessageChannel <- msg1
+			return
+		case "update-data":
+			msg = tgbotapi.NewMessage(int64(admin), "开始更新数据...")
+			channel.MessageChannel <- msg
+			data.GetNews()
+			data.GetRiskLevel()
+			data.GetOverall()
+			data.GetWorld()
 			msg1 := tgbotapi.NewMessage(int64(admin), "数据更新完毕")
 			channel.MessageChannel <- msg1
 			return

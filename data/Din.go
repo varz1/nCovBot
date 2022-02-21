@@ -16,6 +16,7 @@ var (
 	request = resty.New()
 	timer   = cron.New()
 	C       = cache.New()
+	Debug   = false
 )
 
 func init() {
@@ -31,25 +32,27 @@ func init() {
 		"upgrade-insecure-requests": "1",
 	}
 	request.SetHeaders(header)
-	logrus.Info("开始初始化数据")
-	GetNews()
-	GetRiskLevel()
-	GetOverall()
-	timer.AddFunc("@every 6h", func() {
-		logrus.Info("开始更新数据")
+	if !Debug {
+		logrus.Info("开始初始化数据")
 		GetNews()
 		GetRiskLevel()
 		GetOverall()
-	})
-	timer.Start()
+		GetWorld()
+		timer.AddFunc("@every 6h", func() {
+			logrus.Info("开始更新数据")
+			GetNews()
+			GetRiskLevel()
+			GetOverall()
+			GetWorld()
+		})
+		timer.Start()
+	}
 }
 
 // GetOverall 获取疫情概览
 func GetOverall() {
 	log1 := logrus.WithField("func", "GetOverall")
-	var overall struct {
-		Results []model.OverallData `json:"results"`
-	}
+	var overall model.Overall
 	resp, err := request.R().SetResult(&overall).Get(variables.OVERALL)
 	if err != nil {
 		log1.WithField("resp err", err).Error(err)
@@ -59,9 +62,25 @@ func GetOverall() {
 		log1.WithField("status err", err).Error(err)
 		return
 	}
-	log1.Info("请求数据概览API成功")
-	//OA = overall.Results[0]
-	C.Set("overall", overall.Results[0])
+	log1.Info("请求本土数据概览API成功")
+	C.Set("overall", overall)
+}
+
+// GetWorld 获取世界疫情概览
+func GetWorld() {
+	log1 := logrus.WithField("func", "GetOverall")
+	var overall model.OverallWorld
+	resp, err := request.R().SetResult(&overall).SetQueryString("modules=WomWorld").Get(variables.WORLD)
+	if err != nil {
+		log1.WithField("resp err", err).Error(err)
+		return
+	}
+	if resp.StatusCode() != 200 {
+		log1.WithField("status err", err).Error(err)
+		return
+	}
+	log1.Info("请求世界数据概览API成功")
+	C.Set("world", overall)
 }
 
 // GetAreaData 获取地区数据
@@ -85,9 +104,7 @@ func GetAreaData(area string) model.ProvinceData {
 // GetNews 获取新闻
 func GetNews() {
 	log1 := logrus.WithField("func", "GetNews")
-	var res struct {
-		Results []model.NewsData `json:"results"`
-	}
+	var res model.News
 	resp, err := request.R().SetResult(&res).Get(variables.NEWS)
 	if err != nil || resp.StatusCode() != 200 {
 		log1.WithField("请求失败", "新闻API").Errorln(err)
@@ -95,7 +112,7 @@ func GetNews() {
 	}
 	log1.Info("请求新闻数据API成功")
 	//NewsData = res.Results
-	C.Set("news",res.Results)
+	C.Set("news", res)
 }
 
 // GetRiskLevel 获取风险等级
@@ -134,7 +151,7 @@ func GetRiskLevel() {
 	riskdata.High = risk[:count]
 	riskdata.Mid = risk[count:]
 	riskdata.Tm = tm
-	C.Set("risk",riskdata)
+	C.Set("risk", riskdata)
 }
 
 // GetAdds 获取新增数据用于绘制图表
@@ -146,7 +163,7 @@ func GetAdds(day int) []model.Add {
 			Adds []model.Add `json:"chinaDayAddList"`
 		} `json:"data"`
 	}
-	resp, _ := request.R().SetResult(&res).Get(variables.LOCAL)
+	resp, _ := request.R().SetResult(&res).Get(variables.LOCALMap)
 	if !resp.IsSuccess() {
 		logrus.Error("请求数据失败")
 		return nil

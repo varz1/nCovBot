@@ -22,7 +22,8 @@ func News() {
 			text.Reset()
 			return
 		}
-		data1 := data2.([]model.NewsData)
+		data3 := data2.(model.News)
+		data1 := data3.Results
 		//data1 := data.NewsData // 请求API
 		var row1 []tgbotapi.InlineKeyboardButton
 		var row2 []tgbotapi.InlineKeyboardButton

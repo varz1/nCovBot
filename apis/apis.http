@@ -1,0 +1,39 @@
+### --------------腾讯
+GET https://api.inews.qq.com/newsqa/v1/automation/modules/list?modules=WomWorld
+Accept: application/json
+
+###世界数据
+GET https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=diseaseh5Shelf
+Accept: application/json
+
+###
+GET https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=statisGradeCityDetail
+Accept: application/json
+
+###最近城市
+GET https://api.inews.qq.com/newsqa/v1/automation/modules/list?modules=WomAboard
+Accept: application/json
+
+###各个国家数据
+GET https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=chinaDayAddList
+Accept: application/json
+
+###一个月内国内数据
+GET https://eyesight.news.qq.com/sars/riskarea
+Accept: application/json
+
+###风险地区
+
+###--------------丁香园
+GET https://lab.isaaclin.cn/nCoV/api/news
+Accept: application/json
+
+###新闻
+GET https://lab.isaaclin.cn/nCoV/api/area?province=陕西省
+Accept: application/json
+
+###地区
+GET https://lab.isaaclin.cn/nCoV/api/overall
+Accept: application/json
+
+###疫情概览Ovarall

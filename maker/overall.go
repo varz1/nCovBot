@@ -51,15 +51,19 @@ func Overall() {
 			channel.MessageChannel <- errMsg
 			return
 		}
-		data := oa.(model.OverallData)
-		tm := time.Unix(data.UpdateTime/1000, 0).Format("2006-01-02 15:04")
+		data1 := oa.(model.Overall)
+		data := data1.Data.Diseaseh5Shelf
+		tm :=data.LastUpdateTime
+		total := data.ChinaTotal
+		add := data.ChinaAdd
 		caption.WriteString("🇨🇳中国疫情概况:")
-		caption.WriteString("\n现存确诊(含港澳台):" + strconv.Itoa(data.CurrentConfirmedCount) + " ⬆️" + strconv.Itoa(data.CurrentConfirmedIncr))
-		caption.WriteString("\n现存无症状:" + strconv.Itoa(data.SeriousCount) + " ⬆️" + strconv.Itoa(data.SeriousIncr))
-		caption.WriteString("\n境外输入:" + strconv.Itoa(data.SuspectedCount) + " ⬆️" + strconv.Itoa(data.SuspectedIncr))
-		caption.WriteString("\n累计确诊:" + strconv.Itoa(data.ConfirmedCount) + " ⬆️" + strconv.Itoa(data.ConfirmedIncr))
-		caption.WriteString("\n累计治愈:" + strconv.Itoa(data.CuredCount) + " ⬆️" + strconv.Itoa(data.CuredIncr))
-		caption.WriteString("\n累计死亡" + strconv.Itoa(data.DeadCount) + " ⬆️" + strconv.Itoa(data.DeadIncr))
+		caption.WriteString("\n本土现有确诊:" + strconv.Itoa(total.LocalConfirm) + " 较上日⬆️" + strconv.Itoa(add.LocalConfirmH5))
+		caption.WriteString("\n现存确诊(含港澳台):" + strconv.Itoa(total.NowConfirm) + " 较上日⬆️" + strconv.Itoa(add.NowConfirm))
+		caption.WriteString("\n累计确诊:" + strconv.Itoa(total.Confirm) + " 较上日⬆️" + strconv.Itoa(add.Confirm))
+		caption.WriteString("\n无症状感染者:" + strconv.Itoa(total.NoInfect) + " 较上日⬆️" + strconv.Itoa(add.NoInfect))
+		caption.WriteString("\n境外输入:" + strconv.Itoa(total.ImportedCase) + " 较上日⬆️" + strconv.Itoa(add.ImportedCase))
+		//caption.WriteString("\n累计治愈:" + strconv.Itoa(data.CuredCount) + " 较上日⬆️" + strconv.Itoa(data.CuredIncr))
+		caption.WriteString("\n累计死亡" + strconv.Itoa(total.Dead) + " 较上日⬆️" + strconv.Itoa(add.Dead))
 		caption.WriteString("\n数据更新时间:" + tm)
 		msg := tgbotapi.PhotoConfig{
 			BaseFile: tgbotapi.BaseFile{
@@ -101,23 +105,23 @@ func Trend() {
 
 func WorldOverall() {
 	for update := range channel.WorldUpdateChannel {
-		world, exist := data2.C.Get("overall")
-		data := world.(model.OverallData)
+		world, exist := data2.C.Get("world")
+		data := world.(model.OverallWorld)
 		p1, _ := C.Get("pie")
 		Pie := p1.(model.Chartt)
-		global := data.GlobalStatistics
+		global := data.Data.WomWorld
 		if Pie.Pie.Bytes() == nil || !exist {
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "数据错误")
 			channel.MessageChannel <- msg
 			return
 		}
 		caption := strings.Builder{}
-		tm := time.Unix(data.UpdateTime/1000, 0).Format("2006-01-02 15:04")
+		tm := global.LastUpdateTime
 		caption.WriteString("\n🌏全球疫情概况")
-		caption.WriteString("\n全球现存确诊" + strconv.Itoa(global.CurrentConfirmedCount) + " ⬆️" + strconv.Itoa(global.CurrentConfirmedIncr))
-		caption.WriteString("\n全球累计确诊" + strconv.Itoa(global.ConfirmedCount) + " ⬆️" + strconv.Itoa(global.ConfirmedIncr))
-		caption.WriteString("\n全球累计治愈" + strconv.Itoa(global.CuredCount) + " ⬆️" + strconv.Itoa(global.CuredIncr))
-		caption.WriteString("\n全球累计死亡" + strconv.Itoa(global.DeadCount) + " ⬆️" + strconv.Itoa(global.DeadIncr))
+		caption.WriteString("\n全球现存确诊" + strconv.Itoa(global.NowConfirm) + " 较上日⬆️" + strconv.Itoa(global.NowConfirmAdd))
+		caption.WriteString("\n全球累计确诊" + strconv.Itoa(global.Confirm) + " 较上日⬆️" + strconv.Itoa(global.ConfirmAdd))
+		caption.WriteString("\n全球累计治愈" + strconv.Itoa(global.Heal) + " 较上日⬆️" + strconv.Itoa(global.HealAdd))
+		caption.WriteString("\n全球累计死亡" + strconv.Itoa(global.Dead) + " 较上日⬆️" + strconv.Itoa(global.DeadAdd))
 		caption.WriteString("\n数据更新时间:" + tm)
 		caption.WriteString("\n图表更新时间:" + Pie.Date)
 		p := tgbotapi.PhotoConfig{

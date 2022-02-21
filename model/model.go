@@ -4,10 +4,6 @@ import (
 	"bytes"
 )
 
-//type Data interface {
-//	IsEmpty() bool
-//}
-
 type Risks struct {
 	High []RiskArea
 	Mid []RiskArea
@@ -35,27 +31,23 @@ type World struct {
 	Confirm   int    `json:"confirm"`
 }
 
-// Add 新增本土case数据
+// Add 新增本土case数据时间线
 type Add struct {
 	Date            string `json:"date"`
 	LocalConfirmAdd int    `json:"localConfirmadd"`
 	Year            string `json:"y"`
 }
 
-// NewsData 请求的新闻数据
-type NewsData struct {
-	PubDate    string `json:"pubDate"`    //发布时间
-	Title      string `json:"title"`      //标题
-	Summary    string `json:"summary"`    //新闻概要
-	InfoSource string `json:"infoSource"` //新闻来源
-	SourceUrl  string `json:"sourceUrl"`  //新闻源地址
+// News 请求的新闻数据
+type News struct {
+	Results []struct {
+		PubDate    string      `json:"pubDate"`
+		Title      string      `json:"title"`
+		Summary    string      `json:"summary"`
+		InfoSource string      `json:"infoSource"`
+		SourceUrl  string      `json:"sourceUrl"`
+	} `json:"results"`
 }
-
-//// IsEmpty ProvinceData 判空
-//func (msg ProvinceData) IsEmpty() bool {
-//	return reflect.DeepEqual(msg, ProvinceData{})
-//}
-
 // ProvinceData 请求的省份详细数据
 type ProvinceData struct {
 	LocationId            int         `json:"locationId"`
@@ -85,32 +77,60 @@ type Cities struct {
 	CityEnglishName          string `json:"cityEnglishName,omitempty"`
 }
 
-// OverallData 请求的概要数据
-type OverallData struct {
-	CurrentConfirmedCount int              `json:"currentConfirmedCount"` //现有确诊(含港澳台,境外
-	CurrentConfirmedIncr  int              `json:"currentConfirmedIncr"`  //现有确诊较昨日新增
-	ConfirmedCount        int              `json:"confirmedCount"`        //累计确诊
-	ConfirmedIncr         int              `json:"confirmedIncr"`         //累计确诊新增
-	SuspectedCount        int              `json:"suspectedCount"`        //境外输入
-	SuspectedIncr         int              `json:"suspectedIncr"`         //境外输入新增
-	CuredCount            int              `json:"curedCount"`            //累计治愈
-	CuredIncr             int              `json:"curedIncr"`             //新增治愈
-	DeadCount             int              `json:"deadCount"`             //死亡人数
-	DeadIncr              int              `json:"deadIncr"`              //死亡新增
-	SeriousCount          int              `json:"seriousCount"`          //现存无症状
-	SeriousIncr           int              `json:"seriousIncr"`           //现存无症状新增
-	GlobalStatistics      GlobalStatistics `json:"globalStatistics"`
-	UpdateTime            int64            `json:"updateTime"` //更新时间戳
+type Overall struct {
+	Data struct {
+		Diseaseh5Shelf struct {
+			LastUpdateTime string `json:"lastUpdateTime"`
+			ChinaTotal     struct {
+				LocalConfirm       int `json:"localConfirm"`
+				LocalConfirmH5     int `json:"localConfirmH5"`
+				Confirm            int `json:"confirm"`
+				NoInfect           int `json:"noInfect"`
+				Dead               int `json:"dead"`
+				NowConfirm         int `json:"nowConfirm"`
+				LocalAccConfirm    int `json:"local_acc_confirm"`
+				NoInfectH5         int `json:"noInfectH5"`
+				Heal               int `json:"heal"`
+				Suspect            int `json:"suspect"`
+				NowSevere          int `json:"nowSevere"`
+				ImportedCase       int `json:"importedCase"`
+				ShowLocalConfirm   int `json:"showLocalConfirm"`
+				Showlocalinfeciton int `json:"showlocalinfeciton"`
+			} `json:"chinaTotal"`
+			ChinaAdd struct {
+				NoInfect       int `json:"noInfect"`
+				LocalConfirm   int `json:"localConfirm"`
+				NoInfectH5     int `json:"noInfectH5"`
+				Confirm        int `json:"confirm"`
+				Heal           int `json:"heal"`
+				NowSevere      int `json:"nowSevere"`
+				ImportedCase   int `json:"importedCase"`
+				LocalConfirmH5 int `json:"localConfirmH5"`
+				Dead           int `json:"dead"`
+				NowConfirm     int `json:"nowConfirm"`
+				Suspect        int `json:"suspect"`
+			} `json:"chinaAdd"`
+		} `json:"diseaseh5Shelf"`
+	} `json:"data"`
 }
 
-type GlobalStatistics struct {
-	CurrentConfirmedCount       int `json:"currentConfirmedCount"`       //全球现存确诊
-	ConfirmedCount              int `json:"confirmedCount"`              //全球累计确诊
-	CuredCount                  int `json:"curedCount"`                  //全球累计治愈
-	DeadCount                   int `json:"deadCount"`                   //全球累计死亡
-	CurrentConfirmedIncr        int `json:"currentConfirmedIncr"`        //全球现存确诊新增
-	ConfirmedIncr               int `json:"confirmedIncr"`               //全球累计确诊新增
-	CuredIncr                   int `json:"curedIncr"`                   //全球累计治愈新增
-	DeadIncr                    int `json:"deadIncr"`                    //全球累计确诊新增
-	YesterdayConfirmedCountIncr int `json:"yesterdayConfirmedCountIncr"` //全球现存确诊新增
+type OverallWorld struct {
+	Data struct {
+		WomWorld struct {
+			PubDate        string `json:"PubDate"`
+			Y              string `json:"y"`
+			Date           string `json:"date"`
+			NowConfirm     int    `json:"nowConfirm"`
+			NowConfirmAdd  int    `json:"nowConfirmAdd"`
+			Confirm        int    `json:"confirm"`
+			ConfirmAdd     int    `json:"confirmAdd"`
+			Heal           int    `json:"heal"`
+			HealAdd        int    `json:"healAdd"`
+			Dead           int    `json:"dead"`
+			DeadAdd        int    `json:"deadAdd"`
+			Deathrate      int    `json:"deathrate"`
+			Curerate       int    `json:"curerate"`
+			LastUpdateTime string `json:"lastUpdateTime"`
+		} `json:"WomWorld"`
+	} `json:"data"`
 }

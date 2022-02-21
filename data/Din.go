@@ -6,6 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/varz1/nCovBot/cache"
 	"github.com/varz1/nCovBot/model"
+	"github.com/varz1/nCovBot/variables"
 	"sort"
 	"strconv"
 	"time"
@@ -15,21 +16,6 @@ var (
 	request = resty.New()
 	timer   = cron.New()
 	C       = cache.New()
-)
-
-const (
-	OVERALL = "https://lab.isaaclin.cn/nCoV/api/overall"                                                    //新闻概览API
-	AREA    = "https://lab.isaaclin.cn/nCoV/api/area?"                                                      //地区数据API
-	NEWS    = "https://lab.isaaclin.cn/nCoV/api/news"                                                       //新闻API
-	RISK    = "https://eyesight.news.qq.com/sars/riskarea"                                                  //风险地区API
-	LOCAL   = "https://api.inews.qq.com/newsqa/v1/query/inner/publish/modules/list?modules=chinaDayAddList" //本土新增时间线
-	WORLD   = "https://api.inews.qq.com/newsqa/v1/automation/modules/list?"                                 //世界数据API
-	NA      = "北美洲"
-	AS      = "亚洲"
-	SA      = "南美洲"
-	EU      = "欧洲"
-	OC      = "大洋州"
-	AF      = "非洲"
 )
 
 func init() {
@@ -64,7 +50,7 @@ func GetOverall() {
 	var overall struct {
 		Results []model.OverallData `json:"results"`
 	}
-	resp, err := request.R().SetResult(&overall).Get(OVERALL)
+	resp, err := request.R().SetResult(&overall).Get(variables.OVERALL)
 	if err != nil {
 		log1.WithField("resp err", err).Error(err)
 		return
@@ -85,7 +71,7 @@ func GetAreaData(area string) model.ProvinceData {
 		Results []model.ProvinceData `json:"results"`
 	}
 	log1.Println("开始请求地区数据API")
-	resp, err := request.R().SetResult(&res).SetQueryString("province=" + area).Get(AREA)
+	resp, err := request.R().SetResult(&res).SetQueryString("province=" + area).Get(variables.AREA)
 	if err != nil || resp.StatusCode() != 200 {
 		log1.WithField("请求地区数据失败", "").Errorln(err)
 		return model.ProvinceData{}
@@ -102,7 +88,7 @@ func GetNews() {
 	var res struct {
 		Results []model.NewsData `json:"results"`
 	}
-	resp, err := request.R().SetResult(&res).Get(NEWS)
+	resp, err := request.R().SetResult(&res).Get(variables.NEWS)
 	if err != nil || resp.StatusCode() != 200 {
 		log1.WithField("请求失败", "新闻API").Errorln(err)
 		return
@@ -120,7 +106,7 @@ func GetRiskLevel() {
 		Data []model.RiskArea `json:"data"`
 	}
 	count := 0
-	resp, err := request.R().SetResult(&res).Get(RISK)
+	resp, err := request.R().SetResult(&res).Get(variables.RISK)
 	if err != nil || resp.StatusCode() != 200 {
 		log1.WithField("请求失败", "风险地区").Error(err)
 		return
@@ -160,7 +146,7 @@ func GetAdds(day int) []model.Add {
 			Adds []model.Add `json:"chinaDayAddList"`
 		} `json:"data"`
 	}
-	resp, _ := request.R().SetResult(&res).Get(LOCAL)
+	resp, _ := request.R().SetResult(&res).Get(variables.LOCAL)
 	if !resp.IsSuccess() {
 		logrus.Error("请求数据失败")
 		return nil
@@ -176,7 +162,7 @@ func GetWorldData() (map[string]int, error) {
 			WomAboard []model.World `json:"WomAboard"`
 		} `json:"data"`
 	}
-	resp, err := request.R().SetResult(&res).SetQueryString("modules=WomAboard").Get(WORLD)
+	resp, err := request.R().SetResult(&res).SetQueryString("modules=WomAboard").Get(variables.WORLD)
 	if resp.StatusCode() != 200 {
 		logrus.Error("获取世界数据失败")
 		return nil, err
@@ -185,17 +171,17 @@ func GetWorldData() (map[string]int, error) {
 	for _, v := range res.Data.WomAboard {
 		switch v.Continent {
 		case "北美洲":
-			continent[NA] = continent[NA] + v.Confirm
+			continent[variables.NA] = continent[variables.NA] + v.Confirm
 		case "亚洲":
-			continent[AS] = continent[AS] + v.Confirm
+			continent[variables.AS] = continent[variables.AS] + v.Confirm
 		case "南美洲":
-			continent[SA] = continent[SA] + v.Confirm
+			continent[variables.SA] = continent[variables.SA] + v.Confirm
 		case "欧洲":
-			continent[EU] = continent[EU] + v.Confirm
+			continent[variables.EU] = continent[variables.EU] + v.Confirm
 		case "大洋洲":
-			continent[OC] = continent[OC] + v.Confirm
+			continent[variables.OC] = continent[variables.OC] + v.Confirm
 		case "非洲":
-			continent[AF] = continent[AF] + v.Confirm
+			continent[variables.AF] = continent[variables.AF] + v.Confirm
 		}
 	}
 	return continent, nil

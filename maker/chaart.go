@@ -9,6 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 	data2 "github.com/varz1/nCovBot/data"
 	"github.com/varz1/nCovBot/model"
+	"github.com/varz1/nCovBot/variables"
 	"github.com/vdobler/chart"
 	"github.com/vdobler/chart/imgg"
 	"image"
@@ -21,10 +22,6 @@ import (
 	"strings"
 	"time"
 )
-
-const PIE = "各大洲累计确诊比"
-const TREND = "七天内新增本土病例"
-const DAY float64 = 86400 // 一天的时间戳
 
 var font *truetype.Font
 
@@ -66,7 +63,7 @@ func (d *Dumper) Plot(c chart.Chart) error {
 // Scatter 渲染散点图
 func Scatter(x, y []float64) *bytes.Buffer {
 	dumper := NewDumper(1, 1, 800, 600)
-	pl := chart.ScatterChart{Title: TREND}
+	pl := chart.ScatterChart{Title: variables.TREND}
 	pl.Key.Pos = "itl"
 	todayAdd := "单位/例" //将今日新增标注上
 	pl.AddDataPair(todayAdd, x, y, chart.PlotStyleLinesPoints,
@@ -75,8 +72,8 @@ func Scatter(x, y []float64) *bytes.Buffer {
 	pl.XRange.TicSetting.TLocation = time.Local
 	pl.XRange.Time = true
 	pl.XRange.DataMin = x[0]
-	pl.XRange.DataMax = x[len(x)-1] - DAY
-	pl.XRange.TicSetting.TDelta = chart.MatchingTimeDelta(float64(time.Now().Unix()), DAY) //x轴时间间隔
+	pl.XRange.DataMax = x[len(x)-1] - variables.DAY
+	pl.XRange.TicSetting.TDelta = chart.MatchingTimeDelta(float64(time.Now().Unix()), variables.DAY) //x轴时间间隔
 
 	pl.YRange.TicSetting.Mirror = 1
 	pl.XRange.Label = "日期"
@@ -100,7 +97,7 @@ func PieChart(continent map[string]int) *bytes.Buffer {
 		cases = append(cases, v)
 	}
 
-	pie := chart.PieChart{Title: PIE}
+	pie := chart.PieChart{Title: variables.PIE}
 	pie.AddIntDataPair("大洲", names, cases)
 	pie.Data[0].Samples[3].Flag = true
 

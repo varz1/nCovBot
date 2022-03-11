@@ -28,5 +28,5 @@ func HiHandler(c *fiber.Ctx) error {
 }
 
 func BlogHandler(c *fiber.Ctx) error {
-	return c.Redirect(variables.Blog)
+	return c.Redirect(variables.Blog, fiber.StatusOK)
 }

@@ -4,8 +4,6 @@ module github.com/varz1/nCovBot
 go 1.17
 
 require (
-	github.com/akyoto/cache v1.0.6
-	github.com/chromedp/chromedp v0.7.6
 	github.com/go-resty/resty/v2 v2.7.0
 	github.com/go-rod/rod v0.103.0
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
@@ -18,16 +16,9 @@ require (
 
 require (
 	github.com/andybalholm/brotli v1.0.2 // indirect
-	github.com/chromedp/cdproto v0.0.0-20211126220118-81fa0469ad77 // indirect
-	github.com/chromedp/sysutil v1.0.0 // indirect
-	github.com/go-echarts/go-echarts/v2 v2.2.4 // indirect
-	github.com/gobwas/httphead v0.1.0 // indirect
-	github.com/gobwas/pool v0.2.1 // indirect
-	github.com/gobwas/ws v1.1.0 // indirect
-	github.com/josharian/intern v1.0.0 // indirect
 	github.com/klauspost/compress v1.13.4 // indirect
 	github.com/llgcode/draw2d v0.0.0-20180825133448-f52c8a71aff0 // indirect
-	github.com/mailru/easyjson v0.7.7 // indirect
+	github.com/stretchr/testify v1.6.0 // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.31.0 // indirect

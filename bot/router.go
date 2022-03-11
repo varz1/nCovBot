@@ -39,7 +39,7 @@ func baseRouter(update *tgbotapi.Update) {
 		switch message {
 		case "hi":
 			msg = tgbotapi.NewMessage(int64(admin), "Hi👋 :) Administrator")
-		case "update-map":
+		case "/update-map":
 			msg = tgbotapi.NewMessage(int64(admin), "开始更新图表数据...")
 			channel.MessageChannel <- msg
 			maker.GetChMap()
@@ -48,7 +48,7 @@ func baseRouter(update *tgbotapi.Update) {
 			msg1 := tgbotapi.NewMessage(int64(admin), "图表数据更新完毕")
 			channel.MessageChannel <- msg1
 			return
-		case "update-data":
+		case "/update-data":
 			msg = tgbotapi.NewMessage(int64(admin), "开始更新数据...")
 			channel.MessageChannel <- msg
 			data.GetNews()
@@ -70,7 +70,12 @@ func commandRouter(update *tgbotapi.Update) {
 	message := update.Message.Text
 	switch message {
 	case "/start":
-		msg := GetStartMenu(*update)
+		var msg tgbotapi.MessageConfig
+		if strconv.Itoa(int(update.Message.Chat.ID)) == variables.EnvAdminId {
+			msg = GetStartMenu(*update, true)
+		} else {
+			msg = GetStartMenu(*update, false)
+		}
 		channel.MessageChannel <- msg
 	case "/list":
 		msg := GetListMenu(*update)
@@ -101,16 +106,31 @@ func callBackRouter(query *tgbotapi.CallbackQuery) {
 	}
 }
 
-func GetStartMenu(update tgbotapi.Update) tgbotapi.MessageConfig {
-	msg := tgbotapi.NewMessage(update.Message.Chat.ID,
-		"欢迎使用nCov疫情数据机器人🤖\n"+
-			"功能列表:\n/start:使用提示👋\n/list:支持查询的地区列表🌏\n/overall:查看中国疫情数据概览😷\n"+
-			"/world:查看世界疫情概览🌎\n/trend:查看本土疫情趋势图📶\n"+
-			"/news:查看最新新闻🆕\n"+
-			"/risk:中高风险地区列表⚠️\n"+
-			"\n使用Tip:\n发送列表中地区名可返回该地区疫情数据（注意格式）\n"+
-			"示例消息:上海市\n"+
-			"\n数据来自丁香园/腾讯/百度 本Bot不对数据负责")
+func GetStartMenu(update tgbotapi.Update, isAdmin bool) tgbotapi.MessageConfig {
+	var msg tgbotapi.MessageConfig
+	if isAdmin {
+		msg = tgbotapi.NewMessage(update.Message.Chat.ID,
+			"欢迎使用nCov疫情数据机器人🤖\n"+
+				"功能列表:\n/start:使用提示👋\n/list:支持查询的地区列表🌏\n/overall:查看中国疫情数据概览😷\n"+
+				"/world:查看世界疫情概览🌎\n/trend:查看本土疫情趋势图📶\n"+
+				"/news:查看最新新闻🆕\n"+
+				"/risk:中高风险地区列表⚠️\n"+
+				"/update-map:更新图表\n"+
+				"/update-data:更新数据\n"+
+				"\n使用Tip:\n发送列表中地区名可返回该地区疫情数据（注意格式）\n"+
+				"示例消息:上海市\n"+
+				"\n数据来自丁香园/腾讯/百度 本Bot不对数据负责")
+	} else {
+		msg = tgbotapi.NewMessage(update.Message.Chat.ID,
+			"欢迎使用nCov疫情数据机器人🤖\n"+
+				"功能列表:\n/start:使用提示👋\n/list:支持查询的地区列表🌏\n/overall:查看中国疫情数据概览😷\n"+
+				"/world:查看世界疫情概览🌎\n/trend:查看本土疫情趋势图📶\n"+
+				"/news:查看最新新闻🆕\n"+
+				"/risk:中高风险地区列表⚠️\n"+
+				"\n使用Tip:\n发送列表中地区名可返回该地区疫情数据（注意格式）\n"+
+				"示例消息:上海市\n"+
+				"\n数据来自丁香园/腾讯/百度 本Bot不对数据负责")
+	}
 	return msg
 }
 

@@ -3,22 +3,26 @@ package bot
 import (
 	"fmt"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/gofiber/fiber/v2"
 	"github.com/varz1/nCovBot/channel"
 	"github.com/varz1/nCovBot/data"
 	"github.com/varz1/nCovBot/maker"
 	"github.com/varz1/nCovBot/model"
-	"os"
+	"github.com/varz1/nCovBot/variables"
 	"strconv"
 	"strings"
 )
 
-//func SetUpRouter(app *fiber.App) {
-//	app.Post("/"+botAPI.Token, WebHookHandler)
-//}
+func SetUpRouter(app *fiber.App) {
+	app.Post("/"+variables.EnvToken, WebHookHandler)
+	app.Get("/", BlogHandler)
+	app.Get("/hi", HiHandler)
+	app.Use(NotFoundHandler)
+}
 
 func baseRouter(update *tgbotapi.Update) {
 	message := update.Message.Text
-	admin, _ := strconv.Atoi(os.Getenv("AdminId"))
+	admin, _ := strconv.Atoi(variables.EnvAdminId)
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "无该地区或格式错误")
 	if update.Message.IsCommand() {
 		go commandRouter(update)
@@ -55,8 +59,8 @@ func baseRouter(update *tgbotapi.Update) {
 			channel.MessageChannel <- msg1
 			return
 		}
-	}else {
-		notice := tgbotapi.NewMessage(int64(admin), fmt.Sprintf("User:%v\nId:%d",update.Message.Chat.UserName,update.Message.Chat.ID))
+	} else {
+		notice := tgbotapi.NewMessage(int64(admin), fmt.Sprintf("User:%v\nId:%d", update.Message.Chat.UserName, update.Message.Chat.ID))
 		channel.MessageChannel <- notice
 	}
 	channel.MessageChannel <- msg

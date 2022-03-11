@@ -14,6 +14,7 @@
 ![nCovBot](https://github.com/varz1/pics/blob/master/bot.png?raw=true)
 
 ## ChangeLog
+- **2022.2.21** 优化model
 - **2022.2.08** 实现了一个内存kv存储器,将上游的信息进行缓存并定期同步,提高服务响应速度和稳定性
 - **2022.1.20** 全局概览
 - **2022.1.16** 初始化数据,定时更新数据,风险地区优化

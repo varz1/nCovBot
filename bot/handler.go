@@ -4,6 +4,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/gofiber/fiber/v2"
 	"github.com/varz1/nCovBot/channel"
+	"github.com/varz1/nCovBot/variables"
 	"log"
 )
 
@@ -24,4 +25,8 @@ func NotFoundHandler(c *fiber.Ctx) error {
 
 func HiHandler(c *fiber.Ctx) error {
 	return c.SendString("hi")
+}
+
+func BlogHandler(c *fiber.Ctx) error {
+	return c.Redirect(variables.Blog)
 }

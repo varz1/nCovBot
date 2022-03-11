@@ -1,3 +1,6 @@
+# github.com/akyoto/cache v1.0.6
+## explicit; go 1.13
+github.com/akyoto/cache
 # github.com/andybalholm/brotli v1.0.2
 ## explicit; go 1.12
 github.com/andybalholm/brotli
@@ -62,6 +65,19 @@ github.com/chromedp/sysutil
 # github.com/go-resty/resty/v2 v2.7.0
 ## explicit; go 1.11
 github.com/go-resty/resty/v2
+# github.com/go-rod/rod v0.103.0
+## explicit; go 1.16
+github.com/go-rod/rod
+github.com/go-rod/rod/lib/assets
+github.com/go-rod/rod/lib/cdp
+github.com/go-rod/rod/lib/defaults
+github.com/go-rod/rod/lib/devices
+github.com/go-rod/rod/lib/input
+github.com/go-rod/rod/lib/js
+github.com/go-rod/rod/lib/launcher
+github.com/go-rod/rod/lib/launcher/flags
+github.com/go-rod/rod/lib/proto
+github.com/go-rod/rod/lib/utils
 # github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 ## explicit
 github.com/go-telegram-bot-api/telegram-bot-api
@@ -147,6 +163,17 @@ github.com/valyala/tcplisten
 ## explicit
 github.com/vdobler/chart
 github.com/vdobler/chart/imgg
+# github.com/ysmood/goob v0.3.1
+## explicit; go 1.15
+github.com/ysmood/goob
+# github.com/ysmood/gson v0.6.4
+## explicit; go 1.15
+github.com/ysmood/gson
+# github.com/ysmood/leakless v0.7.0
+## explicit; go 1.15
+github.com/ysmood/leakless
+github.com/ysmood/leakless/pkg/shared
+github.com/ysmood/leakless/pkg/utils
 # golang.org/x/image v0.0.0-20181030002151-69cc3646b96e
 ## explicit
 golang.org/x/image/draw

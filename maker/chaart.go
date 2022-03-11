@@ -176,7 +176,7 @@ func GetChMap() {
 	var Map model.Chartt
 	Map.Pie.Write(buf)
 	Map.Date = time.Unix(time.Now().Unix(), 0).Format("2006-01-02 15:04")
-	C.Set("map",Map)
+	C.Set("map", Map)
 	logrus.Info("截图成功")
 }
 

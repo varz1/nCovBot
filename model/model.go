@@ -48,6 +48,7 @@ type News struct {
 		SourceUrl  string      `json:"sourceUrl"`
 	} `json:"results"`
 }
+
 // ProvinceData 请求的省份详细数据
 type ProvinceData struct {
 	LocationId            int         `json:"locationId"`

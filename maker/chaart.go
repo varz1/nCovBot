@@ -3,7 +3,10 @@ package maker
 import (
 	"bytes"
 	"context"
+	"errors"
 	"github.com/chromedp/chromedp"
+	"github.com/go-rod/rod"
+	"github.com/go-rod/rod/lib/launcher"
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
 	"github.com/sirupsen/logrus"
@@ -155,26 +158,39 @@ func GetPie() {
 // GetChMap 无头浏览器爬取疫情地图
 func GetChMap() {
 	logrus.WithField("开始爬取地图", "GetChMap")
-	var url = "https://voice.baidu.com/act/newpneumonia/newpneumonia"
-	var selMap = "#virus-map"
-	options := []chromedp.ExecAllocatorOption{
-		chromedp.Flag("blink-settings", "imagesEnabled=false"),
-		chromedp.UserAgent(`Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36`),
-	}
-	options = append(chromedp.DefaultExecAllocatorOptions[:], options...)
-	ctx, cancel := chromedp.NewContext(context.Background())
-	defer cancel()
-	chromedp.ExecPath(os.Getenv("GOOGLE_CHROME_SHIM"))
-	// 超时设置
-	ctx, cancel = context.WithTimeout(ctx, 2*time.Minute)
-	defer cancel()
-	var buf []byte
-	if err := chromedp.Run(ctx,
-		Screenshot(url, selMap, &buf)); err != nil {
-		logrus.Error("截图失败")
-	}
 	var Map model.Chartt
-	Map.Pie.Write(buf)
+	path, _ := launcher.LookPath()
+	u := launcher.New().Bin(path).MustLaunch()
+	r := rod.New().ControlURL(u).MustConnect()
+	err := rod.Try(func() {
+		page := r.Timeout(2 * time.Minute).MustPage("https://voice.baidu.com/act/newpneumonia/newpneumonia").MustWaitLoad()
+		shot := page.MustElement("#virus-map").MustWaitLoad().MustScreenshot()
+		Map.Pie.Write(shot)
+	})
+	if errors.Is(err, context.DeadlineExceeded) {
+		logrus.Error("请求超时")
+		return
+	} else if err != nil {
+		logrus.Error("截图错误")
+		return
+	}
+	//
+	//options := []chromedp.ExecAllocatorOption{
+	//	chromedp.Flag("blink-settings", "imagesEnabled=false"),
+	//	chromedp.UserAgent(`Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36`),
+	//}
+	//options = append(chromedp.DefaultExecAllocatorOptions[:], options...)
+	//ctx, cancel := chromedp.NewContext(context.Background())
+	//defer cancel()
+	//chromedp.ExecPath(os.Getenv("GOOGLE_CHROME_SHIM"))
+	//// 超时设置
+	//ctx, cancel = context.WithTimeout(ctx, 2*time.Minute)
+	//defer cancel()
+	//var buf []byte
+	//if err := chromedp.Run(ctx,
+	//	Screenshot(url, selMap, &buf)); err != nil {
+	//	logrus.Error("截图失败")
+	//}
 	Map.Date = time.Unix(time.Now().Unix(), 0).Format("2006-01-02 15:04")
 	C.Set("map", Map)
 	logrus.Info("截图成功")

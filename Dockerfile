@@ -13,7 +13,6 @@ COPY . .
 
 RUN CGO_ENABLED=0 go build -o /nCovBot
 
-
 FROM scratch
 
 COPY --from=gobuilder /list.json /

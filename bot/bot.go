@@ -12,8 +12,7 @@ var botAPI *tgbotapi.BotAPI
 func initBot() *tgbotapi.BotAPI {
 	api, err := tgbotapi.NewBotAPI(variables.EnvToken)
 	if err != nil {
-		log.Println("初始化失败 检查token")
-		log.Panic(err)
+		log.Panic("初始化失败 检查token", err)
 	}
 	//初始化webHook
 	url := variables.EnvBaseUrl + api.Token

@@ -7,10 +7,9 @@ type Cache struct {
 }
 
 func New() *Cache {
-	cache := &Cache{
+	return &Cache{
 		obj: sync.Map{},
 	}
-	return cache
 }
 
 func (c *Cache) Set(key, value interface{}) {

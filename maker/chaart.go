@@ -175,7 +175,7 @@ func GetChMap() {
 		logrus.Error("截图错误")
 		return
 	}
-	Map.Date = time.Unix(time.Now().Unix(), 0).Format("2006-01-02 15:04")
+	Map.Date = time.Now().Format("2006-01-02 15:04")
 	C.Set("map", Map)
 	logrus.Info("截图成功")
 }
@@ -185,8 +185,7 @@ func YaHeiFontData() []byte {
 	p, _ := os.Getwd()
 	fontBytes, err := ioutil.ReadFile(p + "/.fonts/WeiRuanYaHei-1.ttf")
 	if err != nil {
-		log.Println(err)
-		return nil
+		log.Fatal(err)
 	}
 	return fontBytes
 }

@@ -14,12 +14,12 @@ var (
 
 func init() {
 	if EnvAdminId == "" || EnvBaseUrl == "" || EnvToken == "" || EnvTestToken == "" {
-		logrus.Error("缺少环境变量！")
-		return
+		logrus.Fatal("缺少环境变量！")
 	}
 }
 
 const Blog = "https://varz1.github.io/"
+
 // apis
 const (
 	OVERALL1      = "https://lab.isaaclin.cn/nCoV/api/overall"                                                    //新闻概览API

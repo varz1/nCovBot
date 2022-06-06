@@ -14,7 +14,7 @@ var (
 
 func init() {
 	if EnvAdminId == "" || EnvBaseUrl == "" || EnvToken == "" || EnvTestToken == "" {
-		logrus.Fatal("缺少环境变量！")
+		logrus.Warn("缺少环境变量！")
 	}
 }
 

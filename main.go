@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/varz1/nCovBot/bot"
 	"github.com/varz1/nCovBot/maker"
+	"log"
 	"os"
 )
 
@@ -21,5 +22,5 @@ func main() {
 	go maker.QueryProvince()
 	go maker.News()
 	go maker.RiskQuery()
-	app.Listen(":" + os.Getenv("PORT"))
+	log.Fatal(app.Listen(":" + os.Getenv("PORT")))
 }

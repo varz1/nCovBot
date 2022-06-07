@@ -6,13 +6,39 @@ import (
 
 type Risks struct {
 	High []RiskArea
-	Mid []RiskArea
-	Tm string
+	Mid  []RiskArea
+	Tm   string
+}
+
+type RisksRes struct {
+	Data struct {
+		EndUpdateTime string `json:"end_update_time"`
+		Hcount        int    `json:"hcount"`
+		Mcount        int    `json:"mcount"`
+		Highlist      []struct {
+			Type       string   `json:"type"`
+			Province   string   `json:"province"`
+			City       string   `json:"city"`
+			County     string   `json:"county"`
+			AreaName   string   `json:"area_name"`
+			Communitys []string `json:"communitys"`
+		} `json:"highlist"`
+		Middlelist []struct {
+			Type       string   `json:"type"`
+			Province   string   `json:"province"`
+			City       string   `json:"city"`
+			County     string   `json:"county"`
+			AreaName   string   `json:"area_name"`
+			Communitys []string `json:"communitys"`
+		} `json:"middlelist"`
+	} `json:"data"`
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
 }
 
 // Chartt 图表结构体
 type Chartt struct {
-	Pie bytes.Buffer
+	Pie  bytes.Buffer
 	Date string
 }
 
@@ -41,11 +67,11 @@ type Add struct {
 // News 请求的新闻数据
 type News struct {
 	Results []struct {
-		PubDate    string      `json:"pubDate"`
-		Title      string      `json:"title"`
-		Summary    string      `json:"summary"`
-		InfoSource string      `json:"infoSource"`
-		SourceUrl  string      `json:"sourceUrl"`
+		PubDate    string `json:"pubDate"`
+		Title      string `json:"title"`
+		Summary    string `json:"summary"`
+		InfoSource string `json:"infoSource"`
+		SourceUrl  string `json:"sourceUrl"`
 	} `json:"results"`
 }
 

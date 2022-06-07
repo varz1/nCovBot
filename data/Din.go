@@ -7,8 +7,6 @@ import (
 	"github.com/varz1/nCovBot/cache"
 	"github.com/varz1/nCovBot/model"
 	"github.com/varz1/nCovBot/variables"
-	"sort"
-	"strconv"
 	"time"
 )
 
@@ -119,10 +117,7 @@ func GetNews() {
 func GetRiskLevel() {
 	log1 := logrus.WithField("func", "GetRiskLevel")
 	tm := time.Unix(time.Now().Unix(), 0).Format("2006-01-02 15:04")
-	var res struct {
-		Data []model.RiskArea `json:"data"`
-	}
-	count := 0
+	var res model.RisksRes
 	resp, err := request.R().SetResult(&res).Get(variables.RISK)
 	if err != nil || resp.StatusCode() != 200 {
 		log1.WithField("请求失败", "风险地区").Error(err)
@@ -130,27 +125,23 @@ func GetRiskLevel() {
 	}
 	log1.Info("请求风险地区API成功")
 	var riskdata model.Risks
-	risk := res.Data
-	if len(risk) == 0 {
-		riskdata.Mid = nil
-		riskdata.High = nil
+	var high []model.RiskArea
+	for i := 0; i < len(res.Data.Highlist); i++ {
+		var value model.RiskArea
+		value.Type = "2"
+		value.Area = res.Data.Highlist[i].Province + res.Data.Highlist[i].City + res.Data.Highlist[i].AreaName
+		high = append(high, value)
 	}
-	sort.SliceStable(risk, func(i, j int) bool {
-		m, _ := strconv.Atoi(risk[i].Type)
-		n, _ := strconv.Atoi(risk[j].Type)
-		if m < n {
-			return false
-		}
-		return true
-	})
-	for _, v := range risk {
-		if v.Type == "2" {
-			count = count + 1
-		}
+	var mid []model.RiskArea
+	for i := 0; i < len(res.Data.Middlelist); i++ {
+		var value model.RiskArea
+		value.Type = "1"
+		value.Area = res.Data.Middlelist[i].Province + res.Data.Middlelist[i].City + res.Data.Middlelist[i].AreaName
+		mid = append(mid, value)
 	}
-	riskdata.High = risk[:count]
-	riskdata.Mid = risk[count:]
 	riskdata.Tm = tm
+	riskdata.High = high
+	riskdata.Mid = mid
 	C.Set("risk", riskdata)
 }
 

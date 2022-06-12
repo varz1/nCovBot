@@ -39,25 +39,25 @@ func baseRouter(update *tgbotapi.Update) {
 		switch message {
 		case "hi":
 			msg = tgbotapi.NewMessage(int64(admin), "Hi👋 :) Administrator")
-		case "/map":
-			msg = tgbotapi.NewMessage(int64(admin), "开始更新图表数据...")
-			channel.MessageChannel <- msg
-			maker.GetChMap()
-			maker.GetScatter()
-			maker.GetPie()
-			msg1 := tgbotapi.NewMessage(int64(admin), "图表数据更新完毕")
-			channel.MessageChannel <- msg1
-			return
-		case "/data":
-			msg = tgbotapi.NewMessage(int64(admin), "开始更新数据...")
-			channel.MessageChannel <- msg
-			data.GetNews()
-			data.GetRiskLevel()
-			data.GetOverall()
-			data.GetWorld()
-			msg1 := tgbotapi.NewMessage(int64(admin), "数据更新完毕")
-			channel.MessageChannel <- msg1
-			return
+			//case "/map":
+			//	msg = tgbotapi.NewMessage(int64(admin), "开始更新图表数据...")
+			//	channel.MessageChannel <- msg
+			//	maker.GetChMap()
+			//	maker.GetScatter()
+			//	maker.GetPie()
+			//	msg1 := tgbotapi.NewMessage(int64(admin), "图表数据更新完毕")
+			//	channel.MessageChannel <- msg1
+			//	return
+			//case "/data":
+			//	msg = tgbotapi.NewMessage(int64(admin), "开始更新数据...")
+			//	channel.MessageChannel <- msg
+			//	data.GetNews()
+			//	data.GetRiskLevel()
+			//	data.GetOverall()
+			//	data.GetWorld()
+			//	msg1 := tgbotapi.NewMessage(int64(admin), "数据更新完毕")
+			//	channel.MessageChannel <- msg1
+			//	return
 		}
 	} else {
 		notice := tgbotapi.NewMessage(int64(admin), fmt.Sprintf("User:%v\nId:%d", update.Message.Chat.UserName, update.Message.Chat.ID))
@@ -70,13 +70,8 @@ func commandRouter(update *tgbotapi.Update) {
 	message := update.Message.Text
 	switch message {
 	case "/start":
-		var msg tgbotapi.MessageConfig
-		if strconv.Itoa(int(update.Message.Chat.ID)) == variables.EnvAdminId {
-			msg = GetStartMenu(*update, true)
-		} else {
-			msg = GetStartMenu(*update, false)
-		}
-		channel.MessageChannel <- msg
+		menu := GetStartMenu(*update)
+		channel.MessageChannel <- menu
 	case "/list":
 		msg := GetListMenu(*update)
 		channel.MessageChannel <- msg
@@ -106,31 +101,17 @@ func callBackRouter(query *tgbotapi.CallbackQuery) {
 	}
 }
 
-func GetStartMenu(update tgbotapi.Update, isAdmin bool) tgbotapi.MessageConfig {
+func GetStartMenu(update tgbotapi.Update) tgbotapi.MessageConfig {
 	var msg tgbotapi.MessageConfig
-	if isAdmin {
-		msg = tgbotapi.NewMessage(update.Message.Chat.ID,
-			"你好管理员！欢迎使用nCov疫情数据机器人🤖\n"+
-				"功能列表:\n/start:使用提示👋\n/list:支持查询的地区列表🌏\n/overall:查看中国疫情数据概览😷\n"+
-				"/world:查看世界疫情概览🌎\n/trend:查看本土疫情趋势图📶\n"+
-				"/news:查看最新新闻🆕\n"+
-				"/risk:中高风险地区列表⚠️\n"+
-				"/map:更新图表\n"+
-				"/data:更新数据\n"+
-				"\n使用Tip:\n发送列表中地区名可返回该地区疫情数据（注意格式）\n"+
-				"示例消息:上海市\n"+
-				"\n数据来自丁香园/腾讯/百度 本Bot不对数据负责")
-	} else {
-		msg = tgbotapi.NewMessage(update.Message.Chat.ID,
-			"欢迎使用nCov疫情数据机器人🤖\n"+
-				"功能列表:\n/start:使用提示👋\n/list:支持查询的地区列表🌏\n/overall:查看中国疫情数据概览😷\n"+
-				"/world:查看世界疫情概览🌎\n/trend:查看本土疫情趋势图📶\n"+
-				"/news:查看最新新闻🆕\n"+
-				"/risk:中高风险地区列表⚠️\n"+
-				"\n使用Tip:\n发送列表中地区名可返回该地区疫情数据（注意格式）\n"+
-				"示例消息:上海市\n"+
-				"\n数据来自丁香园/腾讯/百度 本Bot不对数据负责")
-	}
+	msg = tgbotapi.NewMessage(update.Message.Chat.ID,
+		"欢迎使用nCov疫情数据机器人🤖\n"+
+			"功能列表:\n/start:使用提示👋\n/list:支持查询的地区列表🌏\n/overall:查看中国疫情数据概览😷\n"+
+			"/world:查看世界疫情概览🌎\n/trend:查看本土疫情趋势图📶\n"+
+			"/news:查看最新新闻🆕\n"+
+			"/risk:中高风险地区列表⚠️\n"+
+			"\n使用Tip:\n发送列表中地区名可返回该地区疫情数据（注意格式）\n"+
+			"示例消息:上海市\n"+
+			"\n数据来自丁香园/腾讯/百度 本Bot不对数据负责")
 	return msg
 }
 

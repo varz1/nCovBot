@@ -127,17 +127,21 @@ func GetRiskLevel() {
 	var riskdata model.Risks
 	var high []model.RiskArea
 	for i := 0; i < len(res.Data.Highlist); i++ {
-		var value model.RiskArea
-		value.Type = "2"
-		value.Area = res.Data.Highlist[i].Province + res.Data.Highlist[i].City + res.Data.Highlist[i].AreaName
-		high = append(high, value)
+		for _, v := range res.Data.Highlist[i].Communitys {
+			var value model.RiskArea
+			value.Type = "2"
+			value.Area = res.Data.Highlist[i].AreaName + v
+			high = append(high, value)
+		}
 	}
 	var mid []model.RiskArea
 	for i := 0; i < len(res.Data.Middlelist); i++ {
-		var value model.RiskArea
-		value.Type = "1"
-		value.Area = res.Data.Middlelist[i].Province + res.Data.Middlelist[i].City + res.Data.Middlelist[i].AreaName
-		mid = append(mid, value)
+		for _, v := range res.Data.Middlelist[i].Communitys {
+			var value model.RiskArea
+			value.Type = "1"
+			value.Area = res.Data.Middlelist[i].AreaName + v
+			mid = append(mid, value)
+		}
 	}
 	riskdata.Tm = tm
 	riskdata.High = high

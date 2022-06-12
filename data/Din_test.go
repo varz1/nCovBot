@@ -2,20 +2,17 @@ package data
 
 import (
 	"github.com/varz1/nCovBot/model"
-	"github.com/varz1/nCovBot/variables"
 	"testing"
 )
 
 func TestGetRisk(t *testing.T) {
-	var res struct {
-		Data []model.RiskArea `json:"data"`
-	}
-	resp, err := request.R().SetResult(&res).Get(variables.RISK)
-	if err != nil || resp.StatusCode() != 200 {
-		t.Log(err)
-		return
-	}
-	t.Log(res)
+	t.Log("fake")
+	var riskdata model.Risks
+	risk, _ := C.Get("risk")
+	riskdata = risk.(model.Risks)
+	t.Logf("high %v", len(riskdata.High))
+	t.Logf("mid %v", len(riskdata.Mid))
+	t.Log(riskdata)
 }
 
 func Test1(t *testing.T) {

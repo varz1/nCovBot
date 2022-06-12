@@ -29,7 +29,7 @@ func baseRouter(update *tgbotapi.Update) {
 		return
 	}
 	if maker.IsContain(message) {
-		msg = tgbotapi.NewMessage(int64(admin), "正在查找...")
+		msg = tgbotapi.NewMessage(update.Message.Chat.ID, "正在查找...")
 		channel.MessageChannel <- msg
 		channel.ProvinceUpdateChannel <- update
 		return
